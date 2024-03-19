@@ -3,7 +3,7 @@ spring:
     name: calorie_counter
 
   datasource:
-    url: jdbc:h2:mem:credit-application-system_DB
+    url: jdbc:h2:mem:calorie_counter_DB
     #    username: sa
     #    password:
   jpa:
