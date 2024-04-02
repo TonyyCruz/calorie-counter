@@ -3,9 +3,9 @@ spring:
     name: calorie_counter
 
   datasource:
-    url: jdbc:h2:mem:credit-application-system_DB
-    #    username: sa
-    #    password:
+    url: jdbc:h2:mem:calories-counter_DB
+    username: sa
+    password:
   jpa:
   #    hibernate:
   #      ddl-auto: create-drop
