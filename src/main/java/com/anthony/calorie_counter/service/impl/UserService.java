@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.exceptions.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +15,11 @@ public class UserService implements IUserService {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User was not found."));
-    }
-
-    private boolean emailExists(String email) {
-        return userRepository.findByEmail(email).isPresent();
+                .orElseThrow(() -> new NotFoundException("User was not found."));
     }
 
     @Override
     public User save(User user) {
-        if (emailExists(user.getEmail())) {
-            throw new IllegalArgumentException("This email is already in use.");
-        }
         return userRepository.save(user);
     }
 
