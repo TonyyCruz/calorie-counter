@@ -6,12 +6,14 @@ spring:
     url: jdbc:h2:mem:calories-counter_DB
     username: sa
     password:
+
   jpa:
   #    hibernate:
   #      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate.format_sql: true
+
   h2:
     console:
       enabled: true
@@ -19,6 +21,7 @@ spring:
       settings:
         trace: false
         web-allow-others: true
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
