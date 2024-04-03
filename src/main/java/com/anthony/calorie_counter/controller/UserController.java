@@ -10,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/users")
+@RestController @RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserService userService;
@@ -20,20 +19,20 @@ public class UserController {
     ResponseEntity<UserView> create(@RequestBody @Valid UserDto userDto) {
         User user = userDto.toEntity();
         User savedUser = userService.save(user);
-        return ResponseEntity.ok().body(new UserView(savedUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserView(savedUser));
     }
 
     @GetMapping("/{id}")
     ResponseEntity<UserView> findById(@PathVariable Long id) {
         User user = userService.findById(id);
-        return ResponseEntity.ok().body(new UserView(user));
+        return ResponseEntity.ok(new UserView(user));
     }
 
     @PutMapping("/{id}")
     ResponseEntity<UserView> create(@PathVariable Long id, @RequestBody UserDto userDto) {
         User user = userDto.toEntity();
         User updatedUser = userService.update(id, user);
-        return ResponseEntity.ok().body(new UserView(updatedUser));
+        return ResponseEntity.ok(new UserView(updatedUser));
     }
 
     @DeleteMapping("/{id}")
