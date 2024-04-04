@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record UserDto(
         @NotEmpty(message = "The name must not be empty.")
-        String name,
+        String fullName,
         @Email(message = "Invalid Email.") @NotEmpty(message = "The email must not be empty.")
         String email,
         @NotEmpty(message = "The password must not be empty.")
@@ -17,7 +17,7 @@ public record UserDto(
 ){
     public User toEntity() {
         User user = new User();
-        user.setName(name);
+        user.setFullName(fullName);
         user.setEmail(email);
         user.setPassword(password);
         return user;
