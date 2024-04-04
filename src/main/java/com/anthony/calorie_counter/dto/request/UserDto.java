@@ -3,15 +3,18 @@ package com.anthony.calorie_counter.dto.request;
 import com.anthony.calorie_counter.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 public record UserDto(
-        @NotEmpty(message = "Field 'Name' must not be empty.")
+        @NotEmpty(message = "The name must not be empty.")
         String name,
-        @Email(message = "Invalid Email.") @NotEmpty(message = "Field 'Email' must not be empty.")
+        @Email(message = "Invalid Email.") @NotEmpty(message = "The email must not be empty.")
         String email,
-        @NotEmpty(message = "Field 'Password' must not be empty.")
-        String password)
-{
+        @NotEmpty(message = "The password must not be empty.")
+        @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$",
+                message = "The password must have at least 8 characters including at least one uppercase, one lowercase and a number.")
+        String password
+){
     public User toEntity() {
         User user = new User();
         user.setName(name);
