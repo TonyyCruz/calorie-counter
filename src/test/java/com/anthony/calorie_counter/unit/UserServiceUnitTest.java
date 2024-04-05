@@ -32,6 +32,37 @@ public class UserServiceUnitTest {
 	}
 
 	@Test
+	void testCanSaveAnNewUser() {
+		Long fakeId = 1L;
+		User userToSave = buildUser();
+		User expectUser = buildUser(fakeId);
+		when(userRepository.save(userToSave)).thenReturn(expectUser);
+		User receivedUser = userService.save(userToSave);
+		assertEquals(userToSave.getFullName(), receivedUser.getFullName());
+		assertEquals(userToSave.getEmail(), receivedUser.getEmail());
+		assertEquals(userToSave.getPassword(), receivedUser.getPassword());
+		assertEquals(expectUser.getId(), receivedUser.getId());
+	}
+
+	@Test
+	void testCanUpdateAnUser() {
+		Long fakeId = 10L;
+		User userToUpdate = buildUser(fakeId);
+		User expectUser = buildUser();
+		expectUser.setFullName("New Name");
+		expectUser.setEmail("new@email.com");
+		expectUser.setPassword("myNewPass01");
+		when(userRepository.findById(fakeId)).thenReturn(Optional.of(expectUser));
+		when(userRepository.save(userToUpdate)).thenReturn(expectUser);
+		User receivedUser = userService.update(fakeId, expectUser);
+		assertEquals(expectUser.getFullName(), receivedUser.getFullName());
+		assertEquals(expectUser.getEmail(), receivedUser.getEmail());
+		assertEquals(expectUser.getPassword(), receivedUser.getPassword());
+		assertEquals(expectUser.getId(), receivedUser.getId());
+	}
+
+	// ======================================== Error cases ======================================== //
+	@Test
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
 		Long invalidIUd = 99L;
 		when(userRepository.findById(invalidIUd)).thenReturn(Optional.empty());
@@ -39,8 +70,11 @@ public class UserServiceUnitTest {
 		assertEquals(error.getMessage(), "User 99 was not found.");
 	}
 
-	User buildUser() {
-		return new User(1L, "User Name", "Ab123456", "test@email.com");
+	private User buildUser() {
+		return new User(0L, "User Name", "Ab123456", "test@email.com");
 	}
 
+	private User buildUser(Long id) {
+		return new User(id, "User Name", "Ab123456", "test@email.com");
+	}
 }
