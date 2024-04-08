@@ -46,15 +46,16 @@ public class UserServiceUnitTest {
 
 	@Test
 	void testCanUpdateAnUser() {
-		Long fakeId = 10L;
-		User userToUpdate = buildUser(fakeId);
-		User expectUser = buildUser();
+		Long userId = 10L;
+		User currentUser = buildUser(userId);
+		User expectUser = buildUser(userId);
 		expectUser.setFullName("New Name");
 		expectUser.setEmail("new@email.com");
 		expectUser.setPassword("myNewPass01");
-		when(userRepository.findById(fakeId)).thenReturn(Optional.of(expectUser));
-		when(userRepository.save(userToUpdate)).thenReturn(expectUser);
-		User receivedUser = userService.update(fakeId, expectUser);
+		when(userRepository.findById(userId)).thenReturn(Optional.of(currentUser));
+		when(userRepository.save(expectUser)).thenReturn(expectUser);
+		expectUser.setId(0L);
+		User receivedUser = userService.update(userId, expectUser);
 		assertEquals(expectUser.getFullName(), receivedUser.getFullName());
 		assertEquals(expectUser.getEmail(), receivedUser.getEmail());
 		assertEquals(expectUser.getPassword(), receivedUser.getPassword());
@@ -64,9 +65,26 @@ public class UserServiceUnitTest {
 	// ======================================== Error cases ======================================== //
 	@Test
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
-		Long invalidIUd = 99L;
-		when(userRepository.findById(invalidIUd)).thenReturn(Optional.empty());
-		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidIUd));
+		Long invalidId = 99L;
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidId));
+		assertEquals(error.getMessage(), "User 99 was not found.");
+	}
+
+	@Test
+	void testCannotUpdateUserByInvalidIdAndThrowsAnException() {
+		Long invalidId = 99L;
+		User expectUser = buildUser();
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.update(invalidId, expectUser));
+		assertEquals(error.getMessage(), "User 99 was not found.");
+	}
+
+	@Test
+	void testCannotDeleteUserByInvalidIdAndThrowsAnException() {
+		Long invalidId = 99L;
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.delete(invalidId));
 		assertEquals(error.getMessage(), "User 99 was not found.");
 	}
 
