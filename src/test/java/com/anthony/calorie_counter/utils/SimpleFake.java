@@ -4,17 +4,30 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Random;
 
-public class SimpleFakeData {
-    private static final int MIN_RANGE = 2;
-    private static final int MAX_RANGE = 10;
-
+public class SimpleFake {
     public static String randomString(int size) {
         return RandomStringUtils.randomAlphabetic(size);
     }
 
-    public static String randomString() {
+    public static int randomInteger() {
         Random random = new Random();
-        int characters = random.nextInt(MAX_RANGE - MIN_RANGE) + MIN_RANGE;
+        return random.nextInt();
+    }
+
+    public static Long randomLong() {
+        String randomValue = String.valueOf(randomInteger());
+        return Long.valueOf(randomValue);
+    }
+
+    public static int randomInteger(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
+
+    public static String randomString() {
+        final int minimumCharacters = 2;
+        final int maximumCharacters = 10;
+        int characters = randomInteger(minimumCharacters, maximumCharacters);
         return RandomStringUtils.randomAlphabetic(characters);
     }
 
@@ -31,7 +44,7 @@ public class SimpleFakeData {
     }
 
     public static String fullName() {
-        return upperFirstLetterCase(randomString()) + " " + upperFirstLetterCase(randomString());
+        return firstName() + " " + lastName();
     }
 
     public static String email(){
