@@ -10,7 +10,7 @@ public class UserFactory {
         user.setId(SimpleFake.randomLong());
         user.setFullName(SimpleFake.fullName());
         user.setEmail(SimpleFake.email());
-        user.setPassword(SimpleFake.password());
+        user.setPassword(SimpleFake.password(8));
         return user;
     }
 
@@ -19,11 +19,11 @@ public class UserFactory {
         user.setId(id);
         user.setFullName(SimpleFake.fullName());
         user.setEmail(SimpleFake.email());
-        user.setPassword(SimpleFake.password());
+        user.setPassword(SimpleFake.password(8));
         return user;
     }
 
     public static UserDto createUserDto() {
-        return new UserDto(SimpleFake.fullName(), SimpleFake.email(), SimpleFake.password());
+        return new UserDto(SimpleFake.fullName(), SimpleFake.email(), SimpleFake.password(8));
     }
 }

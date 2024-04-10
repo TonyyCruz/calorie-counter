@@ -31,6 +31,11 @@ public class SimpleFake {
         return RandomStringUtils.randomAlphabetic(characters);
     }
 
+    public static String randomString(int minimumCharacters, int maximumCharacters) {
+        int characters = randomInteger(minimumCharacters, maximumCharacters);
+        return RandomStringUtils.randomAlphabetic(characters);
+    }
+
     public static String upperFirstLetterCase(String word) {
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
@@ -51,9 +56,15 @@ public class SimpleFake {
         return randomString() + "@email.com";
     }
 
-    public static String password() {
+    public static String randomSymbol() {
+        String[] symbols = new String[] {"!", "@", "#", "$", "%", "", "&", "*", "(", ")", "_", "=", "+", ".", "?", ">", "<"};
+        int position = randomInteger(0, symbols.length - 1);
+        return symbols[position];
+    }
+
+    public static String password(int minimumSize) {
         Random random = new Random();
         int randomInt = random.nextInt();
-        return upperFirstLetterCase(randomString()) + randomInt + "*";
+        return upperFirstLetterCase(upperFirstLetterCase(randomString(minimumSize - 2))) + randomInt + randomSymbol();
     }
 }
