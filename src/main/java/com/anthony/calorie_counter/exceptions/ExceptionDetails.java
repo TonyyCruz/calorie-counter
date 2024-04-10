@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Map;
 
 @Data @AllArgsConstructor @NoArgsConstructor
 public class ExceptionDetails implements Serializable {
@@ -16,4 +17,5 @@ public class ExceptionDetails implements Serializable {
     int status;
     String exception;
     String path;
+    Map<String, String> details;
 }
