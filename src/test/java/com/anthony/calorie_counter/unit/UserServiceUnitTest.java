@@ -5,6 +5,8 @@ import com.anthony.calorie_counter.exceptions.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +25,7 @@ public class UserServiceUnitTest {
 	@Mock
 	UserRepository userRepository;
 
-	@Test
+	@Test @DisplayName("Test service method find user by id.")
 	void testCanFindUserById() {
 		User expectUser = buildUser();
 		when(userRepository.findById(expectUser.getId())).thenReturn(Optional.of(expectUser));
@@ -31,7 +33,7 @@ public class UserServiceUnitTest {
 		assertEquals(expectUser, receivedUser);
 	}
 
-	@Test
+	@Test @DisplayName("Test service method user create.")
 	void testCanSaveAnNewUser() {
 		Long fakeId = 1L;
 		User userToSave = buildUser();
@@ -44,7 +46,7 @@ public class UserServiceUnitTest {
 		assertEquals(expectUser.getId(), receivedUser.getId());
 	}
 
-	@Test
+	@Test @DisplayName("Test service method user update.")
 	void testCanUpdateAnUser() {
 		Long userId = 10L;
 		User currentUser = buildUser(userId);
@@ -63,7 +65,7 @@ public class UserServiceUnitTest {
 	}
 
 	// ======================================== Error cases ======================================== //
-	@Test
+	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
@@ -71,7 +73,7 @@ public class UserServiceUnitTest {
 		assertEquals(error.getMessage(), "User 99 was not found.");
 	}
 
-	@Test
+	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
 	void testCannotUpdateUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
 		User expectUser = buildUser();
@@ -80,7 +82,7 @@ public class UserServiceUnitTest {
 		assertEquals(error.getMessage(), "User 99 was not found.");
 	}
 
-	@Test
+	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
 	void testCannotDeleteUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
