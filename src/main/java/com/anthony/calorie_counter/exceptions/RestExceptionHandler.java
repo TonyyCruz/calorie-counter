@@ -3,13 +3,13 @@ package com.anthony.calorie_counter.exceptions;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -27,23 +27,19 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ExceptionDetails> argumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
-        String errors = exceptionMessageFormatter(e.getAllErrors());
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach(objectError -> {
+            String fieldName = objectError.getObjectName();
+            String message = objectError.getDefaultMessage();
+            errors.put(fieldName, message);
+        });
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Bed request, argument not valid.");
+        exceptionDetails.setTitle("Bad request, invalid argumentation.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
-        exceptionDetails.setException(errors);
+        exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.setDetails(errors);
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
-    }
-
-    private String exceptionMessageFormatter(List<ObjectError> errors) {
-        String errorMessage = "Errors found %d: ".formatted(errors.size());
-        for(ObjectError err : errors) {
-            if (err.getDefaultMessage() != null) {
-                errorMessage = errorMessage.concat("[" ).concat(err.getDefaultMessage()).concat("] ");
-            }
-        }
-        return errorMessage.trim();
     }
 }

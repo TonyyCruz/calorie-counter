@@ -5,6 +5,8 @@ import com.anthony.calorie_counter.exceptions.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +25,7 @@ public class UserServiceUnitTest {
 	@Mock
 	UserRepository userRepository;
 
-	@Test
+	@Test @DisplayName("Test service method find user by id.")
 	void testCanFindUserById() {
 		User expectUser = buildUser();
 		when(userRepository.findById(expectUser.getId())).thenReturn(Optional.of(expectUser));
@@ -31,7 +33,7 @@ public class UserServiceUnitTest {
 		assertEquals(expectUser, receivedUser);
 	}
 
-	@Test
+	@Test @DisplayName("Test service method user create.")
 	void testCanSaveAnNewUser() {
 		Long fakeId = 1L;
 		User userToSave = buildUser();
@@ -44,17 +46,18 @@ public class UserServiceUnitTest {
 		assertEquals(expectUser.getId(), receivedUser.getId());
 	}
 
-	@Test
+	@Test @DisplayName("Test service method user update.")
 	void testCanUpdateAnUser() {
-		Long fakeId = 10L;
-		User userToUpdate = buildUser(fakeId);
-		User expectUser = buildUser();
+		Long userId = 10L;
+		User currentUser = buildUser(userId);
+		User expectUser = buildUser(userId);
 		expectUser.setFullName("New Name");
 		expectUser.setEmail("new@email.com");
 		expectUser.setPassword("myNewPass01");
-		when(userRepository.findById(fakeId)).thenReturn(Optional.of(expectUser));
-		when(userRepository.save(userToUpdate)).thenReturn(expectUser);
-		User receivedUser = userService.update(fakeId, expectUser);
+		when(userRepository.findById(userId)).thenReturn(Optional.of(currentUser));
+		when(userRepository.save(expectUser)).thenReturn(expectUser);
+		expectUser.setId(0L);
+		User receivedUser = userService.update(userId, expectUser);
 		assertEquals(expectUser.getFullName(), receivedUser.getFullName());
 		assertEquals(expectUser.getEmail(), receivedUser.getEmail());
 		assertEquals(expectUser.getPassword(), receivedUser.getPassword());
@@ -62,11 +65,28 @@ public class UserServiceUnitTest {
 	}
 
 	// ======================================== Error cases ======================================== //
-	@Test
+	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
-		Long invalidIUd = 99L;
-		when(userRepository.findById(invalidIUd)).thenReturn(Optional.empty());
-		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidIUd));
+		Long invalidId = 99L;
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidId));
+		assertEquals(error.getMessage(), "User 99 was not found.");
+	}
+
+	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
+	void testCannotUpdateUserByInvalidIdAndThrowsAnException() {
+		Long invalidId = 99L;
+		User expectUser = buildUser();
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.update(invalidId, expectUser));
+		assertEquals(error.getMessage(), "User 99 was not found.");
+	}
+
+	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
+	void testCannotDeleteUserByInvalidIdAndThrowsAnException() {
+		Long invalidId = 99L;
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.delete(invalidId));
 		assertEquals(error.getMessage(), "User 99 was not found.");
 	}
 

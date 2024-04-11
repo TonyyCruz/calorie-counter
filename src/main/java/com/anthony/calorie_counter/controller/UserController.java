@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserView> create(@PathVariable Long id, @RequestBody UserDto userDto) {
+    ResponseEntity<UserView> update(@PathVariable Long id, @RequestBody UserDto userDto) {
         User user = userDto.toEntity();
         User updatedUser = userService.update(id, user);
         return ResponseEntity.ok(new UserView(updatedUser));
