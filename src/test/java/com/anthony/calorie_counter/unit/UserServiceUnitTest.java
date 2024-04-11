@@ -65,12 +65,13 @@ public class UserServiceUnitTest {
 	}
 
 	// ======================================== Error cases ======================================== //
+
 	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidId));
-		assertEquals(error.getMessage(), "User 99 was not found.");
+		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
 	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
@@ -79,7 +80,7 @@ public class UserServiceUnitTest {
 		User expectUser = buildUser();
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.update(invalidId, expectUser));
-		assertEquals(error.getMessage(), "User 99 was not found.");
+		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
 	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
@@ -87,7 +88,7 @@ public class UserServiceUnitTest {
 		Long invalidId = 99L;
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.delete(invalidId));
-		assertEquals(error.getMessage(), "User 99 was not found.");
+		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
 	private User buildUser() {

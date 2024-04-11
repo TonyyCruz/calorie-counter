@@ -11,7 +11,7 @@ public class SimpleFake {
 
     public static int randomInteger() {
         Random random = new Random();
-        return random.nextInt();
+        return random.nextInt(1, 10001);
     }
 
     public static Long randomLong() {

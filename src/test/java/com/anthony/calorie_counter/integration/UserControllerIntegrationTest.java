@@ -5,6 +5,8 @@ import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,12 @@ public class UserControllerIntegrationTest extends TestBase {
     @Autowired
     private UserRepository userRepository;
 
-    @Test @DisplayName("Test if is possible create a new user.")
+    @BeforeEach
+    void setup() {
+        userRepository.deleteAll();
+    }
+
+    @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
     void canCreateAnNewUser() throws Exception {
         UserDto newUser = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(newUser);
@@ -29,38 +36,219 @@ public class UserControllerIntegrationTest extends TestBase {
             .andExpect(jsonPath("$.password").doesNotExist());
     }
 
-    @Test @DisplayName("Test if is possible find a user by received id.")
+    @Test @DisplayName("Test if is possible find a user by received id and receive status code 200.")
     void canFindAnUserById() throws Exception {
-        User user = UserFactory.createUser();
-        userRepository.save(user);
-        mockMvc.perform(get(USER_URL + "/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fullName").value(user.getFullName()))
-                .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.password").doesNotExist());
+        UserDto userDto = UserFactory.createUserDto();
+        User savedUser = userRepository.save(userDto.toEntity());
+        String path = USER_URL + "/" + savedUser.getId();
+        mockMvc.perform(get(path))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.fullName").value(userDto.fullName()))
+            .andExpect(jsonPath("$.email").value(userDto.email()))
+            .andExpect(jsonPath("$.password").doesNotExist());
     }
 
-    @Test @DisplayName("Test if is possible update a user by received id.")
+    @Test @DisplayName("Test if is possible update a user by received id and receive status code 201.")
     void canUpdateAnUserById() throws Exception {
-        User currentUser = UserFactory.createUser();
+        UserDto userDto = UserFactory.createUserDto();
+        User currentUser = userRepository.save(userDto.toEntity());
         UserDto updateUser = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(updateUser);
-        userRepository.save(currentUser);
-        mockMvc.perform(put(USER_URL + "/1").contentType(MediaType.APPLICATION_JSON).content(valueAsString))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fullName").value(updateUser.fullName()))
-                .andExpect(jsonPath("$.email").value(updateUser.email()))
-                .andExpect(jsonPath("$.password").doesNotExist());
+        String path = USER_URL + "/" + currentUser.getId();
+        mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.fullName").value(updateUser.fullName()))
+            .andExpect(jsonPath("$.email").value(updateUser.email()))
+            .andExpect(jsonPath("$.password").doesNotExist());
     }
 
-    @Test @DisplayName("Test if is possible update a user by received id.")
+    @Test @DisplayName("Test if is possible delete a user by received id and receive status code 204.")
     void canDeleteAnUserById() throws Exception {
         User user = UserFactory.createUser();
-        userRepository.save(user);
-        mockMvc.perform(delete(USER_URL + "/1"))
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.fullName").doesNotExist())
-                .andExpect(jsonPath("$.email").doesNotExist())
-                .andExpect(jsonPath("$.password").doesNotExist());
+        User savedUser = userRepository.save(user);
+        String path = USER_URL + "/" + savedUser.getId();
+        mockMvc.perform(delete(path))
+            .andExpect(status().isNoContent())
+            .andExpect(jsonPath("$.fullName").doesNotExist())
+            .andExpect(jsonPath("$.email").doesNotExist())
+            .andExpect(jsonPath("$.password").doesNotExist());
+    }
+
+    // ======================================== Error cases ======================================== //
+
+    @Test @DisplayName("Test if throws an exception when try create a user with empty full name and receive status code 400.")
+    void cannotCreateAnNewUserWithEmptyFullName() throws Exception {
+        UserDto newUser = new UserDto("", "teste@email.com", "123456Aa.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("The name must not be empty."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user with empty email and receive status code 400.")
+    void cannotCreateAnNewUserWithEmptyEmail() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "", "123456Aa.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("The email must not be empty."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user with invalid email format and receive status code 400.")
+    void cannotCreateAnNewUserWithInvalidEmailFormat() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "test", "123456Aa.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("Invalid Email."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user with already used email and receive status code 400.")
+    void cannotCreateAnNewUserWithAlreadyUsedEmail() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "test@email.com", "123456Aa.");
+        userRepository.save(newUser.toEntity());
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.title").value("Conflicting data, received data already exists in the database."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(409))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.dao.DataIntegrityViolationException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty());
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user with password smaller than 8 characters and receive status code 400.")
+    void cannotCreateAnNewUserWithPasswordSmallerThanEight() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234Aa.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("The password must have at least 8 characters including at least one uppercase, one lowercase and a number."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one uppercase character and receive status code 400.")
+    void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneUppercaseCharacter() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234aa.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception").value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]")
+                    .value("The password must have at least 8 characters including at least one uppercase, one lowercase and a number."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one lowercase character and receive status code 400.")
+    void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneLowercaseCharacter() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234AA.");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("The password must have at least 8 characters including at least one uppercase, one lowercase and a number."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one number and receive status code 400.")
+    void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneNumber() throws Exception {
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass.*");
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bad request, invalid argumentation."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(USER_URL))
+            .andExpect(jsonPath("$.exception")
+                    .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("The password must have at least 8 characters including at least one uppercase, one lowercase and a number."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try find a user with invalid id and receive status code 400.")
+    void cannotFindAnUserByInvalidId() throws Exception {
+        byte invalidId = 9;
+        String path = USER_URL + "/" + invalidId;
+        mockMvc.perform(get(path))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value(path))
+            .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+            .andExpect(jsonPath("$.details[*]").isNotEmpty())
+            .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
+
+    }
+
+    @Test @DisplayName("Test if throws an exception when try update a user with invalid id and receive status code 400.")
+    void cannotUpdateAnUserByInvalidId() throws Exception {
+        byte invalidId = 9;
+        UserDto userDto  = UserFactory.createUserDto();
+        String valueAsString = objectMapper.writeValueAsString(userDto);
+        String path = USER_URL + "/" + invalidId;
+        mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.path").value(path))
+                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+                .andExpect(jsonPath("$.details[*]").isNotEmpty())
+                .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
+    }
+
+    @Test @DisplayName("Test if throws an exception when try delete a user with invalid id and receive status code 400.")
+    void cannotDeleteAnUserByInvalidId() throws Exception {
+        byte invalidId = 9;
+        String path = USER_URL + "/" + invalidId;
+        mockMvc.perform(delete(path))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.path").value(path))
+                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+                .andExpect(jsonPath("$.details[*]").isNotEmpty())
+                .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
     }
 }
