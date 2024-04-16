@@ -20,7 +20,7 @@ public class RestExceptionHandler {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Bed request, resource not found.");
         exceptionDetails.setTimestamp(Instant.now());
-        exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        exceptionDetails.setStatus(HttpStatus.NOT_FOUND.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.setDetails(Map.of("error", e.getMessage()));
