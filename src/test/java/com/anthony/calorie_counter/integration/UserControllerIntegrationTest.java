@@ -5,7 +5,6 @@ import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,7 @@ public class UserControllerIntegrationTest extends TestBase {
             .andExpect(jsonPath("$.password").doesNotExist());
     }
 
-    @Test @DisplayName("Test if is possible update a user by received id and receive status code 201.")
+    @Test @DisplayName("Test if is possible update a user by received id and receive status code 200.")
     void canUpdateAnUserById() throws Exception {
         UserDto userDto = UserFactory.createUserDto();
         User currentUser = userRepository.save(userDto.toEntity());
@@ -204,15 +203,15 @@ public class UserControllerIntegrationTest extends TestBase {
             .andExpect(jsonPath("$.details[*]").value("The password must have at least 8 characters including at least one uppercase, one lowercase and a number."));
     }
 
-    @Test @DisplayName("Test if throws an exception when try find a user with invalid id and receive status code 400.")
+    @Test @DisplayName("Test if throws an exception when try find a user with invalid id and receive status code 404.")
     void cannotFindAnUserByInvalidId() throws Exception {
         byte invalidId = 9;
         String path = USER_URL + "/" + invalidId;
         mockMvc.perform(get(path))
-            .andExpect(status().isBadRequest())
+            .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
             .andExpect(jsonPath("$.timestamp").exists())
-            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value(path))
             .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
             .andExpect(jsonPath("$.details[*]").isNotEmpty())
@@ -220,32 +219,32 @@ public class UserControllerIntegrationTest extends TestBase {
 
     }
 
-    @Test @DisplayName("Test if throws an exception when try update a user with invalid id and receive status code 400.")
+    @Test @DisplayName("Test if throws an exception when try update a user with invalid id and receive status code 404.")
     void cannotUpdateAnUserByInvalidId() throws Exception {
         byte invalidId = 9;
         UserDto userDto  = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(userDto);
         String path = USER_URL + "/" + invalidId;
         mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
                 .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.path").value(path))
                 .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
                 .andExpect(jsonPath("$.details[*]").isNotEmpty())
                 .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
     }
 
-    @Test @DisplayName("Test if throws an exception when try delete a user with invalid id and receive status code 400.")
+    @Test @DisplayName("Test if throws an exception when try delete a user with invalid id and receive status code 404.")
     void cannotDeleteAnUserByInvalidId() throws Exception {
         byte invalidId = 9;
         String path = USER_URL + "/" + invalidId;
         mockMvc.perform(delete(path))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Bed request, resource not found."))
                 .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.path").value(path))
                 .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
                 .andExpect(jsonPath("$.details[*]").isNotEmpty())
