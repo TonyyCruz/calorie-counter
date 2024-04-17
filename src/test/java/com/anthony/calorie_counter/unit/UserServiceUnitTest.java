@@ -94,10 +94,12 @@ public class UserServiceUnitTest {
 	}
 
 	private User buildUser() {
-		return new User(0L, "User Name", "Ab123456", "test@email.com");
+
+		return new User(0L, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
 	}
 
 	private User buildUser(Long id) {
-		return new User(id, "User Name", "Ab123456", "test@email.com");
+
+		return new User(id, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
 	}
 }

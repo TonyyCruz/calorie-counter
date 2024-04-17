@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class SimpleFake {
     public static String randomString(int size) {
-        return RandomStringUtils.randomAlphabetic(size);
+        return RandomStringUtils.randomAlphabetic(size).toLowerCase();
     }
 
     public static int randomInteger() {
@@ -28,16 +28,17 @@ public class SimpleFake {
         final int minimumCharacters = 2;
         final int maximumCharacters = 10;
         int characters = randomInteger(minimumCharacters, maximumCharacters);
-        return RandomStringUtils.randomAlphabetic(characters);
+        return RandomStringUtils.randomAlphabetic(characters).toLowerCase();
     }
 
     public static String randomString(int minimumCharacters, int maximumCharacters) {
         int characters = randomInteger(minimumCharacters, maximumCharacters);
-        return RandomStringUtils.randomAlphabetic(characters);
+        return RandomStringUtils.randomAlphabetic(characters).toLowerCase();
     }
 
     public static String upperFirstLetterCase(String word) {
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
+        String firstCharacter = String.valueOf(word.charAt(0)).toUpperCase();
+        return firstCharacter + word.substring(1);
     }
 
     public static String firstName() {
@@ -66,5 +67,13 @@ public class SimpleFake {
         Random random = new Random();
         int randomInt = random.nextInt();
         return upperFirstLetterCase(upperFirstLetterCase(randomString(minimumSize - 2))) + randomInt + randomSymbol();
+    }
+    
+    public static String phoneNumber() {
+        int[] prefixes = new int[] { 11, 12, 13 ,14, 22, 24, 27, 28, 31, 32, 33, 34, 35, 37, 38, 41, 42, 43, 44, 45, 46, 47, 51, 53, 54, 55, 61, 62, 63, 91, 93, 99 };
+        String digit = String.valueOf(prefixes[randomInteger(0, prefixes.length - 1)]);
+        String firstNumberGroup = String.valueOf(randomInteger(1000, 9999));
+        String secondNumberGroup = String.valueOf(randomInteger(1000, 9999));
+        return "(%s) 9%s-%s".formatted(digit, firstNumberGroup, secondNumberGroup);
     }
 }

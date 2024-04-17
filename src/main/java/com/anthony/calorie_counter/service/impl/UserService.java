@@ -32,6 +32,7 @@ public class UserService implements IUserService {
         user.setFullName(updateUser.getFullName());
         user.setEmail(updateUser.getEmail());
         user.setPassword(updateUser.getPassword());
+        user.setPhoneNumber(updateUser.getPhoneNumber());
         return userRepository.save(user);
         } catch (EntityNotFoundException e) {
             throw new EntityDataNotFoundException("User %d was not found.".formatted(id));
