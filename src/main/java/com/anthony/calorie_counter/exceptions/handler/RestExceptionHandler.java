@@ -1,5 +1,6 @@
-package com.anthony.calorie_counter.exceptions;
+package com.anthony.calorie_counter.exceptions.handler;
 
+import com.anthony.calorie_counter.exceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;

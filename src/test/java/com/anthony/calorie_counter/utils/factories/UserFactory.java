@@ -11,6 +11,7 @@ public class UserFactory {
         user.setFullName(SimpleFake.fullName());
         user.setEmail(SimpleFake.email());
         user.setPassword(SimpleFake.password(8));
+        user.setPhoneNumber(SimpleFake.phoneNumber());
         return user;
     }
 
@@ -20,10 +21,11 @@ public class UserFactory {
         user.setFullName(SimpleFake.fullName());
         user.setEmail(SimpleFake.email());
         user.setPassword(SimpleFake.password(8));
+        user.setPhoneNumber(SimpleFake.phoneNumber());
         return user;
     }
 
     public static UserDto createUserDto() {
-        return new UserDto(SimpleFake.fullName(), SimpleFake.email(), SimpleFake.password(8));
+        return new UserDto(SimpleFake.fullName(), SimpleFake.email(), SimpleFake.password(8), SimpleFake.phoneNumber());
     }
 }
