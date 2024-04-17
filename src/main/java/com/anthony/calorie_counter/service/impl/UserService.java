@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.User;
-import com.anthony.calorie_counter.exceptions.NotFoundException;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +17,7 @@ public class UserService implements IUserService {
     @Override @Transactional(readOnly = true)
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User %d was not found.".formatted(id)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User %d was not found.".formatted(id)));
     }
 
     @Override @Transactional
@@ -34,13 +34,13 @@ public class UserService implements IUserService {
         user.setPassword(updateUser.getPassword());
         return userRepository.save(user);
         } catch (EntityNotFoundException e) {
-            throw new NotFoundException("User %d was not found.".formatted(id));
+            throw new EntityDataNotFoundException("User %d was not found.".formatted(id));
         }
     }
 
-    @Override
+    @Override @Transactional
     public void delete(Long id) {
-        if (!userRepository.existsById(id)) throw new NotFoundException("User %d was not found.".formatted(id));
+        if (!userRepository.existsById(id)) throw new EntityDataNotFoundException("User %d was not found.".formatted(id));
         userRepository.deleteById(id);
     }
 }

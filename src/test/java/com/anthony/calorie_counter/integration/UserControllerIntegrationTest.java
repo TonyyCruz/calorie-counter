@@ -213,7 +213,7 @@ public class UserControllerIntegrationTest extends TestBase {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value(path))
-            .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+            .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFoundException"))
             .andExpect(jsonPath("$.details[*]").isNotEmpty())
             .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
 
@@ -231,7 +231,7 @@ public class UserControllerIntegrationTest extends TestBase {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.path").value(path))
-                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFoundException"))
                 .andExpect(jsonPath("$.details[*]").isNotEmpty())
                 .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
     }
@@ -246,7 +246,7 @@ public class UserControllerIntegrationTest extends TestBase {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.path").value(path))
-                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.NotFoundException"))
+                .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFoundException"))
                 .andExpect(jsonPath("$.details[*]").isNotEmpty())
                 .andExpect(jsonPath("$.details[*]").value("User " +  invalidId + " was not found."));
     }

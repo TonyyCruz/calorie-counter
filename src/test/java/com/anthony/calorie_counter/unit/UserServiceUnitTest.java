@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.unit;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Optional;
 
@@ -71,7 +71,7 @@ public class UserServiceUnitTest {
 	void testCannotFindUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
-		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.findById(invalidId));
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
 		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
@@ -80,7 +80,7 @@ public class UserServiceUnitTest {
 		Long invalidId = 99L;
 		User expectUser = buildUser();
 		when(userRepository.getReferenceById(invalidId)).thenThrow(new EntityNotFoundException());
-		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.update(invalidId, expectUser));
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.update(invalidId, expectUser));
 		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
@@ -89,7 +89,7 @@ public class UserServiceUnitTest {
 		Long invalidId = 99L;
 //		doThrow(new EmptyResultDataAccessException(0)).when(userRepository).deleteById(invalidId);
 		when(userRepository.existsById(invalidId)).thenReturn(false);
-		Throwable error = assertThrowsExactly(NotFoundException.class , () -> userService.delete(invalidId));
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.delete(invalidId));
 		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 

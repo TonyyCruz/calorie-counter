@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.exceptions;
+package com.anthony.calorie_counter.exceptions.handler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
