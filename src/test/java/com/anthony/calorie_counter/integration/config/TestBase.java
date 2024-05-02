@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @ContextConfiguration
 public class TestBase {
-    protected final String USER_URL = "/api/users";
+    protected final String USER_URL = "/api/v1/users";
     @Autowired
     protected MockMvc mockMvc;
     @Autowired
