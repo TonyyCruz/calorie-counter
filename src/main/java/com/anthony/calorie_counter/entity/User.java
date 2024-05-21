@@ -1,8 +1,14 @@
 package com.anthony.calorie_counter.entity;
 
+import com.anthony.calorie_counter.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -13,17 +19,18 @@ import java.util.Objects;
 @ToString
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(nullable = false)
-    String fullName;
-    @Column(nullable = false)
-    String password;
+    private String fullName;
     @Column(unique = true, nullable = false)
-    String email;
-    String phoneNumber;
+    private String email;
+    @Column(nullable = false)
+    private String password;
+    private String phoneNumber;
+    private Roles role = Roles.USER;
 
     public User(String fullName, String password, String email, String phoneNumber) {
         this.fullName = fullName;
@@ -32,20 +39,57 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public User(String fullName, String password, String email, String phoneNumber, Roles role) {
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id)
-                && Objects.equals(fullName, user.fullName)
-                && Objects.equals(password, user.password)
-                && Objects.equals(email, user.email)
-                && Objects.equals(phoneNumber, user.phoneNumber);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullName, password, email, phoneNumber);
+        return Objects.hash(id);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (role == Roles.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }
