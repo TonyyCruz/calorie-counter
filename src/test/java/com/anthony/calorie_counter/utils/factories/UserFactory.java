@@ -8,7 +8,7 @@ import com.anthony.calorie_counter.utils.SimpleFake;
 public class UserFactory {
     public static User createUser() {
         User user = new User();
-        user.setId(SimpleFake.randomLong());
+        user.setId("b2283d3b-d470-40ec-9fd2-8b4eb4c5e290");
         user.setFullName(SimpleFake.fullName());
         user.setEmail(SimpleFake.email());
         user.setPassword(SimpleFake.password(8));
@@ -17,7 +17,7 @@ public class UserFactory {
         return user;
     }
 
-    public static User createUser(Long id) {
+    public static User createUser(String id) {
         User user = new User();
         user.setId(id);
         user.setFullName(SimpleFake.fullName());
