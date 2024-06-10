@@ -15,12 +15,12 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping
-    ResponseEntity<UserView> create(@RequestBody @Valid UserDto userDto) {
-        User user = userDto.toEntity();
-        User savedUser = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserView(savedUser));
-    }
+//    @PostMapping
+//    ResponseEntity<UserView> create(@RequestBody @Valid UserDto userDto) {
+//        User user = userDto.toEntity();
+//        User savedUser = userService.save(user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new UserView(savedUser));
+//    }
 
     @GetMapping("/{id}")
     ResponseEntity<UserView> findById(@PathVariable String id) {
@@ -29,16 +29,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserView> update(@PathVariable String id, @RequestBody UserDto userDto) {
+    ResponseEntity<UserView> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
         User user = userDto.toEntity();
         User updatedUser = userService.update(id, user);
         return ResponseEntity.ok(new UserView(updatedUser));
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<?> delete(@PathVariable String id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{id}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    ResponseEntity<?> delete(@PathVariable String id) {
+//        userService.delete(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }
