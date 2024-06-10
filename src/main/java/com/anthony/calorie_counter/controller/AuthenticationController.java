@@ -2,8 +2,10 @@ package com.anthony.calorie_counter.controller;
 
 import com.anthony.calorie_counter.dto.request.AuthenticationDto;
 import com.anthony.calorie_counter.dto.request.UserDto;
-import com.anthony.calorie_counter.dto.response.UserView;
+import com.anthony.calorie_counter.dto.response.LoginResponseTokenDto;
+import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.infra.security.TokenService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +26,23 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDto data) {
+    public ResponseEntity<LoginResponseTokenDto> login(@RequestBody @Valid AuthenticationDto data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        authenticationManager.authenticate(usernamePassword);
-        return ResponseEntity.ok().build();
+        var auth = authenticationManager.authenticate(usernamePassword);
+        String token = tokenService.generateToken((User) auth.getPrincipal());
+        return ResponseEntity.ok(new LoginResponseTokenDto(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserView> register(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserDto userDto) {
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.password());
         User user = userDto.toEntity();
         user.setPassword(encryptedPassword);
         User registeredUser = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserView(registeredUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUser));
     }
 }

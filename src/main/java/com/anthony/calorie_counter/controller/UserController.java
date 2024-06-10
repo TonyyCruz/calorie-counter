@@ -1,12 +1,11 @@
 package com.anthony.calorie_counter.controller;
 
 import com.anthony.calorie_counter.dto.request.UserDto;
-import com.anthony.calorie_counter.dto.response.UserView;
+import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,16 +22,16 @@ public class UserController {
 //    }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserView> findById(@PathVariable String id) {
+    ResponseEntity<UserViewDto> findById(@PathVariable String id) {
         User user = userService.findById(id);
-        return ResponseEntity.ok(new UserView(user));
+        return ResponseEntity.ok(new UserViewDto(user));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserView> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
+    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
         User user = userDto.toEntity();
         User updatedUser = userService.update(id, user);
-        return ResponseEntity.ok(new UserView(updatedUser));
+        return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 
 //    @DeleteMapping("/{id}")

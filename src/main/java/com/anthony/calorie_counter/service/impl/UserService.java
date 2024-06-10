@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService implements IUserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override @Transactional(readOnly = true)
     public User findById(String id) {
