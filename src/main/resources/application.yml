@@ -10,9 +10,16 @@ spring:
   jpa:
   #    hibernate:
   #      ddl-auto: create-drop
+    defer-datasource-initialization: true # To hibernate runs before data SQL
     show-sql: true
     properties:
-      hibernate.format_sql: true
+      hibernate:
+        format_sql: true
+
+  spring:
+    sql:
+      init:
+        mode: always # To hibernate runs before data SQL
 
   h2:
     console:

@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.entity;
 
-import com.anthony.calorie_counter.enums.Roles;
+import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,8 +21,8 @@ import java.util.Objects;
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     @Column(nullable = false)
     private String fullName;
     @Column(unique = true, nullable = false)
@@ -30,21 +30,21 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     private String phoneNumber;
-    private Roles role = Roles.USER;
+    private UserRole role = UserRole.USER;
+
+    public User(String fullName, String password, String email, String phoneNumber, UserRole role) {
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+    }
 
     public User(String fullName, String password, String email, String phoneNumber) {
         this.fullName = fullName;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
-    }
-
-    public User(String fullName, String password, String email, String phoneNumber, Roles role) {
-        this.fullName = fullName;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role == Roles.ADMIN) {
+        if (role == UserRole.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         }
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -75,21 +75,21 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

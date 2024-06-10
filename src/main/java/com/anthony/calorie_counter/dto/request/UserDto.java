@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.dto.request;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;

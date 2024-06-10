@@ -15,9 +15,9 @@ public class UserService implements IUserService {
     UserRepository userRepository;
 
     @Override @Transactional(readOnly = true)
-    public User findById(Long id) {
+    public User findById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("User %d was not found.".formatted(id)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
     }
 
     @Override @Transactional
@@ -26,7 +26,7 @@ public class UserService implements IUserService {
     }
 
     @Override @Transactional
-    public User update(Long id, User updateUser) {
+    public User update(String id, User updateUser) {
         try {
         User user = userRepository.getReferenceById(id);
         user.setFullName(updateUser.getFullName());
@@ -35,13 +35,13 @@ public class UserService implements IUserService {
         user.setPhoneNumber(updateUser.getPhoneNumber());
         return userRepository.save(user);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User %d was not found.".formatted(id));
+            throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
         }
     }
 
     @Override @Transactional
-    public void delete(Long id) {
-        if (!userRepository.existsById(id)) throw new EntityDataNotFoundException("User %d was not found.".formatted(id));
+    public void delete(String id) {
+        if (!userRepository.existsById(id)) throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
         userRepository.deleteById(id);
     }
 }
