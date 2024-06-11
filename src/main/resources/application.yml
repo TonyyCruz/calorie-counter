@@ -37,3 +37,4 @@ api:
   security:
     token:
       secret: ${JWT_SECRET:my_jwt_secret}
+      validate_time: ${JWT_VALIDATE_TIME:9999999999} # Minutes

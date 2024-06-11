@@ -34,13 +34,16 @@ public class SecurityConfigurations {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) //H2 database
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        // ALL
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/register").permitAll()
+                        // ADMIN
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, API_VERSION + "/meals").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
+                        .requestMatchers(API_VERSION + "/admin/**").hasRole("ADMIN")
+                        // USERS
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

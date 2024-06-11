@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.NotFoundException;
+import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,18 @@ public class RestExceptionHandler {
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.setDetails(Map.of(e.getCause().toString(), e.getMessage()));
+        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+    }
+
+    @ExceptionHandler(TokenCreateException.class)
+    ResponseEntity<ExceptionDetails> validateException(TokenCreateException e, HttpServletRequest request) {
+        ExceptionDetails exceptionDetails = new ExceptionDetails();
+        exceptionDetails.setTitle("Validate Exception.");
+        exceptionDetails.setTimestamp(Instant.now());
+        exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
+        exceptionDetails.setException(e.getClass().toString());
+        exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.setDetails(Map.of("error", e.getMessage(), "cause", e.getCause().getMessage()));
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 }

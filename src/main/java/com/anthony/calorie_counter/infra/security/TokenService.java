@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.infra.security;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -14,19 +15,22 @@ import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
+    private final String ISSUER = "auth-api";
     @Value("${api.security.token.secret}")
     private String secret;
+    @Value("${api.security.token.validate_time}")
+    private Long validateTime;
 
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
-                    .withIssuer("auth-api")
+                    .withIssuer(ISSUER)
                     .withSubject(user.getEmail())
-                    .withExpiresAt(generateExpirationDate())
+                    .withExpiresAt(generateExpirationDate(validateTime))
                     .sign(algorithm);
         } catch (JWTCreationException e) {
-            throw new RuntimeException("Error while generating token", e);
+            throw new TokenCreateException("Error while generating token", e);
         }
     }
 
@@ -34,7 +38,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("auth-api")
+                    .withIssuer(ISSUER)
                     .build()
                     .verify(token)
                     .getSubject();
@@ -43,7 +47,7 @@ public class TokenService {
         }
     }
 
-    private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusMonths(6).toInstant(ZoneOffset.of("-03:00"));
+    private Instant generateExpirationDate(Long expirationMinutes) {
+        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
     }
 }
