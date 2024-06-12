@@ -3,16 +3,26 @@ package com.anthony.calorie_counter.controller;
 import com.anthony.calorie_counter.dto.request.UserDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/api/v1/users")
-public class UserController {
+@RestController @RequestMapping("/api/v1/admin")
+public class AdminController {
     @Autowired
     UserService userService;
+
+    @PostMapping("/register")
+    ResponseEntity<UserViewDto> create(@RequestBody @Valid UserDto userDto, @RequestParam(name = "role") String role) {
+        User user = userDto.toEntity();
+        user.setRole(UserRole.valueOf(role.toUpperCase()));
+        User savedUser = userService.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(savedUser));
+    }
 
     @GetMapping("/{id}")
     ResponseEntity<UserViewDto> findById(@PathVariable String id) {
@@ -20,7 +30,6 @@ public class UserController {
         return ResponseEntity.ok(new UserViewDto(user));
     }
 
-    // VALIDAR SE O ID É REALMNTE DO USUARIO
     @PutMapping("/{id}")
     ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
         User user = userDto.toEntity();
@@ -28,11 +37,10 @@ public class UserController {
         return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 
-    // VALIDAR SE O ID É REALMNTE DO USUARIO
-//    @DeleteMapping("/{id}")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    ResponseEntity<?> delete(@PathVariable String id) {
-//        userService.delete(id);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<?> delete(@PathVariable String id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
