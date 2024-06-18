@@ -25,25 +25,21 @@ public class RestExceptionHandler {
         exceptionDetails.setStatus(HttpStatus.NOT_FOUND.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(Map.of("error", e.getMessage()));
+        exceptionDetails.addError("notFound", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ExceptionDetails> invalidArgumentation(MethodArgumentNotValidException e, HttpServletRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach(objectError -> {
-            String fieldName = objectError.getObjectName();
-            String message = objectError.getDefaultMessage();
-            errors.put(fieldName, message);
-        });
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Bad request, invalid argumentation.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(errors);
+        e.getBindingResult().getFieldErrors().forEach(objectError -> {
+            exceptionDetails.addError(objectError.getField(), objectError.getDefaultMessage());
+        });
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
@@ -55,7 +51,7 @@ public class RestExceptionHandler {
         exceptionDetails.setStatus(HttpStatus.CONFLICT.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(Map.of(e.getCause().toString(), e.getMessage()));
+        exceptionDetails.addError(e.getCause().toString(), e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
@@ -67,7 +63,8 @@ public class RestExceptionHandler {
         exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(Map.of("error", e.getMessage(), "cause", e.getCause().getMessage()));
+        exceptionDetails.addError("error", e.getMessage());
+        exceptionDetails.addError("cause", e.getCause().getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 }

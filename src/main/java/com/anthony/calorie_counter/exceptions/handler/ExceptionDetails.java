@@ -1,12 +1,12 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data @AllArgsConstructor @NoArgsConstructor
@@ -17,5 +17,11 @@ public class ExceptionDetails implements Serializable {
     int status;
     String exception;
     String path;
-    Map<String, String> details;
+
+    @Setter(AccessLevel.NONE)
+    Map<String, String> errors = new HashMap<>();
+
+    public void addError(String name, String message) {
+        errors.put(name, message);
+    }
 }
