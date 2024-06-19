@@ -19,9 +19,9 @@ public class ExceptionDetails implements Serializable {
     String path;
 
     @Setter(AccessLevel.NONE)
-    Map<String, String> errors = new HashMap<>();
+    private final Map<String, String> errors = new HashMap<>();
 
-    public void addError(String name, String message) {
-        errors.put(name, message);
+    public void addError(String error, String details) {
+        errors.put(error, details);
     }
 }
