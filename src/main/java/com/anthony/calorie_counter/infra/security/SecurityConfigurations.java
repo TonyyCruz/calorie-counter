@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.infra.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,12 +13,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
     private final String API_VERSION = "/api/v1";
+
+    @Autowired
+    private SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -29,18 +34,19 @@ public class SecurityConfigurations {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) //H2 database
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        // ALL
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/register").permitAll()
+                        // ADMIN
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, API_VERSION + "/meals").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
+                        .requestMatchers(API_VERSION + "/admin/**").hasRole("ADMIN")
+                        // USERS
                         .anyRequest().authenticated()
-
-                        // TEST  //
-//                        .anyRequest().permitAll()
                 )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

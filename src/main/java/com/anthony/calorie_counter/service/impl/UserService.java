@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService implements IUserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override @Transactional(readOnly = true)
     public User findById(String id) {
@@ -33,6 +33,7 @@ public class UserService implements IUserService {
         user.setEmail(updateUser.getEmail());
         user.setPassword(updateUser.getPassword());
         user.setPhoneNumber(updateUser.getPhoneNumber());
+        user.setRole(updateUser.getRole());
         return userRepository.save(user);
         } catch (EntityNotFoundException e) {
             throw new EntityDataNotFoundException("User %s was not found.".formatted(id));

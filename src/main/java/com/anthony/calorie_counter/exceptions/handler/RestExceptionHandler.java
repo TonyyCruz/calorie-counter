@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.NotFoundException;
+import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -24,26 +23,23 @@ public class RestExceptionHandler {
         exceptionDetails.setStatus(HttpStatus.NOT_FOUND.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(Map.of("error", e.getMessage()));
+        exceptionDetails.addError("notFound", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ExceptionDetails> invalidArgumentation(MethodArgumentNotValidException e, HttpServletRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach(objectError -> {
-            String fieldName = objectError.getObjectName();
-            String message = objectError.getDefaultMessage();
-            errors.put(fieldName, message);
+    ResponseEntity<ValidationError> invalidArgumentation(MethodArgumentNotValidException e, HttpServletRequest request) {
+        ValidationError validationError = new ValidationError();
+        validationError.setTitle("Bad request, invalid argumentation.");
+        validationError.setTimestamp(Instant.now());
+        validationError.setStatus(HttpStatus.BAD_REQUEST.value());
+        validationError.setException(e.getClass().toString());
+        validationError.setPath(request.getRequestURI());
+        validationError.addError("InvalidFieldData", "One or more fields contain invalid data.");
+        e.getBindingResult().getFieldErrors().forEach(objectError -> {
+            validationError.addFieldError(objectError.getField(), objectError.getDefaultMessage());
         });
-        ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Bad request, invalid argumentation.");
-        exceptionDetails.setTimestamp(Instant.now());
-        exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
-        exceptionDetails.setException(e.getClass().toString());
-        exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(errors);
-        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+        return ResponseEntity.status(validationError.getStatus()).body(validationError);
     }
 
     @ExceptionHandler(DataAccessException.class)
@@ -54,7 +50,19 @@ public class RestExceptionHandler {
         exceptionDetails.setStatus(HttpStatus.CONFLICT.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.setDetails(Map.of(e.getCause().toString(), e.getMessage()));
+        exceptionDetails.addError(e.getCause().toString(), e.getMessage());
+        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+    }
+
+    @ExceptionHandler(TokenCreateException.class)
+    ResponseEntity<ExceptionDetails> validateException(TokenCreateException e, HttpServletRequest request) {
+        ExceptionDetails exceptionDetails = new ExceptionDetails();
+        exceptionDetails.setTitle("Validate Exception.");
+        exceptionDetails.setTimestamp(Instant.now());
+        exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
+        exceptionDetails.setException(e.getClass().toString());
+        exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.addError(e.getCause().toString(), e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 }
