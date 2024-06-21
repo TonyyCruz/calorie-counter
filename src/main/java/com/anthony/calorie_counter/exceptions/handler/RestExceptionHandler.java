@@ -35,7 +35,7 @@ public class RestExceptionHandler {
         validationError.setStatus(HttpStatus.BAD_REQUEST.value());
         validationError.setException(e.getClass().toString());
         validationError.setPath(request.getRequestURI());
-        validationError.addError("InvalidFieldData", "One or more fields contain invalid data.");
+        validationError.addError("InvalidFieldData", e.getMessage());
         e.getBindingResult().getFieldErrors().forEach(objectError -> {
             validationError.addFieldError(objectError.getField(), objectError.getDefaultMessage());
         });

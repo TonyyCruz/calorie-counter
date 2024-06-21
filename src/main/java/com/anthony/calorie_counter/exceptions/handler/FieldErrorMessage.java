@@ -11,5 +11,5 @@ import java.io.Serializable;
 @Data
 public class FieldErrorMessage implements Serializable {
     private String fieldName;
-    private String error;
+    private String errorMessage;
 }

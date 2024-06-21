@@ -1,11 +1,13 @@
 package com.anthony.calorie_counter.dto.request;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.service.validation.UserInsertValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 
+@UserInsertValid
 public record UserDto(
         @NotBlank(message = "The name must not be empty.")
         String fullName,
