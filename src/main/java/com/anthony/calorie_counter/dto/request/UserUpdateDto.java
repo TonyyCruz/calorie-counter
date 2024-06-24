@@ -2,7 +2,7 @@ package com.anthony.calorie_counter.dto.request;
 
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.service.validation.EmailUnique;
-import com.anthony.calorie_counter.service.validation.PhoneNumber;
+import com.anthony.calorie_counter.service.validation.PhoneNumberValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,7 +19,7 @@ public class UserUpdateDto {
     @EmailUnique
     @Email(message = "Invalid Email.") @NotEmpty(message = "The email must not be empty.")
     protected String email;
-    @PhoneNumber
+    @PhoneNumberValid
     protected String phoneNumber;
 
     public User toEntity() {

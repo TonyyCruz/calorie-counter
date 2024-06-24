@@ -7,7 +7,13 @@ public interface IUserService {
 
     User save(User user);
 
-    User update(String id, User user);
+    User updateUser(String id, User user);
 
-    void delete(String id);
+    void deleteByEmail(String id);
+
+    User updatePassword(String email, User updateUser);
+
+    User findByEmail(String id);
+
+    User updateRole(String id, User updateUser);
 }

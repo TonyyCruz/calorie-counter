@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, String> {
+public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberValid, String> {
     private final Pattern REGEX = Pattern.compile("^\\(0?([14689][1-9]|2([1-2]|4|[7-8])|3([1-5]|[7-8])|5(1|[3-5])|7(1|[3-5]|7|9))\\) (9\\d|7)\\d{3}[- .]\\d{4}$");
 
     @Override
-    public void initialize(PhoneNumber ann){}
+    public void initialize(PhoneNumberValid ann){}
 
     @Override
     public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {

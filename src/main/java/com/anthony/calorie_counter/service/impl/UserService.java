@@ -20,29 +20,42 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
     }
 
+    @Override @Transactional(readOnly = true)
+    public User findByEmail(String id) {
+        return userRepository.findByEmail(id)
+                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
+    }
+
     @Override @Transactional
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override @Transactional
-    public User update(String id, User updateUser) {
-        try {
-        User user = userRepository.getReferenceById(id);
+    public User updateUser(String id, User updateUser) {
+        User user = findByEmail(id);
         user.setFullName(updateUser.getFullName());
         user.setEmail(updateUser.getEmail());
-        user.setPassword(updateUser.getPassword());
         user.setPhoneNumber(updateUser.getPhoneNumber());
-        user.setRole(updateUser.getRole());
         return userRepository.save(user);
-        } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
-        }
     }
 
     @Override @Transactional
-    public void delete(String id) {
-        if (!userRepository.existsById(id)) throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
-        userRepository.deleteById(id);
+    public User updatePassword(String email, User updateUser) {
+        User user = findByEmail(email);
+        user.setPassword(updateUser.getPassword());
+        return userRepository.save(user);
+    }
+
+    @Override @Transactional
+    public User updateRole(String id, User updateUser) {
+        User user = findById(id);
+        user.setRole(updateUser.getRole());
+        return userRepository.save(user);
+    }
+
+    @Override @Transactional
+    public void deleteByEmail(String email) {
+        userRepository.deleteByEmail(email);
     }
 }

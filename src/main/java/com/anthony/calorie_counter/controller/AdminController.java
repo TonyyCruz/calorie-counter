@@ -33,14 +33,14 @@ public class AdminController {
     @PutMapping("/{id}")
     ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
         User user = userCreateDto.toEntity();
-        User updatedUser = userService.update(id, user);
+        User updatedUser = userService.updateUser(id, user);
         return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<?> delete(@PathVariable String id) {
-        userService.delete(id);
+        userService.deleteByEmail(id);
         return ResponseEntity.noContent().build();
     }
 }

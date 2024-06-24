@@ -50,7 +50,7 @@ public class UserControllerIntegrationTest extends TestBase {
     }
 
     @Test @DisplayName("Test if is possible update a user by received id and receive status code 200.")
-    void canUpdateAnUserById() throws Exception {
+    void canUserUpdateAnUserById() throws Exception {
         UserCreateDto userCreateDto = UserFactory.createUserDto();
         User currentUser = userRepository.save(userCreateDto.toEntity());
         UserCreateDto updateUser = UserFactory.createUserDto();
@@ -352,7 +352,7 @@ public class UserControllerIntegrationTest extends TestBase {
     }
 
     @Test @DisplayName("Test if throws an exception when try update a user with invalid id and receive status code 404.")
-    void cannotUpdateAnUserByInvalidId() throws Exception {
+    void cannotUserUpdateAnUserByInvalidId() throws Exception {
         byte invalidId = 9;
         UserCreateDto userCreateDto = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(userCreateDto);

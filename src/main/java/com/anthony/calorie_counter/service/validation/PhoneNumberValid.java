@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 
-public @interface PhoneNumber {
+public @interface PhoneNumberValid {
     String message() default "Validation error.";
 
     Class<?>[] groups() default {};
