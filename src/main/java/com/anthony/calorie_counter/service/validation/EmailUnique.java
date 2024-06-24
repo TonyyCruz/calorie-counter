@@ -8,11 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = UserInsertValidator.class)
-@Target({ElementType.TYPE})
+@Constraint(validatedBy = EmailUniqueValidator.class)
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-
-public @interface UserInsertValid {
+public @interface EmailUnique {
     String message() default "Validation error.";
 
     Class<?>[] groups() default {};

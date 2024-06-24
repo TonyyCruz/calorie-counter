@@ -1,34 +1,29 @@
 package com.anthony.calorie_counter.service.validation;
 
-import com.anthony.calorie_counter.dto.request.UserDto;
 import com.anthony.calorie_counter.exceptions.handler.FieldErrorMessage;
-import com.anthony.calorie_counter.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class UserInsertValidator implements ConstraintValidator<UserInsertValid, UserDto> {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Override
-    public void initialize(UserInsertValid ann){}
+public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, String> {
+    private final Pattern REGEX = Pattern.compile("^\\(0?([14689][1-9]|2([1-2]|4|[7-8])|3([1-5]|[7-8])|5(1|[3-5])|7(1|[3-5]|7|9))\\) (9\\d|7)\\d{3}[- .]\\d{4}$");
 
     @Override
-    public boolean isValid(UserDto userDto, ConstraintValidatorContext context) {
+    public void initialize(PhoneNumber ann){}
+
+    @Override
+    public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
         List<FieldErrorMessage> list = new ArrayList<>();
         // Testes de validaçãoa baixo. Insere os erros da validação de email a lista com minha classe "FieldErrorMessage".
-        if (userRepository.findByEmail(userDto.email()).isPresent()) {
-            list.add(new FieldErrorMessage("email", "The email is already in use."));
+        if (!REGEX.matcher(phoneNumber).matches()) {
+            list.add(new FieldErrorMessage("phoneNumber", "Invalid phone number."));
         }
         for(FieldErrorMessage e : list) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(e.getErrorMessage())
-                    .addPropertyNode(e.getFieldName())
                     .addConstraintViolation();
         }
         return list.isEmpty();

@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.UserDto;
+import com.anthony.calorie_counter.dto.request.UserCreateDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -22,8 +22,8 @@ public class UserController {
 
     // VALIDAR SE O ID É REALMNTE DO USUARIO
     @PutMapping("/{id}")
-    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
-        User user = userDto.toEntity();
+    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
+        User user = userCreateDto.toEntity();
         User updatedUser = userService.update(id, user);
         return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
