@@ -1,6 +1,5 @@
 package com.anthony.calorie_counter.service.validation;
 
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
 import com.anthony.calorie_counter.exceptions.handler.FieldErrorMessage;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

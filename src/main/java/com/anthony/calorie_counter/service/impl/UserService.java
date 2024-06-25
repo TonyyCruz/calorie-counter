@@ -21,9 +21,9 @@ public class UserService implements IUserService {
     }
 
     @Override @Transactional(readOnly = true)
-    public User findByEmail(String id) {
-        return userRepository.findByEmail(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(email)));
     }
 
     @Override @Transactional
@@ -32,30 +32,27 @@ public class UserService implements IUserService {
     }
 
     @Override @Transactional
-    public User updateUser(String id, User updateUser) {
-        User user = findByEmail(id);
-        user.setFullName(updateUser.getFullName());
-        user.setEmail(updateUser.getEmail());
-        user.setPhoneNumber(updateUser.getPhoneNumber());
-        return userRepository.save(user);
+    public User updateUser(User updateUser) {
+//        User user = findByEmail(updateUser.getEmail());
+//        user.setFullName(updateUser.getFullName());
+//        user.setEmail(updateUser.getEmail());
+//        user.setPhoneNumber(updateUser.getPhoneNumber());
+//        return userRepository.save(user);
+        try {
+            User user = userRepository.getReferenceById(updateUser.getId());
+            user.setFullName(updateUser.getFullName());
+            user.setEmail(updateUser.getEmail());
+            user.setPassword(updateUser.getPassword());
+            user.setPhoneNumber(updateUser.getPhoneNumber());
+            user.setRole(updateUser.getRole());
+            return userRepository.save(user);
+        } catch (EntityNotFoundException e) {
+            throw new EntityDataNotFoundException("User %s was not found.".formatted(updateUser.getId()));
+        }
     }
 
     @Override @Transactional
-    public User updatePassword(String email, User updateUser) {
-        User user = findByEmail(email);
-        user.setPassword(updateUser.getPassword());
-        return userRepository.save(user);
-    }
-
-    @Override @Transactional
-    public User updateRole(String id, User updateUser) {
-        User user = findById(id);
-        user.setRole(updateUser.getRole());
-        return userRepository.save(user);
-    }
-
-    @Override @Transactional
-    public void deleteByEmail(String email) {
-        userRepository.deleteByEmail(email);
+    public void deleteById(String id) {
+        userRepository.deleteById(id);
     }
 }

@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.integration;
 
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
+import com.anthony.calorie_counter.dto.request.UserDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;
@@ -26,7 +26,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
     void canCreateAnNewUser() throws Exception {
-        UserCreateDto newUser = UserFactory.createUserDto();
+        UserDto newUser = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isCreated())
@@ -38,22 +38,22 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if is possible find a user by received id and receive status code 200.")
     void canFindAnUserById() throws Exception {
-        UserCreateDto userCreateDto = UserFactory.createUserDto();
-        User savedUser = userRepository.save(userCreateDto.toEntity());
+        UserDto userDto = UserFactory.createUserDto();
+        User savedUser = userRepository.save(userDto.toEntity());
         String path = USER_URL + "/" + savedUser.getId();
         mockMvc.perform(get(path))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.fullName").value(userCreateDto.fullName()))
-            .andExpect(jsonPath("$.email").value(userCreateDto.email()))
-            .andExpect(jsonPath("$.phoneNumber").value(userCreateDto.phoneNumber()))
+            .andExpect(jsonPath("$.fullName").value(userDto.fullName()))
+            .andExpect(jsonPath("$.email").value(userDto.email()))
+            .andExpect(jsonPath("$.phoneNumber").value(userDto.phoneNumber()))
             .andExpect(jsonPath("$.password").doesNotExist());
     }
 
     @Test @DisplayName("Test if is possible update a user by received id and receive status code 200.")
     void canUserUpdateAnUserById() throws Exception {
-        UserCreateDto userCreateDto = UserFactory.createUserDto();
-        User currentUser = userRepository.save(userCreateDto.toEntity());
-        UserCreateDto updateUser = UserFactory.createUserDto();
+        UserDto userDto = UserFactory.createUserDto();
+        User currentUser = userRepository.save(userDto.toEntity());
+        UserDto updateUser = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(updateUser);
         String path = USER_URL + "/" + currentUser.getId();
         mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
@@ -81,7 +81,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with empty full name and receive status code 400.")
     void cannotCreateAnNewUserWithEmptyFullName() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("", "teste@email.com", "123456Aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("", "teste@email.com", "123456Aa.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -97,7 +97,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with empty email and receive status code 400.")
     void cannotCreateAnNewUserWithEmptyEmail() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "", "123456Aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "", "123456Aa.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -113,7 +113,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with invalid email format and receive status code 400.")
     void cannotCreateAnNewUserWithInvalidEmailFormat() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "test", "123456Aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "test", "123456Aa.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -129,7 +129,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with already used email and receive status code 400.")
     void cannotCreateAnNewUserWithAlreadyUsedEmail() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "test@email.com", "123456Aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "test@email.com", "123456Aa.", "(11) 91991-5500");
         userRepository.save(newUser.toEntity());
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
@@ -145,7 +145,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with password smaller than 8 characters and receive status code 400.")
     void cannotCreateAnNewUserWithPasswordSmallerThanEight() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "1234Aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234Aa.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -161,7 +161,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one uppercase character and receive status code 400.")
     void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneUppercaseCharacter() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "1234aa.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234aa.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -177,7 +177,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one lowercase character and receive status code 400.")
     void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneLowercaseCharacter() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "1234AA.", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "1234AA.", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -193,7 +193,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that password not have at least one number and receive status code 400.")
     void cannotCreateAnNewUserIfPasswordNotHaveAtLeastOneNumber() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass.*", "(11) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass.*", "(11) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isBadRequest())
@@ -209,7 +209,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user without phone number and receive status code 400.")
     void cannotCreateAnNewUserWithoutPhoneNumber() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass8.*", "");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass8.*", "");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -225,7 +225,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user with invalid phone number digit and receive status code 400.")
     void cannotCreateAnNewUserWithInvalidPhoneNumberDigit() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -241,7 +241,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user without invalid phone number digit and receive status code 400.")
     void cannotCreateAnNewUserWithoutPhoneNumberDigit() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "91991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "91991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -257,7 +257,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that the phone number not start with 9 and receive status code 400.")
     void cannotCreateAnNewUserWithPhoneNumberNotStartWithNine() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 31991-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 31991-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -273,7 +273,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that the firsts phone number digits have less than five digits and receive status code 400.")
     void cannotCreateAnNewUserWithPhoneNumberFirstDigitsIsSmallerThanFive() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 9191-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 9191-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -289,7 +289,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that the firsts phone number digits have bigger than five digits and receive status code 400.")
     void cannotCreateAnNewUserWithPhoneNumberFirstDigitsIsBiggerThanFive() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 919951-5500");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 919951-5500");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -305,7 +305,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that the lasts phone number digits have less than four digits and receive status code 400.")
     void cannotCreateAnNewUserWithPhoneNumberLastsDigitsIsSmallerThanFour() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 9191-550");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 9191-550");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -321,7 +321,7 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if throws an exception when try create a user that the lasts phone number digits have bigger than four digits and receive status code 400.")
     void cannotCreateAnNewUserWithPhoneNumberLastsDigitsIsBiggerThanFour() throws Exception {
-        UserCreateDto newUser = new UserCreateDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 919951-55009");
+        UserDto newUser = new UserDto("Some Name", "teste@email.com", "MyTestPass9.*", "(36) 919951-55009");
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isBadRequest())
@@ -354,8 +354,8 @@ public class UserControllerIntegrationTest extends TestBase {
     @Test @DisplayName("Test if throws an exception when try update a user with invalid id and receive status code 404.")
     void cannotUserUpdateAnUserByInvalidId() throws Exception {
         byte invalidId = 9;
-        UserCreateDto userCreateDto = UserFactory.createUserDto();
-        String valueAsString = objectMapper.writeValueAsString(userCreateDto);
+        UserDto userDto = UserFactory.createUserDto();
+        String valueAsString = objectMapper.writeValueAsString(userDto);
         String path = USER_URL + "/" + invalidId;
         mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
                 .andExpect(status().isNotFound())
