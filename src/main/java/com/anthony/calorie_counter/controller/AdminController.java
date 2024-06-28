@@ -30,12 +30,13 @@ public class AdminController {
         return ResponseEntity.ok(new UserViewDto(user));
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
-        User user = userCreateDto.toEntity();
-        User updatedUser = userService.updateUser(id, user);
-        return ResponseEntity.ok(new UserViewDto(updatedUser));
-    }
+    // precisa receber a role
+//    @PutMapping("/{id}")
+//    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
+//        User user = userCreateDto.toEntity();
+//        User updatedUser = userService.updateUser(id, user);
+//        return ResponseEntity.ok(new UserViewDto(updatedUser));
+//    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

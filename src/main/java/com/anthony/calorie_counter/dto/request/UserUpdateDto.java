@@ -10,16 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-public class UserCreateDto extends UserDto {
-    @PasswordValid
-    private String password;
-
+public class UserUpdateDto extends UserDto {
     public User toEntity() {
         User user = new User();
         user.setFullName(fullName);
         user.setEmail(email);
-        user.setPassword(password);
         user.setPhoneNumber(phoneNumber);
         return user;
     }

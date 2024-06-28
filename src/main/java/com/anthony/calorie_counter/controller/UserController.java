@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
+import com.anthony.calorie_counter.dto.request.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.enums.UserRole;
@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PutMapping("/update/user")
-    ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-        User user = userCreateDto.toEntity();
+    ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
+        User user = userUpdateDto.toEntity();
         if (isAdmin()) user.setRole(UserRole.ADMIN);
         user.setPassword(getUserPrincipal().getPassword());
         User updatedUser = userService.updateUser(getUserPrincipal().getId(), user);

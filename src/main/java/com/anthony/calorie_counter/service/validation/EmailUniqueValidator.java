@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
@@ -41,10 +42,8 @@ public class EmailUniqueValidator implements ConstraintValidator<EmailUnique, St
     private boolean isUniqueEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) return true;
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
-            User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return principal.getId().equals(user.get().getId());
-        }
-        return false;
+        if (SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) return false;
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getId().equals(user.get().getId());
     }
 }
