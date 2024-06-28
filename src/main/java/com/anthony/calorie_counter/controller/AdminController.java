@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.UserDto;
+import com.anthony.calorie_counter.dto.request.UserCreateDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.enums.UserRole;
@@ -17,8 +17,8 @@ public class AdminController {
     UserService userService;
 
     @PostMapping("/register")
-    ResponseEntity<UserViewDto> create(@RequestBody @Valid UserDto userDto, @RequestParam(name = "role") String role) {
-        User user = userDto.toEntity();
+    ResponseEntity<UserViewDto> create(@RequestBody @Valid UserCreateDto userCreateDto, @RequestParam(name = "role") String role) {
+        User user = userCreateDto.toEntity();
         user.setRole(UserRole.valueOf(role.toUpperCase()));
         User savedUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(savedUser));
@@ -31,9 +31,9 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserDto userDto) {
-        User user = userDto.toEntity();
-        User updatedUser = userService.updateUser(user);
+    ResponseEntity<UserViewDto> update(@PathVariable String id, @RequestBody @Valid UserCreateDto userCreateDto) {
+        User user = userCreateDto.toEntity();
+        User updatedUser = userService.updateUser(id, user);
         return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 

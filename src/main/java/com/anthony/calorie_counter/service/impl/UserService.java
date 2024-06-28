@@ -32,14 +32,14 @@ public class UserService implements IUserService {
     }
 
     @Override @Transactional
-    public User updateUser(User updateUser) {
+    public User updateUser(String id, User updateUser) {
 //        User user = findByEmail(updateUser.getEmail());
 //        user.setFullName(updateUser.getFullName());
 //        user.setEmail(updateUser.getEmail());
 //        user.setPhoneNumber(updateUser.getPhoneNumber());
 //        return userRepository.save(user);
         try {
-            User user = userRepository.getReferenceById(updateUser.getId());
+            User user = userRepository.getReferenceById(id);
             user.setFullName(updateUser.getFullName());
             user.setEmail(updateUser.getEmail());
             user.setPassword(updateUser.getPassword());

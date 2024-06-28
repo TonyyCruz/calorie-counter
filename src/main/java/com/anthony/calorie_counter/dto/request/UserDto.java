@@ -1,20 +1,16 @@
 package com.anthony.calorie_counter.dto.request;
 
-import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.service.validation.EmailUnique;
-import com.anthony.calorie_counter.service.validation.PasswordValid;
 import com.anthony.calorie_counter.service.validation.PhoneNumberValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class UserDto {
+public abstract class UserDto {
     @NotBlank(message = "The name must not be empty.")
     protected String fullName;
     @EmailUnique
@@ -22,15 +18,4 @@ public class UserDto {
     protected String email;
     @PhoneNumberValid
     protected String phoneNumber;
-    @PasswordValid
-    private String password;
-
-    public User toEntity() {
-        User user = new User();
-        user.setFullName(fullName);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPhoneNumber(phoneNumber);
-        return user;
-    }
 }

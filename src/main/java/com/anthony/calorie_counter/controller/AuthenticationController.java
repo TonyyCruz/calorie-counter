@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.controller;
 
 import com.anthony.calorie_counter.dto.request.AuthenticationDto;
-import com.anthony.calorie_counter.dto.request.UserDto;
+import com.anthony.calorie_counter.dto.request.UserCreateDto;
 import com.anthony.calorie_counter.dto.response.LoginResponseTokenDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
@@ -38,9 +38,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserDto userDto) {
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.getPassword());
-        User user = userDto.toEntity();
+    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userCreateDto.getPassword());
+        User user = userCreateDto.toEntity();
         user.setPassword(encryptedPassword);
         User registeredUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUser));
