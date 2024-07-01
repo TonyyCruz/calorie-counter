@@ -23,7 +23,7 @@ public class UserService implements IUserService {
     @Override @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(email)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User '%s' was not found.".formatted(email)));
     }
 
     @Override @Transactional
@@ -33,11 +33,6 @@ public class UserService implements IUserService {
 
     @Override @Transactional
     public User updateUser(String id, User updateUser) {
-//        User user = findByEmail(updateUser.getEmail());
-//        user.setFullName(updateUser.getFullName());
-//        user.setEmail(updateUser.getEmail());
-//        user.setPhoneNumber(updateUser.getPhoneNumber());
-//        return userRepository.save(user);
         try {
             User user = userRepository.getReferenceById(id);
             user.setFullName(updateUser.getFullName());
@@ -54,5 +49,10 @@ public class UserService implements IUserService {
     @Override @Transactional
     public void deleteById(String id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updatePassword(String id, String newPassword) {
+        userRepository.updatePasswordById(id, newPassword);
     }
 }

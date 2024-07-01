@@ -30,8 +30,8 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseTokenDto> login(@RequestBody @Valid AuthenticationDto data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
+    public ResponseEntity<LoginResponseTokenDto> login(@RequestBody AuthenticationDto authData) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(authData.getEmail(), authData.getPassword());
         var auth = authenticationManager.authenticate(usernamePassword);
         String token = tokenService.generateToken((User) auth.getPrincipal());
         return ResponseEntity.ok(new LoginResponseTokenDto(token));
