@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -63,6 +64,18 @@ public class RestExceptionHandler {
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.addError(e.getCause().toString(), e.getMessage());
+        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<ExceptionDetails> authenticationException(AuthenticationException e, HttpServletRequest request) {
+        ExceptionDetails exceptionDetails = new ExceptionDetails();
+        exceptionDetails.setTitle("Validate Exception.");
+        exceptionDetails.setTimestamp(Instant.now());
+        exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        exceptionDetails.setException(e.getClass().toString());
+        exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.addError("invalidCredentials", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 }

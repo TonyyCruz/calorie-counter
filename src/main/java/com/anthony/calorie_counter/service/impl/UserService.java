@@ -20,29 +20,39 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
     }
 
+    @Override @Transactional(readOnly = true)
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityDataNotFoundException("User '%s' was not found.".formatted(email)));
+    }
+
     @Override @Transactional
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override @Transactional
-    public User update(String id, User updateUser) {
+    public User updateUser(String id, User updateUser) {
         try {
-        User user = userRepository.getReferenceById(id);
-        user.setFullName(updateUser.getFullName());
-        user.setEmail(updateUser.getEmail());
-        user.setPassword(updateUser.getPassword());
-        user.setPhoneNumber(updateUser.getPhoneNumber());
-        user.setRole(updateUser.getRole());
-        return userRepository.save(user);
+            User user = userRepository.getReferenceById(id);
+            user.setFullName(updateUser.getFullName());
+            user.setEmail(updateUser.getEmail());
+            user.setPassword(updateUser.getPassword());
+            user.setPhoneNumber(updateUser.getPhoneNumber());
+            user.setRole(updateUser.getRole());
+            return userRepository.save(user);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
+            throw new EntityDataNotFoundException("User %s was not found.".formatted(updateUser.getId()));
         }
     }
 
     @Override @Transactional
-    public void delete(String id) {
-        if (!userRepository.existsById(id)) throw new EntityDataNotFoundException("User %s was not found.".formatted(id));
+    public void deleteById(String id) {
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updatePassword(String id, String newPassword) {
+        userRepository.updatePasswordById(id, newPassword);
     }
 }

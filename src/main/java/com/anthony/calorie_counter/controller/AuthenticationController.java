@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.controller;
 
 import com.anthony.calorie_counter.dto.request.AuthenticationDto;
-import com.anthony.calorie_counter.dto.request.UserDto;
+import com.anthony.calorie_counter.dto.request.UserCreateDto;
 import com.anthony.calorie_counter.dto.response.LoginResponseTokenDto;
 import com.anthony.calorie_counter.dto.response.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
@@ -30,17 +30,17 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseTokenDto> login(@RequestBody @Valid AuthenticationDto data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+    public ResponseEntity<LoginResponseTokenDto> login(@RequestBody AuthenticationDto authData) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(authData.getEmail(), authData.getPassword());
         var auth = authenticationManager.authenticate(usernamePassword);
         String token = tokenService.generateToken((User) auth.getPrincipal());
         return ResponseEntity.ok(new LoginResponseTokenDto(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserDto userDto) {
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDto.password());
-        User user = userDto.toEntity();
+    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userCreateDto.getPassword());
+        User user = userCreateDto.toEntity();
         user.setPassword(encryptedPassword);
         User registeredUser = userService.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUser));
