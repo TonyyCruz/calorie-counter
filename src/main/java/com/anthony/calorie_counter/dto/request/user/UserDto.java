@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.dto.request;
+package com.anthony.calorie_counter.dto.request.user;
 
 import com.anthony.calorie_counter.service.validation.EmailUnique;
 import com.anthony.calorie_counter.service.validation.PhoneNumberValid;
@@ -8,9 +8,11 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public abstract class UserDto {
+public abstract class UserDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
     protected String fullName;
     @EmailUnique

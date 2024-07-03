@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.integration;
 
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
+import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;

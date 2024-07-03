@@ -1,9 +1,9 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.AuthenticationDto;
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
-import com.anthony.calorie_counter.dto.response.LoginResponseTokenDto;
-import com.anthony.calorie_counter.dto.response.UserViewDto;
+import com.anthony.calorie_counter.dto.request.user.AuthenticationDto;
+import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.dto.response.user.LoginResponseTokenDto;
+import com.anthony.calorie_counter.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.infra.security.TokenService;
 import com.anthony.calorie_counter.service.impl.UserService;
