@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-
 @Service
 public class UserService implements IUserService {
     @Autowired
@@ -55,17 +53,18 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override @Transactional
-    public void deleteById(String id) {
-        userRepository.deleteById(id);
-    }
-
     @Transactional
     public void updatePassword(String id, String newPassword) {
         userRepository.updatePasswordById(id, newPassword);
     }
 
-    private Role findRoleById(Long id) {
+    @Override @Transactional
+    public void deleteById(String id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override @Transactional(readOnly = true)
+    public Role findRoleById(Long id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new EntityDataNotFoundException("Role wit id: %d was not fount.".formatted(id)));
     }

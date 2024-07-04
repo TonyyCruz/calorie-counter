@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,18 +30,18 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<ValidationError> invalidArgumentation(MethodArgumentNotValidException e, HttpServletRequest request) {
-        ValidationError validationError = new ValidationError();
-        validationError.setTitle("Bad request, invalid argumentation.");
-        validationError.setTimestamp(Instant.now());
-        validationError.setStatus(HttpStatus.BAD_REQUEST.value());
-        validationError.setException(e.getClass().toString());
-        validationError.setPath(request.getRequestURI());
-        validationError.addError("InvalidFieldData", e.getMessage());
+    ResponseEntity<ValidationDetails> invalidArgumentation(MethodArgumentNotValidException e, HttpServletRequest request) {
+        ValidationDetails validationDetails = new ValidationDetails();
+        validationDetails.setTitle("Bad request, invalid argumentation.");
+        validationDetails.setTimestamp(Instant.now());
+        validationDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        validationDetails.setException(e.getClass().toString());
+        validationDetails.setPath(request.getRequestURI());
+        validationDetails.addError("InvalidFieldData", e.getMessage());
         e.getBindingResult().getFieldErrors().forEach(objectError -> {
-            validationError.addFieldError(objectError.getField(), objectError.getDefaultMessage());
+            validationDetails.addFieldError(objectError.getField(), objectError.getDefaultMessage());
         });
-        return ResponseEntity.status(validationError.getStatus()).body(validationError);
+        return ResponseEntity.status(validationDetails.getStatus()).body(validationDetails);
     }
 
     @ExceptionHandler(DataAccessException.class)
@@ -78,4 +79,5 @@ public class RestExceptionHandler {
         exceptionDetails.addError("invalidCredentials", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
+    
 }

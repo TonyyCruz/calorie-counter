@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.infra.security;
 
 import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

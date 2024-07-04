@@ -28,6 +28,8 @@ public class AuthenticationController {
     private UserService userService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseTokenDto> login(@RequestBody AuthenticationDto authData) {
@@ -39,7 +41,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userCreateDto.getPassword());
+        String encryptedPassword = bCryptPasswordEncoder.encode(userCreateDto.getPassword());
         User user = userCreateDto.toEntity();
         user.setPassword(encryptedPassword);
         User registeredUser = userService.save(user);

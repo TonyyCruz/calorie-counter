@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping("/{id}")
     ResponseEntity<UserViewDto> findById(@PathVariable String id) {
@@ -37,10 +39,10 @@ public class UserController {
 
     @PutMapping("/update/password")
     ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        if (!new BCryptPasswordEncoder().matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword())) {
+        if (!bCryptPasswordEncoder.matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword())) {
             throw new AuthenticationDataException("Old password is invalid.");
         }
-        String newPasswordEncoded = new BCryptPasswordEncoder().encode(passwordDto.getNewPassword());
+        String newPasswordEncoded = bCryptPasswordEncoder.encode(passwordDto.getNewPassword());
         userService.updatePassword(getUserPrincipal().getId(), newPasswordEncoded);
         return ResponseEntity.ok("Update successfully.");
     }
@@ -51,13 +53,6 @@ public class UserController {
         userService.deleteById(getUserPrincipal().getId());
         return ResponseEntity.noContent().build();
     }
-
-//    private boolean isAdmin() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Set<String> roles = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toSet());
-//        return roles.contains("ROLE_ADMIN");
-//    }
 
     private User getUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

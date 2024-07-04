@@ -1,10 +1,6 @@
 package com.anthony.calorie_counter.service.impl;
 
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
-import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
-import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

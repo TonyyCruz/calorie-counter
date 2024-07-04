@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class ValidationError extends ExceptionDetails {
+public class ValidationDetails extends ExceptionDetails {
     private final List<FieldErrorMessage> fieldError = new ArrayList<>();
 
     public void addFieldError(String field, String error) {
