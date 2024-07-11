@@ -1,15 +1,16 @@
 package com.anthony.calorie_counter.entity;
 
-import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Getter
@@ -18,8 +19,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "users")
-public class User implements UserDetails {
+@Table(name = "USERS")
+public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -30,14 +31,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     private String phoneNumber;
-    private UserRole role = UserRole.USER;
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-    public User(String fullName, String password, String email, String phoneNumber, UserRole role) {
+    public User(String fullName, String password, String email, String phoneNumber, Set<Role> roles) {
         this.fullName = fullName;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.role = role;
+        this.roles = roles;
     }
 
     public User(String fullName, String password, String email, String phoneNumber) {
@@ -45,6 +51,14 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public void addRoles(Set<Role> roles) {
+        roles.forEach(this::addRole);
     }
 
     @Override
@@ -62,10 +76,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role == UserRole.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).toList();
     }
 
     @Override

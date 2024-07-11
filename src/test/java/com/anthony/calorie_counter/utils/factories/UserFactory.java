@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.utils.factories;
 
-import com.anthony.calorie_counter.dto.request.UserCreateDto;
+import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.utils.SimpleFake;
@@ -13,7 +13,7 @@ public class UserFactory {
         user.setEmail(SimpleFake.email());
         user.setPassword(SimpleFake.password(8));
         user.setPhoneNumber(SimpleFake.phoneNumber());
-        user.setRole(UserRole.USER);
+        user.setRoles(UserRole.USER);
         return user;
     }
 
@@ -24,7 +24,7 @@ public class UserFactory {
         user.setEmail(SimpleFake.email());
         user.setPassword(SimpleFake.password(8));
         user.setPhoneNumber(SimpleFake.phoneNumber());
-        user.setRole(UserRole.USER);
+        user.setRoles(UserRole.USER);
         return user;
     }
 

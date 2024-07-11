@@ -7,5 +7,6 @@ esse crud de usuario provavelmente sera para a criacao de usuarios,
 [v] inicializar o DB com os dados SQL
 [v] Adicionar telefone a tabela de usuario.
 [V] Fazer a url para login
-[V] o spring security está comentado e precisa ser configurado posteriormente
+[V] O spring security está comentado e precisa ser configurado posteriormente
+[] Personalizar o erro enviado ao usar token vazio ou invalido, está vindo apenas um 403.
 [] Fazer url para CRUD de alimentos

@@ -4,13 +4,19 @@
 --  `email` CHAR(100),
 --  `password` CHAR(40),
 --  `phone_number` CHAR(20),
---  `role` INT
+--  `roles` INT
 --);
 
-INSERT INTO `users` (`id`,`full_name`,`email`,`password`,`phone_number`, `role`)
 -- login: admin@email.com
 -- password: Passw0rd*
-VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 'admin', 'admin@email.com', '$2a$10$2O9L0YxLhBWpjoyCkEOkDe5N4ahqyDFDlUot5AhNmKm5tghHS.dea', '99999999', 1);
+INSERT INTO `users` (`id`,`full_name`,`email`,`password`,`phone_number`)
+VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 'admin', 'admin@email.com', '$2a$10$2O9L0YxLhBWpjoyCkEOkDe5N4ahqyDFDlUot5AhNmKm5tghHS.dea', '99999999');
+
+INSERT INTO `roles` (`id`,`authority`)
+VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_USER');
+
+INSERT INTO `user_role` (`user_id`,`role_id`)
+VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 1), ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 2);
 
 CREATE TABLE `foods` (
   `id` INT PRIMARY KEY,
