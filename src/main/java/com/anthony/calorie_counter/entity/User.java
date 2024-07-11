@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

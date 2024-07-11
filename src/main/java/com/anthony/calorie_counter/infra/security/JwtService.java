@@ -1,34 +1,33 @@
 package com.anthony.calorie_counter.infra.security;
 
-import com.anthony.calorie_counter.entity.User;
-import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service
-public class TokenService {
-    private final String ISSUER = "auth-api";
-    @Value("${api.security.token.secret}")
+public class JwtService {
+    private final String ISSUER = "spring-security-jwt";
+    @Value("${jwt.secret}")
     private String secret;
-    @Value("${api.security.token.validate_time}")
-    private Long validateTime;
+    @Value("${jwt.expiration_time}")
+    private Long expirationTime;
 
-    public String generateToken(User user) {
+    public String generateToken(Authentication authentication) {
+        Instant now = Instant.now();
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(user.getEmail())
-                    .withExpiresAt(generateExpirationDate(validateTime))
+                    .withIssuedAt(now)
+                    .withExpiresAt(now.plusSeconds(expirationTime))
+                    .withSubject(authentication.getName())
                     .sign(algorithm);
         } catch (JWTCreationException e) {
             throw new TokenCreateException("Error while generating token", e);
@@ -46,9 +45,5 @@ public class TokenService {
         } catch (JWTVerificationException e) {
             return "";
         }
-    }
-
-    private Instant generateExpirationDate(Long expirationMinutes) {
-        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
     }
 }

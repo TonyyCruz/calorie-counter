@@ -13,7 +13,7 @@ import java.util.Objects;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "roles")
+@Table(name = "ROLES")
 public class Role implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

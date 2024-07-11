@@ -9,11 +9,15 @@ import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IUserService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -22,40 +26,39 @@ public class UserService implements IUserService {
     @Override @Transactional(readOnly = true)
     public User findById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("User %s was not found.".formatted(id)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User with id %s was not found.".formatted(id)));
     }
 
     @Override @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityDataNotFoundException("User '%s' was not found.".formatted(email)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User with email '%s' was not found.".formatted(email)));
     }
 
     @Override @Transactional
     public User save(User user) {
         Role role = findRoleById((long) UserRole.ROLE_USER.getRole());
         user.addRole(role);
+        user.setPassword(encodePassword(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override @Transactional
-    public User updateUser(String id, User updateUser) {
+    public User updateUser(String id, User newUserData) {
         try {
             User user = userRepository.getReferenceById(id);
-            user.setFullName(updateUser.getFullName());
-            user.setEmail(updateUser.getEmail());
-            user.setPassword(updateUser.getPassword());
-            user.setPhoneNumber(updateUser.getPhoneNumber());
-            user.addRoles(updateUser.getRoles());
+            user.setFullName(newUserData.getFullName());
+            user.setEmail(newUserData.getEmail());
+            user.setPhoneNumber(newUserData.getPhoneNumber());
             return userRepository.save(user);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User %s was not found.".formatted(updateUser.getId()));
+            throw new EntityDataNotFoundException("User with id '%s' was not found.".formatted(id));
         }
     }
 
     @Transactional
     public void updatePassword(String id, String newPassword) {
-        userRepository.updatePasswordById(id, newPassword);
+        userRepository.updatePasswordById(id, encodePassword(newPassword));
     }
 
     @Override @Transactional
@@ -66,6 +69,15 @@ public class UserService implements IUserService {
     @Override @Transactional(readOnly = true)
     public Role findRoleById(Long id) {
         return roleRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("Role wit id: %d was not fount.".formatted(id)));
+                .orElseThrow(() -> new EntityDataNotFoundException("Role with id %d was not fount.".formatted(id)));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return findByEmail(username);
+    }
+
+    private String encodePassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
     }
 }

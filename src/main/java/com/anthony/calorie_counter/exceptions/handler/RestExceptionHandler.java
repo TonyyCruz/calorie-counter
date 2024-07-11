@@ -79,5 +79,5 @@ public class RestExceptionHandler {
         exceptionDetails.addError("invalidCredentials", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
-    
+
 }

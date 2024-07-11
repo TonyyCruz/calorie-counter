@@ -17,7 +17,7 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
-    private TokenService tokenService;
+    private JwtService jwtService;
     @Autowired
     private UserRepository userRepository;
 
@@ -25,7 +25,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = this.recoverToken(request);
         if (token != null) {
-            String email = tokenService.validateToken(token);
+            String email = jwtService.validateToken(token);
             UserDetails user = userRepository.findByEmail(email).orElse(null);
             if (user != null) {
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

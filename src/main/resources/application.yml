@@ -33,8 +33,10 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 
-api:
-  security:
-    token:
-      secret: ${JWT_SECRET:my_jwt_secret}
-      validate_time: ${JWT_VALIDATE_TIME:9999999999} # Minutes
+jwt:
+  private:
+    key: classpath:app.key
+  public:
+    key: classpath:app.pub
+  expiration_time: ${JWT_EXPIRATION_TIME:99999999999999} # Seconds
+  secret: ${JWT_SECRET:my_jwt_secret}

@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     UserService userService;
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping("/{id}")
     ResponseEntity<UserViewDto> findById(@PathVariable String id) {
@@ -31,19 +29,17 @@ public class UserController {
     @PutMapping("/update/user")
     ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
         User user = userUpdateDto.toEntity();
-        user.addRoles(getUserPrincipal().getRoles());
-        user.setPassword(getUserPrincipal().getPassword());
         User updatedUser = userService.updateUser(getUserPrincipal().getId(), user);
         return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 
     @PutMapping("/update/password")
     ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        if (!bCryptPasswordEncoder.matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword())) {
+        boolean passwordMatches = new BCryptPasswordEncoder().matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword());
+        if (!passwordMatches) {
             throw new AuthenticationDataException("Old password is invalid.");
         }
-        String newPasswordEncoded = bCryptPasswordEncoder.encode(passwordDto.getNewPassword());
-        userService.updatePassword(getUserPrincipal().getId(), newPasswordEncoded);
+        userService.updatePassword(getUserPrincipal().getId(), passwordDto.getNewPassword());
         return ResponseEntity.ok("Update successfully.");
     }
 
