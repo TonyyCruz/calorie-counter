@@ -13,12 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/v1/users")
 public class UserController {
     @Autowired
     UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/{id}")
     ResponseEntity<UserViewDto> findById(@PathVariable String id) {
@@ -35,7 +38,7 @@ public class UserController {
 
     @PutMapping("/update/password")
     ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        boolean passwordMatches = new BCryptPasswordEncoder().matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword());
+        boolean passwordMatches = passwordEncoder.matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword());
         if (!passwordMatches) {
             throw new AuthenticationDataException("Old password is invalid.");
         }
