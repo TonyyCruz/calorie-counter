@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
+import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.NotFoundException;
 import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,8 +69,8 @@ public class RestExceptionHandler {
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    ResponseEntity<ExceptionDetails> authenticationException(AuthenticationException e, HttpServletRequest request) {
+    @ExceptionHandler(AuthenticationDataException.class)
+    ResponseEntity<ExceptionDetails> authenticationException(AuthenticationDataException e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Validate Exception.");
         exceptionDetails.setTimestamp(Instant.now());

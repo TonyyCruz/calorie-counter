@@ -32,12 +32,6 @@ public class UserService implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new EntityDataNotFoundException("User with id %s was not found.".formatted(id)));
     }
 
-    @Override @Transactional(readOnly = true)
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityDataNotFoundException("User with email '%s' was not found.".formatted(email)));
-    }
-
     @Override @Transactional
     public User save(User user) {
         Role role = findRoleById((long) UserRole.ROLE_USER.getRole());
@@ -77,6 +71,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return findByEmail(username);
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username '%s' was not found.".formatted(username)));
     }
 }

@@ -31,16 +31,14 @@ public class UserController {
 
     @PutMapping("/update/user")
     ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
-        User user = userUpdateDto.toEntity();
-        User updatedUser = userService.updateUser(getUserPrincipal().getId(), user);
-        return ResponseEntity.ok(new UserViewDto(updatedUser));
+        User user = userService.updateUser(getUserPrincipal().getId(), userUpdateDto.toEntity());
+        return ResponseEntity.ok(new UserViewDto(user));
     }
 
     @PutMapping("/update/password")
     ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        boolean passwordMatches = passwordEncoder.matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword());
-        if (!passwordMatches) {
-            throw new AuthenticationDataException("Old password is invalid.");
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), getUserPrincipal().getPassword())) {
+            throw new AuthenticationDataException("Old password is incorrect.");
         }
         userService.updatePassword(getUserPrincipal().getId(), passwordDto.getNewPassword());
         return ResponseEntity.ok("Update successfully.");
@@ -54,7 +52,6 @@ public class UserController {
     }
 
     private User getUserPrincipal() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

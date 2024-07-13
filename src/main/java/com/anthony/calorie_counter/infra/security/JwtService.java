@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.infra.security;
 
+import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.TokenCreateException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -35,15 +36,15 @@ public class JwtService {
     }
 
     public String validateToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer(ISSUER)
                     .build()
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException e) {
-            return "";
+            throw new AuthenticationDataException("Invalid token.");
         }
     }
 }
