@@ -1,5 +1,9 @@
 package com.anthony.calorie_counter.infra.security;
 
+import com.anthony.calorie_counter.enums.UserRole;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,24 +19,24 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurations {
+public class WebSecurityConfig {
     private final String API_VERSION = "/api/v1";
+    private final String ADMIN = "ADMIN";
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
-//    @Value("${jwt.private.key}")
-//    private RSAPrivateKey privateKey;
-
-    @Autowired
-    private SecurityFilter securityFilter;
+    @Value("${jwt.private.key}")
+    private RSAPrivateKey privateKey;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -47,20 +51,27 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/register").permitAll()
                         // ADMIN
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole("ADMIN")
-                        .requestMatchers(API_VERSION + "/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
+                        .requestMatchers(API_VERSION + "/admin/**").hasRole(ADMIN)
                         // USERS
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2ResourceServer(conf -> conf.jwt(Customizer.withDefaults()))
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        RSAKey jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+        var jwkSet = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwkSet);
     }
 
     @Bean

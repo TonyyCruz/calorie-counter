@@ -6,8 +6,6 @@ import com.anthony.calorie_counter.entity.User;
 public interface IUserService {
     User findById(String id);
 
-    User findByEmail(String email);
-
     User save(User user);
 
     User updateUser(String id, User user);

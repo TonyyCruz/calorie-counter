@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "USERS")
+@Table(name = "tb_users")
 public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,7 +33,7 @@ public class User implements UserDetails, Serializable {
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role",
+    @JoinTable(name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();

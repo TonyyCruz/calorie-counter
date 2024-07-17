@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,8 @@ public class UserService implements IUserService, UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override @Transactional(readOnly = true)
     public User findById(String id) {
@@ -29,17 +32,11 @@ public class UserService implements IUserService, UserDetailsService {
                 .orElseThrow(() -> new EntityDataNotFoundException("User with id %s was not found.".formatted(id)));
     }
 
-    @Override @Transactional(readOnly = true)
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityDataNotFoundException("User with email '%s' was not found.".formatted(email)));
-    }
-
     @Override @Transactional
     public User save(User user) {
         Role role = findRoleById((long) UserRole.ROLE_USER.getRole());
         user.addRole(role);
-        user.setPassword(encodePassword(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -58,7 +55,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Transactional
     public void updatePassword(String id, String newPassword) {
-        userRepository.updatePasswordById(id, encodePassword(newPassword));
+        userRepository.updatePasswordById(id, passwordEncoder.encode(newPassword));
     }
 
     @Override @Transactional
@@ -74,10 +71,7 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return findByEmail(username);
-    }
-
-    private String encodePassword(String password) {
-        return new BCryptPasswordEncoder().encode(password);
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username '%s' was not found.".formatted(username)));
     }
 }
