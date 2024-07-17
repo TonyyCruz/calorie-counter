@@ -6,45 +6,39 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
     private final String ISSUER = "spring-security-jwt";
-    @Value("${jwt.secret}")
-    private String secret;
+    private final JwtEncoder encoder;
     @Value("${jwt.expiration_time}")
     private Long expirationTime;
 
+    public JwtService(JwtEncoder encoder) { this.encoder = encoder; }
+
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.create()
-                    .withIssuer(ISSUER)
-                    .withIssuedAt(now)
-                    .withExpiresAt(now.plusSeconds(expirationTime))
-                    .withSubject(authentication.getName())
-                    .sign(algorithm);
-        } catch (JWTCreationException e) {
-            throw new TokenCreateException("Error while generating token", e);
-        }
-    }
-
-    public String validateToken(String token) {
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        try {
-            return JWT.require(algorithm)
-                    .withIssuer(ISSUER)
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException e) {
-            throw new AuthenticationDataException("Invalid token.");
-        }
+        String scopes = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(" "));
+        var claims = JwtClaimsSet.builder()
+                .issuer(ISSUER)
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(expirationTime))
+                .subject(authentication.getName())
+                .claim("scope", scopes)
+                .build();
+        return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }
