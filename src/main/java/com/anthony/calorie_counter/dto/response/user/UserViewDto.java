@@ -5,10 +5,11 @@ import com.anthony.calorie_counter.entity.UserModel;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.UUID;
 
 
 public record UserViewDto(
-        String id,
+        UUID id,
         String fullName,
         String email,
         String phoneNumber,

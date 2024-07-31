@@ -21,19 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
-    @Autowired
-    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseTokenDto> login(@RequestBody AuthenticationDto authData) {
         String token = authenticationService.authenticate(authData.toAuthentication());
         return ResponseEntity.ok(new LoginResponseTokenDto(token));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
-        UserModel userModel = userCreateDto.toEntity();
-        UserModel registeredUserModel = userService.save(userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 }

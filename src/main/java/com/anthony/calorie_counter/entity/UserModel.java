@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.entity;
 
+import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +13,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "tb_users")
@@ -34,21 +35,6 @@ public class UserModel implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleModel> roles = new HashSet<>();
 
-    public UserModel(String fullName, String password, String email, String phoneNumber, Set<RoleModel> roles) {
-        this.fullName = fullName;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.roles = roles;
-    }
-
-    public UserModel(String fullName, String password, String email, String phoneNumber) {
-        this.fullName = fullName;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
     public void addRole(RoleModel roleModel) {
         roles.add(roleModel);
     }
@@ -59,6 +45,10 @@ public class UserModel implements UserDetails, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         UserModel userModel = (UserModel) o;
         return Objects.equals(id, userModel.id);
+    }
+
+    public boolean isAdmin() {
+        return getAuthorities().stream().anyMatch(role -> role.getAuthority().contains(UserRole.ROLE_ADMIN.name()));
     }
 
     @Override

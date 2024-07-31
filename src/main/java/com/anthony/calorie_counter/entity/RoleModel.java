@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "tb_roles")
 public class RoleModel implements Serializable, GrantedAuthority {

@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.infra.security;
+package com.anthony.calorie_counter.config.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,6 +27,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private final String API_VERSION = "/api/v1";
     private final String ADMIN = "ADMIN";
@@ -45,7 +47,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/users/register").permitAll()
                         // ADMIN
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)

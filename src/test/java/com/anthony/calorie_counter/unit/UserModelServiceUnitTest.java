@@ -40,7 +40,7 @@ public class UserModelServiceUnitTest {
 		UserModel userModelToSave = buildUser();
 		UserModel expectUserModel = buildUser(fakeId);
 		when(userRepository.save(userModelToSave)).thenReturn(expectUserModel);
-		UserModel receivedUserModel = userService.save(userModelToSave);
+		UserModel receivedUserModel = userService.create(userModelToSave);
 		assertEquals(userModelToSave.getFullName(), receivedUserModel.getFullName());
 		assertEquals(userModelToSave.getEmail(), receivedUserModel.getEmail());
 		assertEquals(userModelToSave.getPassword(), receivedUserModel.getPassword());

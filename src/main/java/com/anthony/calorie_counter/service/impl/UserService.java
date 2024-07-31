@@ -4,13 +4,12 @@ import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
+import com.anthony.calorie_counter.exceptions.UnauthorizedException;
 import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IRoleService;
 import com.anthony.calorie_counter.service.IUserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +34,7 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
     }
 
     @Override @Transactional
-    public UserModel save(UserModel userModel) {
+    public UserModel create(UserModel userModel) {
         RoleModel roleModel = findRoleById((long) UserRole.ROLE_USER.getRole());
         userModel.addRole(roleModel);
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
@@ -43,21 +42,34 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
     }
 
     @Override @Transactional
+    public UserModel updateUser(String username, UserModel newUserModelData) {
+        UserModel userModel = loadUserByUsername(username);
+        userModel.setFullName(newUserModelData.getFullName());
+        userModel.setEmail(newUserModelData.getEmail());
+        userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
+        return userRepository.save(userModel);
+    }
+
+    @Override @Transactional
     public UserModel updateUser(UUID id, UserModel newUserModelData) {
-        try {
-            UserModel userModel = userRepository.getReferenceById(id);
-            userModel.setFullName(newUserModelData.getFullName());
-            userModel.setEmail(newUserModelData.getEmail());
-            userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
-            return userRepository.save(userModel);
-        } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
-        }
+        UserModel userModel = findById(id);
+        userModel.setFullName(newUserModelData.getFullName());
+        userModel.setEmail(newUserModelData.getEmail());
+        userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
+        return userRepository.save(userModel);
     }
 
     @Transactional
     public void updatePassword(UUID id, String newPassword) {
         userRepository.updatePasswordByUserId(id, passwordEncoder.encode(newPassword));
+    }
+
+    @Transactional
+    public void deleteByUsernameAndId(String username, UUID id) {
+        UserModel user = loadUserByUsername(username);
+        boolean havePermission = user.getId().equals(id) || user.isAdmin();
+        if (!havePermission) { throw new UnauthorizedException("Old password is incorrect."); }
+        deleteById(id);
     }
 
     @Override @Transactional
@@ -72,7 +84,7 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found with: " + username));
     }

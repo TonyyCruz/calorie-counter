@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.infra.security;
+package com.anthony.calorie_counter.config.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
