@@ -1,14 +1,7 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
-import com.anthony.calorie_counter.dto.response.user.UserViewDto;
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
 import com.anthony.calorie_counter.service.impl.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/v1/admin")

@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.unit;
 
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceUnitTest {
+public class UserModelServiceUnitTest {
 	@InjectMocks
 	private UserService userService;
 
@@ -28,40 +28,40 @@ public class UserServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible find a user by id.")
 	void testCanFindUserById() {
-		User expectUser = buildUser();
-		when(userRepository.findById(expectUser.getId())).thenReturn(Optional.of(expectUser));
-		User receivedUser = userService.findById(expectUser.getId());
-		assertEquals(expectUser, receivedUser);
+		UserModel expectUserModel = buildUser();
+		when(userRepository.findById(expectUserModel.getId())).thenReturn(Optional.of(expectUserModel));
+		UserModel receivedUserModel = userService.findById(expectUserModel.getId());
+		assertEquals(expectUserModel, receivedUserModel);
 	}
 
 	@Test @DisplayName("Test if is possible save a new user.")
 	void testCanSaveAnNewUser() {
 		Long fakeId = 1L;
-		User userToSave = buildUser();
-		User expectUser = buildUser(fakeId);
-		when(userRepository.save(userToSave)).thenReturn(expectUser);
-		User receivedUser = userService.save(userToSave);
-		assertEquals(userToSave.getFullName(), receivedUser.getFullName());
-		assertEquals(userToSave.getEmail(), receivedUser.getEmail());
-		assertEquals(userToSave.getPassword(), receivedUser.getPassword());
-		assertEquals(expectUser.getId(), receivedUser.getId());
+		UserModel userModelToSave = buildUser();
+		UserModel expectUserModel = buildUser(fakeId);
+		when(userRepository.save(userModelToSave)).thenReturn(expectUserModel);
+		UserModel receivedUserModel = userService.save(userModelToSave);
+		assertEquals(userModelToSave.getFullName(), receivedUserModel.getFullName());
+		assertEquals(userModelToSave.getEmail(), receivedUserModel.getEmail());
+		assertEquals(userModelToSave.getPassword(), receivedUserModel.getPassword());
+		assertEquals(expectUserModel.getId(), receivedUserModel.getId());
 	}
 
 	@Test @DisplayName("Test if is possible update a user.")
 	void testCanUpdateUserAnUser() {
 		Long userId = 10L;
-		User currentUser = buildUser(userId);
-		User expectUser = buildUser(userId);
-		expectUser.setFullName("New Name");
-		expectUser.setEmail("new@email.com");
-		expectUser.setPassword("myNewPass01");
-		when(userRepository.getReferenceById(userId)).thenReturn(currentUser);
-		when(userRepository.save(expectUser)).thenReturn(expectUser);
-		User receivedUser = userService.updateUser(userId, expectUser);
-		assertEquals(expectUser.getFullName(), receivedUser.getFullName());
-		assertEquals(expectUser.getEmail(), receivedUser.getEmail());
-		assertEquals(expectUser.getPassword(), receivedUser.getPassword());
-		assertEquals(expectUser.getId(), receivedUser.getId());
+		UserModel currentUserModel = buildUser(userId);
+		UserModel expectUserModel = buildUser(userId);
+		expectUserModel.setFullName("New Name");
+		expectUserModel.setEmail("new@email.com");
+		expectUserModel.setPassword("myNewPass01");
+		when(userRepository.getReferenceById(userId)).thenReturn(currentUserModel);
+		when(userRepository.save(expectUserModel)).thenReturn(expectUserModel);
+		UserModel receivedUserModel = userService.updateUser(userId, expectUserModel);
+		assertEquals(expectUserModel.getFullName(), receivedUserModel.getFullName());
+		assertEquals(expectUserModel.getEmail(), receivedUserModel.getEmail());
+		assertEquals(expectUserModel.getPassword(), receivedUserModel.getPassword());
+		assertEquals(expectUserModel.getId(), receivedUserModel.getId());
 	}
 
 	// ======================================== Error cases ======================================== //
@@ -77,9 +77,9 @@ public class UserServiceUnitTest {
 	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
 	void testCannotUpdateUserUserByInvalidIdAndThrowsAnException() {
 		Long invalidId = 99L;
-		User expectUser = buildUser();
+		UserModel expectUserModel = buildUser();
 		when(userRepository.getReferenceById(invalidId)).thenThrow(new EntityNotFoundException());
-		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.updateUser(invalidId, expectUser));
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.updateUser(invalidId, expectUserModel));
 		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
@@ -92,13 +92,13 @@ public class UserServiceUnitTest {
 		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
 	}
 
-	private User buildUser() {
+	private UserModel buildUser() {
 
-		return new User(0L, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
+		return new UserModel(0L, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
 	}
 
-	private User buildUser(Long id) {
+	private UserModel buildUser(Long id) {
 
-		return new User(id, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
+		return new UserModel(id, "User Name", "Ab123456", "test@email.com", "(11) 91991-5500");
 	}
 }

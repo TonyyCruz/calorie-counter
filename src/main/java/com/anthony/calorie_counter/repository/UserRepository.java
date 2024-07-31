@@ -1,17 +1,18 @@
 package com.anthony.calorie_counter.repository;
 
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.UserModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<UserModel, UUID> {
 
-    Optional<User> findByEmail(String email);
+    Optional<UserModel> findByEmail(String email);
 
     @Modifying
-    @Query("UPDATE User u SET u.password=?2 where u.id = ?1")
-    void updatePasswordById(String id, String password);
+    @Query("UPDATE UserModel u SET u.password=?2 where u.id = ?1")
+    void updatePasswordByUserId(UUID id, String password);
 }

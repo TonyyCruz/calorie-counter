@@ -4,7 +4,7 @@ import com.anthony.calorie_counter.dto.request.user.AuthenticationDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.response.user.LoginResponseTokenDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.service.impl.AuthenticationService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
@@ -32,8 +32,8 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
-        User user = userCreateDto.toEntity();
-        User registeredUser = userService.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUser));
+        UserModel userModel = userCreateDto.toEntity();
+        UserModel registeredUserModel = userService.save(userModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 }

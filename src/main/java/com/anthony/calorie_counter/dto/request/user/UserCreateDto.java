@@ -1,8 +1,6 @@
 package com.anthony.calorie_counter.dto.request.user;
 
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
-import com.anthony.calorie_counter.enums.UserRole;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.service.validation.PasswordValid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,12 +15,12 @@ public class UserCreateDto extends UserDto {
     @PasswordValid
     private String password;
 
-    public User toEntity() {
-        User user = new User();
-        user.setFullName(fullName);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPhoneNumber(phoneNumber);
-        return user;
+    public UserModel toEntity() {
+        UserModel userModel = new UserModel();
+        userModel.setFullName(fullName);
+        userModel.setEmail(email);
+        userModel.setPassword(password);
+        userModel.setPhoneNumber(phoneNumber);
+        return userModel;
     }
 }

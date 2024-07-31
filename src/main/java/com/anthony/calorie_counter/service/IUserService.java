@@ -1,18 +1,18 @@
 package com.anthony.calorie_counter.service;
 
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.RoleModel;
+import com.anthony.calorie_counter.entity.UserModel;
+
+import java.util.UUID;
 
 public interface IUserService {
-    User findById(String id);
+    UserModel findById(UUID id);
 
-    User save(User user);
+    UserModel save(UserModel userModel);
 
-    User updateUser(String id, User user);
+    UserModel updateUser(UUID id, UserModel userModel);
 
-    void updatePassword(String id, String newPassword);
+    void updatePassword(UUID id, String newPassword);
 
-    void deleteById(String id);
-
-    Role findRoleById(Long id);
+    void deleteById(UUID id);
 }
