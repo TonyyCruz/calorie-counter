@@ -17,9 +17,6 @@ import java.util.Optional;
 public class EmailUniqueValidator implements ConstraintValidator<EmailUnique, String> {
 
     @Autowired
-    private HttpServletRequest request;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Override

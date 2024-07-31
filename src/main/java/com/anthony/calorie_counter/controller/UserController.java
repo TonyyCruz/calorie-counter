@@ -31,6 +31,9 @@ public class UserController {
 
     @PutMapping("/update/user")
     ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
+        System.out.println("-----update------");
+        
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = userService.updateUser(getUserPrincipal().getId(), userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(user));
     }
