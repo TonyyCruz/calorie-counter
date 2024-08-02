@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public abstract class UserDto implements Serializable {
+public abstract class AbstractUserDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
     protected String fullName;
     @EmailUnique

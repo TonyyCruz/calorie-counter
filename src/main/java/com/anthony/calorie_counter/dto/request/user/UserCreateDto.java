@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreateDto extends UserDto {
+public class UserCreateDto extends AbstractUserDto {
     @PasswordValid
     private String password;
 

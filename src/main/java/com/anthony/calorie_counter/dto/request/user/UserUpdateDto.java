@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserUpdateDto extends UserDto {
+public class UserUpdateDto extends AbstractUserDto {
     public UserModel toEntity() {
         UserModel userModel = new UserModel();
         userModel.setFullName(fullName);
