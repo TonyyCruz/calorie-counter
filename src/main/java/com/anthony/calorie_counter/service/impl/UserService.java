@@ -4,7 +4,7 @@ import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
-import com.anthony.calorie_counter.exceptions.UnauthorizedException;
+import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IRoleService;
@@ -35,30 +35,30 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
                 .orElseThrow(() -> new EntityDataNotFoundException("User not found with id: " + id));
     }
 
-    @Override @Transactional
-    public UserModel create(UserModel userModel) {
-        RoleModel roleModel = findRoleById((long) UserRole.ROLE_USER.getRole());
+    @Override
+    public UserModel create(UserRole role, UserModel userModel) {
+        RoleModel roleModel = findRoleById((long) role.getRole());
         userModel.addRole(roleModel);
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
-        return userRepository.save(userModel);
+        return save(userModel);
     }
 
-    @Override @Transactional
+    @Override
     public UserModel updateUser(String username, UserModel newUserModelData) {
         UserModel userModel = loadUserByUsername(username);
         userModel.setFullName(newUserModelData.getFullName());
         userModel.setEmail(newUserModelData.getEmail());
         userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
-        return userRepository.save(userModel);
+        return save(userModel);
     }
 
-    @Override @Transactional
+    @Override
     public UserModel updateUser(UUID id, UserModel newUserModelData) {
         UserModel userModel = findById(id);
         userModel.setFullName(newUserModelData.getFullName());
         userModel.setEmail(newUserModelData.getEmail());
         userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
-        return userRepository.save(userModel);
+        return save(userModel);
     }
 
     @Transactional
@@ -70,10 +70,10 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
     public void delete(String username, UUID id) {
         UserModel user = loadUserByUsername(username);
         boolean havePermission = user.getId().equals(id) || user.isAdmin();
-        if (!havePermission) { throw new UnauthorizedException("Old password is incorrect."); }
+        if (!havePermission) { throw new InvalidCredentialsException("Old password is incorrect."); }
         userRepository.deleteById(id);
     }
-    
+
     @Override
     public Page<UserModel> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
@@ -84,6 +84,13 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
         return roleRepository.findById(id)
                 .orElseThrow(() -> new EntityDataNotFoundException("Role not found with id: " + id));
     }
+
+    @Override @Transactional
+    public UserModel save(UserModel user) {
+        return userRepository.save(user);
+    }
+
+
 
     @Override
     public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {

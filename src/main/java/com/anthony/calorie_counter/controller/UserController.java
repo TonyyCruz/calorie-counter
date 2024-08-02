@@ -5,6 +5,7 @@ import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.UserModel;
+import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
@@ -31,9 +32,42 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<UserViewDto> register(@RequestBody @Valid UserCreateDto userCreateDto) {
+    public ResponseEntity<UserViewDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
         UserModel userModel = userCreateDto.toEntity();
-        UserModel registeredUserModel = userService.create(userModel);
+        UserModel registeredUserModel = userService.create(UserRole.ROLE_USER, userModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
+    }
+
+    @PutMapping("/update/user")
+    ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
+        UserModel userModel = userService.updateUser(getPrincipalUsername(), userUpdateDto.toEntity());
+        return ResponseEntity.ok(new UserViewDto(userModel));
+    }
+
+    @PutMapping("/update/password")
+    ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
+        UserModel user = userService.loadUserByUsername(getPrincipalUsername());
+        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
+            throw new AuthenticationDataException("Old password is incorrect.");
+        }
+        userService.updatePassword(user.getId(), passwordDto.getNewPassword());
+        return ResponseEntity.ok("Password updated successfully.");
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    ResponseEntity<?> delete(@PathVariable String id) {
+        userService.delete(getPrincipalUsername(), UUID.fromString(id));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/register/admin")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<UserViewDto> createAdmin(
+            @RequestBody @Valid UserCreateDto userCreateDto, @RequestParam(name = "role") String role
+    ) {
+        UserModel userModel = userCreateDto.toEntity();
+        UserModel registeredUserModel = userService.create(UserRole.getRoleFrom(role), userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 
@@ -53,34 +87,11 @@ public class UserController {
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
-    @PutMapping("/update/user")
-    ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
-        UserModel userModel = userService.updateUser(getPrincipalUsername(), userUpdateDto.toEntity());
-        return ResponseEntity.ok(new UserViewDto(userModel));
-    }
-
     @PutMapping("/update/user/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     ResponseEntity<UserViewDto> updateUserById(@RequestBody @Valid UserUpdateDto userUpdateDto, @PathVariable String id) {
         UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(userModel));
-    }
-
-    @PutMapping("/update/password")
-    ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        UserModel user = userService.loadUserByUsername(getPrincipalUsername());
-        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
-            throw new AuthenticationDataException("Old password is incorrect.");
-        }
-        userService.updatePassword(user.getId(), passwordDto.getNewPassword());
-        return ResponseEntity.ok("Password updated successfully.");
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    ResponseEntity<?> delete(@PathVariable String id) {
-        userService.delete(getPrincipalUsername(), UUID.fromString(id));
-        return ResponseEntity.noContent().build();
     }
 
     private String getPrincipalUsername() {
