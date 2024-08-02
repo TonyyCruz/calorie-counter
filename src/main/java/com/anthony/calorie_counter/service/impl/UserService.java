@@ -10,6 +10,8 @@ import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IRoleService;
 import com.anthony.calorie_counter.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,17 +66,17 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
         userRepository.updatePasswordByUserId(id, passwordEncoder.encode(newPassword));
     }
 
-    @Transactional
-    public void deleteByUsernameAndId(String username, UUID id) {
+    @Override @Transactional
+    public void delete(String username, UUID id) {
         UserModel user = loadUserByUsername(username);
         boolean havePermission = user.getId().equals(id) || user.isAdmin();
         if (!havePermission) { throw new UnauthorizedException("Old password is incorrect."); }
-        deleteById(id);
-    }
-
-    @Override @Transactional
-    public void deleteById(UUID id) {
         userRepository.deleteById(id);
+    }
+    
+    @Override
+    public Page<UserModel> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override @Transactional(readOnly = true)

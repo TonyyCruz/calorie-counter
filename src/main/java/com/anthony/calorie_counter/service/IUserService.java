@@ -1,6 +1,8 @@
 package com.anthony.calorie_counter.service;
 
 import com.anthony.calorie_counter.entity.UserModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
@@ -15,5 +17,7 @@ public interface IUserService {
 
     void updatePassword(UUID id, String newPassword);
 
-    void deleteById(UUID id);
+    void delete(String username, UUID id);
+
+    Page<UserModel> findAll(Pageable pageable);
 }

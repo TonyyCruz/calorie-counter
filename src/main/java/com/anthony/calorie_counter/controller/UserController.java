@@ -9,8 +9,13 @@ import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,8 +37,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 
+    @GetMapping
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<Page<UserViewDto>> listAll(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        Page<UserViewDto> users = userService.findAll(pageable).map(UserViewDto::new);
+        return ResponseEntity.ok(users);
+    }
+
     @GetMapping("/{id}")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     ResponseEntity<UserViewDto> findById(@PathVariable String id) {
         UserModel userModel = userService.findById(UUID.fromString(id));
         return ResponseEntity.ok(new UserViewDto(userModel));
@@ -46,7 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/update/user/{id}")
-//    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     ResponseEntity<UserViewDto> updateUserById(@RequestBody @Valid UserUpdateDto userUpdateDto, @PathVariable String id) {
         UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(userModel));
@@ -65,7 +79,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<?> delete(@PathVariable String id) {
-        userService.deleteByUsernameAndId(getPrincipalUsername(), UUID.fromString(id));
+        userService.delete(getPrincipalUsername(), UUID.fromString(id));
         return ResponseEntity.noContent().build();
     }
 
