@@ -26,16 +26,25 @@ import java.util.UUID;
 
 @RestController @RequestMapping("/api/v1/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<UserViewDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
         UserModel userModel = userCreateDto.toEntity();
         UserModel registeredUserModel = userService.create(UserRole.ROLE_USER, userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<UserViewDto> findById(@PathVariable String id) {
+        UserModel userModel = userService.findById(UUID.fromString(id));
+        return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     @PutMapping("/update/user")
@@ -78,13 +87,6 @@ public class UserController {
     ) {
         Page<UserViewDto> users = userService.findAll(pageable).map(UserViewDto::new);
         return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    ResponseEntity<UserViewDto> findById(@PathVariable String id) {
-        UserModel userModel = userService.findById(UUID.fromString(id));
-        return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     @PutMapping("/update/user/{id}")

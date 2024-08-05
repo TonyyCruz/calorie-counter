@@ -1,6 +1,5 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
-import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.abstractError.BadRequest;
 import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
