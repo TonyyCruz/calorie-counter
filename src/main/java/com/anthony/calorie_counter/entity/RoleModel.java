@@ -1,7 +1,9 @@
 package com.anthony.calorie_counter.entity;
 
+import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,26 +12,28 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "tb_roles")
-public class Role implements Serializable {
+public class RoleModel implements Serializable, GrantedAuthority {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String authority;
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    @Column(unique = true)
+    private UserRole authority;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(id, role.id);
+        RoleModel roleModel = (RoleModel) o;
+        return Objects.equals(id, roleModel.id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public String getAuthority() {
+        return authority.name();
     }
 }
 

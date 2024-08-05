@@ -1,24 +1,27 @@
 package com.anthony.calorie_counter.service.impl;
 
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.RoleModel;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
+import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
+import com.anthony.calorie_counter.service.IRoleService;
 import com.anthony.calorie_counter.service.IUserService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
-public class UserService implements IUserService, UserDetailsService {
+public class UserService implements IUserService, IRoleService, UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -27,51 +30,71 @@ public class UserService implements IUserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override @Transactional(readOnly = true)
-    public User findById(String id) {
+    public UserModel findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("User with id %s was not found.".formatted(id)));
-    }
-
-    @Override @Transactional
-    public User save(User user) {
-        Role role = findRoleById((long) UserRole.ROLE_USER.getRole());
-        user.addRole(role);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
-
-    @Override @Transactional
-    public User updateUser(String id, User newUserData) {
-        try {
-            User user = userRepository.getReferenceById(id);
-            user.setFullName(newUserData.getFullName());
-            user.setEmail(newUserData.getEmail());
-            user.setPhoneNumber(newUserData.getPhoneNumber());
-            return userRepository.save(user);
-        } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User with id '%s' was not found.".formatted(id));
-        }
-    }
-
-    @Transactional
-    public void updatePassword(String id, String newPassword) {
-        userRepository.updatePasswordById(id, passwordEncoder.encode(newPassword));
-    }
-
-    @Override @Transactional
-    public void deleteById(String id) {
-        userRepository.deleteById(id);
-    }
-
-    @Override @Transactional(readOnly = true)
-    public Role findRoleById(Long id) {
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("Role with id %d was not fount.".formatted(id)));
+                .orElseThrow(() -> new EntityDataNotFoundException("User not found with id: " + id));
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserModel create(UserRole role, UserModel userModel) {
+        RoleModel roleModel = findRoleById((long) role.getRole());
+        userModel.addRole(roleModel);
+        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
+        return save(userModel);
+    }
+
+    @Override
+    public UserModel updateUser(String username, UserModel newUserModelData) {
+        UserModel userModel = loadUserByUsername(username);
+        userModel.setFullName(newUserModelData.getFullName());
+        userModel.setEmail(newUserModelData.getEmail());
+        userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
+        return save(userModel);
+    }
+
+    @Override
+    public UserModel updateUser(UUID id, UserModel newUserModelData) {
+        UserModel userModel = findById(id);
+        userModel.setFullName(newUserModelData.getFullName());
+        userModel.setEmail(newUserModelData.getEmail());
+        userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
+        return save(userModel);
+    }
+
+    @Transactional
+    public void updatePassword(UUID id, String newPassword) {
+        userRepository.updatePasswordByUserId(id, passwordEncoder.encode(newPassword));
+    }
+
+    @Override @Transactional
+    public void delete(String username, UUID id) {
+        UserModel user = loadUserByUsername(username);
+        boolean havePermission = user.getId().equals(id) || user.isAdmin();
+        if (!havePermission) { throw new InvalidCredentialsException("Old password is incorrect."); }
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<UserModel> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override @Transactional(readOnly = true)
+    public RoleModel findRoleById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new EntityDataNotFoundException("Role not found with id: " + id));
+    }
+
+    @Override @Transactional
+    public UserModel save(UserModel user) {
+        return userRepository.save(user);
+    }
+
+
+
+    @Override
+    public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username '%s' was not found.".formatted(username)));
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found with: " + username));
     }
 }

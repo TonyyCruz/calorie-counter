@@ -1,14 +1,12 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
-import com.anthony.calorie_counter.exceptions.NotFoundException;
-import com.anthony.calorie_counter.exceptions.TokenCreateException;
+import com.anthony.calorie_counter.exceptions.abstractError.BadRequest;
+import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,12 +19,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     ResponseEntity<ExceptionDetails> notFound(NotFoundException e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Bed request, resource not found.");
+        exceptionDetails.setTitle("The request was not found.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.NOT_FOUND.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.addError("notFound", e.getMessage());
+        exceptionDetails.addError("error", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
@@ -57,28 +55,15 @@ public class RestExceptionHandler {
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
-    @ExceptionHandler(TokenCreateException.class)
-    ResponseEntity<ExceptionDetails> validateException(TokenCreateException e, HttpServletRequest request) {
+    @ExceptionHandler(BadRequest.class)
+    ResponseEntity<ExceptionDetails> authenticationException(BadRequest e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Validate Exception.");
-        exceptionDetails.setTimestamp(Instant.now());
-        exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
-        exceptionDetails.setException(e.getClass().toString());
-        exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.addError(e.getCause().toString(), e.getMessage());
-        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
-    }
-
-    @ExceptionHandler(AuthenticationDataException.class)
-    ResponseEntity<ExceptionDetails> authenticationException(AuthenticationDataException e, HttpServletRequest request) {
-        ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Validate Exception.");
+        exceptionDetails.setTitle("Error with received data.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
-        exceptionDetails.addError("invalidCredentials", e.getMessage());
+        exceptionDetails.addError("error", e.getMessage());
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
-
 }

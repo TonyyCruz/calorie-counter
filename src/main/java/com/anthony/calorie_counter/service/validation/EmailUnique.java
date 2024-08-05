@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmailUnique {
-    String message() default "Validation error.";
+    String message() default "Email validation error.";
 
     Class<?>[] groups() default {};
 

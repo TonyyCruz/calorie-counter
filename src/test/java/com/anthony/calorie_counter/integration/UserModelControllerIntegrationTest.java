@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.integration;
 
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerIntegrationTest extends TestBase {
+public class UserModelControllerIntegrationTest extends TestBase {
     @Autowired
     private UserRepository userRepository;
 
@@ -39,8 +39,8 @@ public class UserControllerIntegrationTest extends TestBase {
     @Test @DisplayName("Test if is possible find a user by received id and receive status code 200.")
     void canFindAnUserById() throws Exception {
         UserCreateDto userCreateDto = UserFactory.createUserDto();
-        User savedUser = userRepository.save(userCreateDto.toEntity());
-        String path = USER_URL + "/" + savedUser.getId();
+        UserModel savedUserModel = userRepository.save(userCreateDto.toEntity());
+        String path = USER_URL + "/" + savedUserModel.getId();
         mockMvc.perform(get(path))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.fullName").value(userCreateDto.fullName()))
@@ -52,10 +52,10 @@ public class UserControllerIntegrationTest extends TestBase {
     @Test @DisplayName("Test if is possible update a user by received id and receive status code 200.")
     void canUserUpdateAnUserById() throws Exception {
         UserCreateDto userCreateDto = UserFactory.createUserDto();
-        User currentUser = userRepository.save(userCreateDto.toEntity());
+        UserModel currentUserModel = userRepository.save(userCreateDto.toEntity());
         UserCreateDto updateUser = UserFactory.createUserDto();
         String valueAsString = objectMapper.writeValueAsString(updateUser);
-        String path = USER_URL + "/" + currentUser.getId();
+        String path = USER_URL + "/" + currentUserModel.getId();
         mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.fullName").value(updateUser.fullName()))
@@ -66,9 +66,9 @@ public class UserControllerIntegrationTest extends TestBase {
 
     @Test @DisplayName("Test if is possible delete a user by received id and receive status code 204.")
     void canDeleteAnUserById() throws Exception {
-        User user = UserFactory.createUser();
-        User savedUser = userRepository.save(user);
-        String path = USER_URL + "/" + savedUser.getId();
+        UserModel userModel = UserFactory.createUser();
+        UserModel savedUserModel = userRepository.save(userModel);
+        String path = USER_URL + "/" + savedUserModel.getId();
         mockMvc.perform(delete(path))
             .andExpect(status().isNoContent())
             .andExpect(jsonPath("$.fullName").doesNotExist())

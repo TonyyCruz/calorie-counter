@@ -1,18 +1,26 @@
 package com.anthony.calorie_counter.service;
 
-import com.anthony.calorie_counter.entity.Role;
-import com.anthony.calorie_counter.entity.User;
+import com.anthony.calorie_counter.entity.UserModel;
+import com.anthony.calorie_counter.enums.UserRole;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.UUID;
 
 public interface IUserService {
-    User findById(String id);
+    UserModel findById(UUID id);
 
-    User save(User user);
+    UserModel create(UserRole role, UserModel userModel);
 
-    User updateUser(String id, User user);
+    UserModel updateUser(String username, UserModel userModel);
 
-    void updatePassword(String id, String newPassword);
+    UserModel updateUser(UUID id, UserModel userModel);
 
-    void deleteById(String id);
+    void updatePassword(UUID id, String newPassword);
 
-    Role findRoleById(Long id);
+    void delete(String username, UUID id);
+
+    Page<UserModel> findAll(Pageable pageable);
+
+    UserModel save(UserModel user);
 }

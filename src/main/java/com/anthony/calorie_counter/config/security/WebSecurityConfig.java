@@ -1,17 +1,14 @@
-package com.anthony.calorie_counter.infra.security;
+package com.anthony.calorie_counter.config.security;
 
-import com.anthony.calorie_counter.enums.UserRole;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -30,6 +27,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private final String API_VERSION = "/api/v1";
     private final String ADMIN = "ADMIN";
@@ -43,13 +41,12 @@ public class WebSecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) //H2 database
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // ACCESS ALL
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, API_VERSION + "/users/register").permitAll()
                         // ADMIN
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
@@ -59,6 +56,7 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(conf -> conf.jwt(Customizer.withDefaults()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 

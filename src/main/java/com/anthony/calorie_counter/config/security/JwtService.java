@@ -1,12 +1,5 @@
-package com.anthony.calorie_counter.infra.security;
+package com.anthony.calorie_counter.config.security;
 
-import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
-import com.anthony.calorie_counter.exceptions.TokenCreateException;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
-    private final String ISSUER = "spring-security-jwt";
     private final JwtEncoder encoder;
     @Value("${jwt.expiration_time}")
     private Long expirationTime;
@@ -33,7 +25,7 @@ public class JwtService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
         var claims = JwtClaimsSet.builder()
-                .issuer(ISSUER)
+                .issuer("spring-security-jwt")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirationTime))
                 .subject(authentication.getName())
