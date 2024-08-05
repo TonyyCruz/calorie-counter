@@ -42,7 +42,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) //H2 database
                 .authorizeHttpRequests(authorize -> authorize
-                        // ACCESS ALL
+                        // UNAUTHENTICATED
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()

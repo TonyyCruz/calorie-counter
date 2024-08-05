@@ -38,5 +38,5 @@ jwt:
     key: classpath:app.key
   public:
     key: classpath:app.pub
-  expiration_time: ${JWT_EXPIRATION_TIME:99999999999999} # Seconds
+  expiration_time: ${JWT_EXPIRATION_TIME:360000000000} # Seconds
   secret: ${JWT_SECRET:my_jwt_secret}

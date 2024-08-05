@@ -2,6 +2,7 @@ package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.abstractError.BadRequest;
 import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
+import com.anthony.calorie_counter.exceptions.abstractError.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -60,6 +61,18 @@ public class RestExceptionHandler {
         exceptionDetails.setTitle("Error with received data.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
+        exceptionDetails.setException(e.getClass().toString());
+        exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.addError("error", e.getMessage());
+        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    ResponseEntity<ExceptionDetails> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
+        ExceptionDetails exceptionDetails = new ExceptionDetails();
+        exceptionDetails.setTitle("Error with received data.");
+        exceptionDetails.setTimestamp(Instant.now());
+        exceptionDetails.setStatus(HttpStatus.UNAUTHORIZED.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.addError("error", e.getMessage());

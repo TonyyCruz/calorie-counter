@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 
@@ -16,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "tb_roles")
-public class RoleModel implements Serializable, GrantedAuthority {
+public class RoleModel implements GrantedAuthority {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)

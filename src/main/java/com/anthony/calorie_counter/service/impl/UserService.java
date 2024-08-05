@@ -4,12 +4,10 @@ import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
-import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IRoleService;
 import com.anthony.calorie_counter.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,19 +37,9 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
     }
 
     @Override
-    public UserModel create(UserRole role, UserModel userModel) {
-        RoleModel roleModel = findRoleById((long) role.getRole());
-        userModel.addRole(roleModel);
+    public UserModel create(UserModel userModel) {
+        userModel.addRole(findRoleById(UserRole.ROLE_USER.getRole()));
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
-        return save(userModel);
-    }
-
-    @Override
-    public UserModel updateUser(String username, UserModel newUserModelData) {
-        UserModel userModel = loadUserByUsername(username);
-        userModel.setFullName(newUserModelData.getFullName());
-        userModel.setEmail(newUserModelData.getEmail());
-        userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
         return save(userModel);
     }
 
@@ -69,11 +57,8 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
         userRepository.updatePasswordByUserId(id, passwordEncoder.encode(newPassword));
     }
 
-    @Override @Transactional
-    public void delete(String username, UUID id) {
-        UserModel user = loadUserByUsername(username);
-        boolean havePermission = user.getId().equals(id) || user.isAdmin();
-        if (!havePermission) { throw new InvalidCredentialsException("Old password is incorrect."); }
+    @Override
+    public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 
