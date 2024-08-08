@@ -19,5 +19,7 @@ public interface IUserService {
 
     Page<UserModel> findAll(Pageable pageable);
 
-    UserModel save(UserModel user);
+    UserModel promoteToAdmin(UUID id);
+
+    UserModel demoteFromAdmin(UUID id);
 }

@@ -8,9 +8,9 @@ import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.UnauthorizedRequestException;
+import com.anthony.calorie_counter.service.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,7 +28,7 @@ import java.util.UUID;
 
 @RestController @RequestMapping("/api/v1/users")
 public class UserController {
-    private final UserService userService;
+    private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<UserViewDto> findAuthenticatedUser() {
+    public ResponseEntity<UserViewDto> findSelfData() {
         UserModel userModel = userService.findById(getPrincipalId());
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
@@ -76,39 +76,24 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
         UserModel userModel = userService.findById(UUID.fromString(id));
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
-    @PostMapping("/register/admin")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<UserViewDto> createAdmin(
-            @RequestBody @Valid UserCreateDto userCreateDto, @PathVariable(name = "role") String role
-    ) {
-        UserModel userModel = userCreateDto.toEntity();
-        userModel.addRole(userService.findRoleById(UserRole.getRoleFrom(role).getRole()));
-        UserModel registeredUserModel = userService.create(userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
-    }
-
-    @PostMapping("/admin/promote/{id}")
+    @PostMapping("/promote/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<UserViewDto> promoteToAdmin(@PathVariable(name = "id") String id) {
-        UserModel userModel = userService.findById(UUID.fromString(id));
-        userModel.addRole(userService.findRoleById(UserRole.ROLE_ADMIN.getRole()));
-        UserModel updatedUser = userService.save(userModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(updatedUser));
+        UserModel user = userService.promoteToAdmin(UUID.fromString(id));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(user));
     }
 
-    @PostMapping("/admin/remove/{id}")
+    @PostMapping("/demote/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<UserViewDto> removeAdmin(@PathVariable(name = "id") String id) {
-        UserModel user = userService.findById(UUID.fromString(id));
-        user.removeRole(UserRole.ROLE_ADMIN.getRole());
-        UserModel updatedUser = userService.save(user);
+    public ResponseEntity<UserViewDto> demoteFromAdmin(@PathVariable(name = "id") String id) {
+        UserModel updatedUser = userService.demoteFromAdmin(UUID.fromString(id));
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(updatedUser));
     }
 

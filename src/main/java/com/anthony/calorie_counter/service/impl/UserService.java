@@ -6,7 +6,6 @@ import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.repository.RoleRepository;
 import com.anthony.calorie_counter.repository.UserRepository;
-import com.anthony.calorie_counter.service.IRoleService;
 import com.anthony.calorie_counter.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
-public class UserService implements IUserService, IRoleService, UserDetailsService {
+public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,18 +66,30 @@ public class UserService implements IUserService, IRoleService, UserDetailsServi
         return userRepository.findAll(pageable);
     }
 
-    @Override @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public RoleModel findRoleById(Long id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new EntityDataNotFoundException("Role not found with id: " + id));
     }
 
-    @Override @Transactional
-    public UserModel save(UserModel user) {
+    @Transactional
+    private UserModel save(UserModel user) {
         return userRepository.save(user);
     }
 
+    @Override @Transactional
+    public UserModel promoteToAdmin(UUID id) {
+        UserModel userModel = findById(id);
+        userModel.addRole(findRoleById(UserRole.ROLE_ADMIN.getRole()));
+        return userRepository.save(userModel);
+    }
 
+    @Override @Transactional
+    public UserModel demoteFromAdmin(UUID id) {
+        UserModel userModel = findById(id);
+        userModel.removeRole(UserRole.ROLE_ADMIN.getRole());
+        return userRepository.save(userModel);
+    }
 
     @Override
     public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {

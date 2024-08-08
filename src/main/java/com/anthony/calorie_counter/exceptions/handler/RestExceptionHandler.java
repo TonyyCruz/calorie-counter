@@ -19,7 +19,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     ResponseEntity<ExceptionDetails> notFound(NotFoundException e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("The request was not found.");
+        exceptionDetails.setTitle("Not found.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.NOT_FOUND.value());
         exceptionDetails.setException(e.getClass().toString());
@@ -58,7 +58,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(BadRequest.class)
     ResponseEntity<ExceptionDetails> authenticationException(BadRequest e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Error with received data.");
+        exceptionDetails.setTitle("Bad request, error with received data.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
         exceptionDetails.setException(e.getClass().toString());
@@ -70,7 +70,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(UnauthorizedException.class)
     ResponseEntity<ExceptionDetails> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
-        exceptionDetails.setTitle("Error with received data.");
+        exceptionDetails.setTitle("Unauthorized.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.UNAUTHORIZED.value());
         exceptionDetails.setException(e.getClass().toString());
