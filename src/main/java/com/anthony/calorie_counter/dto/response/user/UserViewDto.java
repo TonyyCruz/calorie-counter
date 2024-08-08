@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public record UserViewDto(
         UUID id,
-        String fullName,
+        String name,
         String email,
         String phoneNumber,
         Set<RoleModel> roleModels
@@ -18,6 +18,6 @@ public record UserViewDto(
 
 
     public UserViewDto(UserModel userModel) {
-        this(userModel.getId(), userModel.getFullName(), userModel.getEmail(), userModel.getPhoneNumber(), userModel.getRoles());
+        this(userModel.getId(), userModel.getName(), userModel.getEmail(), userModel.getPhoneNumber(), userModel.getRoles());
     }
 }

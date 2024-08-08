@@ -41,7 +41,7 @@ public class UserModelServiceUnitTest {
 		UserModel expectUserModel = buildUser(fakeId);
 		when(userRepository.save(userModelToSave)).thenReturn(expectUserModel);
 		UserModel receivedUserModel = userService.create(userModelToSave);
-		assertEquals(userModelToSave.getFullName(), receivedUserModel.getFullName());
+		assertEquals(userModelToSave.getName(), receivedUserModel.getName());
 		assertEquals(userModelToSave.getEmail(), receivedUserModel.getEmail());
 		assertEquals(userModelToSave.getPassword(), receivedUserModel.getPassword());
 		assertEquals(expectUserModel.getId(), receivedUserModel.getId());
@@ -52,13 +52,13 @@ public class UserModelServiceUnitTest {
 		Long userId = 10L;
 		UserModel currentUserModel = buildUser(userId);
 		UserModel expectUserModel = buildUser(userId);
-		expectUserModel.setFullName("New Name");
+		expectUserModel.setName("New Name");
 		expectUserModel.setEmail("new@email.com");
 		expectUserModel.setPassword("myNewPass01");
 		when(userRepository.getReferenceById(userId)).thenReturn(currentUserModel);
 		when(userRepository.save(expectUserModel)).thenReturn(expectUserModel);
 		UserModel receivedUserModel = userService.updateUser(userId, expectUserModel);
-		assertEquals(expectUserModel.getFullName(), receivedUserModel.getFullName());
+		assertEquals(expectUserModel.getName(), receivedUserModel.getName());
 		assertEquals(expectUserModel.getEmail(), receivedUserModel.getEmail());
 		assertEquals(expectUserModel.getPassword(), receivedUserModel.getPassword());
 		assertEquals(expectUserModel.getId(), receivedUserModel.getId());

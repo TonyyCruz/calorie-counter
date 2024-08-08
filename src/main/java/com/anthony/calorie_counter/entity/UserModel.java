@@ -21,7 +21,7 @@ public class UserModel implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(nullable = false)
-    private String fullName;
+    private String name;
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)

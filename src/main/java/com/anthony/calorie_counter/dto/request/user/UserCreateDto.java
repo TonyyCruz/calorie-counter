@@ -17,7 +17,7 @@ public class UserCreateDto extends AbstractUserDto {
 
     public UserModel toEntity() {
         UserModel userModel = new UserModel();
-        userModel.setFullName(fullName);
+        userModel.setName(name);
         userModel.setEmail(email);
         userModel.setPassword(password);
         userModel.setPhoneNumber(phoneNumber);

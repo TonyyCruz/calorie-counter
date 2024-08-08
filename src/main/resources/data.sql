@@ -8,7 +8,7 @@
 --);
 
 -- password: Passw0rd*
-INSERT INTO `tb_users` (`id`,`full_name`,`email`,`password`,`phone_number`)
+INSERT INTO `tb_users` (`id`,`name`,`email`,`password`,`phone_number`)
 VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 'admin', 'admin@email.com', '$2a$10$2O9L0YxLhBWpjoyCkEOkDe5N4ahqyDFDlUot5AhNmKm5tghHS.dea', '99999999'),
        ('7b87f809-d142-4dfa-8802-87644d774dd5', 'user', 'user@email.com', '$2a$10$2O9L0YxLhBWpjoyCkEOkDe5N4ahqyDFDlUot5AhNmKm5tghHS.dea', '88888888');
 

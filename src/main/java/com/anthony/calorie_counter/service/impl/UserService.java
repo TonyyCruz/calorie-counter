@@ -45,7 +45,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public UserModel updateUser(UUID id, UserModel newUserModelData) {
         UserModel userModel = findById(id);
-        userModel.setFullName(newUserModelData.getFullName());
+        userModel.setName(newUserModelData.getName());
         userModel.setEmail(newUserModelData.getEmail());
         userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
         return save(userModel);

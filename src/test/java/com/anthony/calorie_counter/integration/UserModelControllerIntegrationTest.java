@@ -30,7 +30,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         String valueAsString = objectMapper.writeValueAsString(newUser);
         mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.fullName").value(newUser.fullName()))
+            .andExpect(jsonPath("$.name").value(newUser.fullName()))
             .andExpect(jsonPath("$.email").value(newUser.email()))
             .andExpect(jsonPath("$.phoneNumber").value(newUser.phoneNumber()))
             .andExpect(jsonPath("$.password").doesNotExist());
@@ -43,7 +43,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         String path = USER_URL + "/" + savedUserModel.getId();
         mockMvc.perform(get(path))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.fullName").value(userCreateDto.fullName()))
+            .andExpect(jsonPath("$.name").value(userCreateDto.fullName()))
             .andExpect(jsonPath("$.email").value(userCreateDto.email()))
             .andExpect(jsonPath("$.phoneNumber").value(userCreateDto.phoneNumber()))
             .andExpect(jsonPath("$.password").doesNotExist());
@@ -58,7 +58,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         String path = USER_URL + "/" + currentUserModel.getId();
         mockMvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.fullName").value(updateUser.fullName()))
+            .andExpect(jsonPath("$.name").value(updateUser.fullName()))
             .andExpect(jsonPath("$.email").value(updateUser.email()))
             .andExpect(jsonPath("$.phoneNumber").value(updateUser.phoneNumber()))
             .andExpect(jsonPath("$.password").doesNotExist());
@@ -71,7 +71,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         String path = USER_URL + "/" + savedUserModel.getId();
         mockMvc.perform(delete(path))
             .andExpect(status().isNoContent())
-            .andExpect(jsonPath("$.fullName").doesNotExist())
+            .andExpect(jsonPath("$.name").doesNotExist())
             .andExpect(jsonPath("$.email").doesNotExist())
             .andExpect(jsonPath("$.phoneNumber").doesNotExist())
             .andExpect(jsonPath("$.password").doesNotExist());

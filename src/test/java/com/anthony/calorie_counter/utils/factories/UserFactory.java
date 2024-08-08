@@ -9,7 +9,7 @@ public class UserFactory {
     public static UserModel createUser() {
         UserModel userModel = new UserModel();
         userModel.setId("b2283d3b-d470-40ec-9fd2-8b4eb4c5e290");
-        userModel.setFullName(SimpleFake.fullName());
+        userModel.setName(SimpleFake.fullName());
         userModel.setEmail(SimpleFake.email());
         userModel.setPassword(SimpleFake.password(8));
         userModel.setPhoneNumber(SimpleFake.phoneNumber());
@@ -20,7 +20,7 @@ public class UserFactory {
     public static UserModel createUser(String id) {
         UserModel userModel = new UserModel();
         userModel.setId(id);
-        userModel.setFullName(SimpleFake.fullName());
+        userModel.setName(SimpleFake.fullName());
         userModel.setEmail(SimpleFake.email());
         userModel.setPassword(SimpleFake.password(8));
         userModel.setPhoneNumber(SimpleFake.phoneNumber());

@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public abstract class AbstractUserDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
-    protected String fullName;
+    protected String name;
     @EmailUnique
     @Email(message = "Invalid Email.") @NotEmpty(message = "The email must not be empty.")
     protected String email;
