@@ -2,38 +2,32 @@ package com.anthony.calorie_counter.utils.factories;
 
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.UserModel;
-import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.utils.SimpleFake;
 
-public class UserFactory {
-    public static UserModel createUser() {
-        UserModel userModel = new UserModel();
-        userModel.setId("b2283d3b-d470-40ec-9fd2-8b4eb4c5e290");
-        userModel.setName(SimpleFake.fullName());
-        userModel.setEmail(SimpleFake.email());
-        userModel.setPassword(SimpleFake.password(8));
-        userModel.setPhoneNumber(SimpleFake.phoneNumber());
-        userModel.setRoles(UserRole.USER);
-        return userModel;
-    }
+import java.util.UUID;
 
-    public static UserModel createUser(String id) {
-        UserModel userModel = new UserModel();
-        userModel.setId(id);
-        userModel.setName(SimpleFake.fullName());
-        userModel.setEmail(SimpleFake.email());
-        userModel.setPassword(SimpleFake.password(8));
-        userModel.setPhoneNumber(SimpleFake.phoneNumber());
-        userModel.setRoles(UserRole.USER);
-        return userModel;
-    }
+public class UserFactory {
 
     public static UserCreateDto createUserDto() {
-        return new UserCreateDto(
-                SimpleFake.fullName(),
-                SimpleFake.email(),
-                SimpleFake.password(8),
-                SimpleFake.phoneNumber()
-        );
+        UserCreateDto createDto = new UserCreateDto();
+        createDto.setName(SimpleFake.fullName());
+        createDto.setEmail(SimpleFake.email());
+        createDto.setPhoneNumber(SimpleFake.phoneNumber());
+        createDto.setPassword(SimpleFake.password(8));
+        return createDto;
+    }
+
+    public static UserModel createUserFromDto(UserCreateDto createDto) {
+        UserModel userModel = new UserModel();
+        userModel.setId(UUID.randomUUID());
+        userModel.setName(createDto.getName());
+        userModel.setEmail(createDto.getEmail());
+        userModel.setPhoneNumber(createDto.getPhoneNumber());
+        userModel.setPassword(createDto.getPassword());
+        return userModel;
+    }
+
+    public static UserModel createUser() {
+        return createUserFromDto(createUserDto());
     }
 }

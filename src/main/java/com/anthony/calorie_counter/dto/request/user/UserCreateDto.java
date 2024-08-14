@@ -15,6 +15,11 @@ public class UserCreateDto extends AbstractUserDto {
     @PasswordValid
     private String password;
 
+    public UserCreateDto(String name, String email, String phone, String password) {
+        super(name, email, phone);
+        this.password = password;
+    }
+
     public UserModel toEntity() {
         UserModel userModel = new UserModel();
         userModel.setName(name);
