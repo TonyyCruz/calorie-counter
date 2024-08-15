@@ -38,7 +38,7 @@ public class UserModel implements UserDetails {
         roles.add(roleModel);
     }
 
-    public void removeRole(Long roleId) {
+    public void removeRoleById(Long roleId) {
         roles.removeIf(r -> Objects.equals(r.getId(), roleId));
     }
 

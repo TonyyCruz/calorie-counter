@@ -22,6 +22,11 @@ public class RoleModel implements GrantedAuthority {
     @Column(unique = true)
     private UserRole authority;
 
+    public RoleModel(UserRole userRole) {
+        this.id = userRole.getRole();
+        this.authority = userRole;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

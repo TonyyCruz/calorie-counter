@@ -17,6 +17,15 @@ public class UserFactory {
         return createDto;
     }
 
+    public static UserCreateDto createUserDtoClone(UserCreateDto createDto) {
+        UserCreateDto newCreateDto = new UserCreateDto();
+        newCreateDto.setName(createDto.getName());
+        newCreateDto.setEmail(createDto.getEmail());
+        newCreateDto.setPhoneNumber(createDto.getPhoneNumber());
+        newCreateDto.setPassword(createDto.getPassword());
+        return newCreateDto;
+    }
+
     public static UserModel createUserFromDto(UserCreateDto createDto) {
         UserModel userModel = new UserModel();
         userModel.setId(UUID.randomUUID());
@@ -29,5 +38,15 @@ public class UserFactory {
 
     public static UserModel createUser() {
         return createUserFromDto(createUserDto());
+    }
+
+    public static UserModel createUserClone(UserModel userModel) {
+        UserModel newUserModel = new UserModel();
+        newUserModel.setId(userModel.getId());
+        newUserModel.setName(userModel.getName());
+        newUserModel.setEmail(userModel.getEmail());
+        newUserModel.setPhoneNumber(userModel.getPhoneNumber());
+        newUserModel.setPassword(userModel.getPassword());
+        return newUserModel;
     }
 }

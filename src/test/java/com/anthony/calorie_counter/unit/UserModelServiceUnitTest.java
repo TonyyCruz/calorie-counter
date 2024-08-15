@@ -16,12 +16,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserModelServiceUnitTest {
@@ -32,7 +32,7 @@ public class UserModelServiceUnitTest {
 	UserRepository userRepository;
 
 	@Mock
-	RoleRepository roleRepository;
+	private PasswordEncoder passwordEncoder;
 
 	@Test @DisplayName("Test if is possible find a user by id.")
 	void testCanFindUserById() {
@@ -45,32 +45,52 @@ public class UserModelServiceUnitTest {
 	@Test @DisplayName("Test if is possible save a new user.")
 	void testCanSaveAnNewUser() {
 		UserCreateDto userCreateDto = UserFactory.createUserDto();
-		when(roleRepository.findById(UserRole.ROLE_USER.getRole())).thenReturn(Optional.of(RoleFactory.createUserRole()));
-		when(userRepository.save(userCreateDto.toEntity())).thenReturn(UserFactory.createUserFromDto(userCreateDto));
-		UserModel receivedUserModel = userService.create(userCreateDto.toEntity());
-		assertEquals(userCreateDto.getName(), receivedUserModel.getName());
-		assertEquals(userCreateDto.getEmail(), receivedUserModel.getEmail());
-//		assertEquals(userCreateDto.getPassword(), receivedUserModel.getPassword());
-//		assertTrue(receivedUserModel.getId()); //exist
+		String encryptedPassword = "new_encrypted_pass";
+		UserCreateDto userCreateEncrypted = UserFactory.createUserDtoClone(userCreateDto);
+		userCreateEncrypted.setPassword(encryptedPassword);
+		UserModel expected = UserFactory.createUserFromDto(userCreateEncrypted);
+		when(passwordEncoder.encode(userCreateDto.getPassword())).thenReturn(encryptedPassword);
+		when(userRepository.save(userCreateEncrypted.toEntity())).thenReturn(expected);
+		UserModel current = userService.create(userCreateDto.toEntity());
+		assertEquals(userCreateDto.getName(), current.getName());
+		assertEquals(userCreateDto.getEmail(), current.getEmail());
+		assertEquals(current.getPassword(), encryptedPassword);
+		assertEquals(expected.getId(), current.getId());
 	}
 
-//	@Test @DisplayName("Test if is possible update a user.")
-//	void testCanUpdateAnUser() {
-//		UserModel currentUserModel = UserFactory.createUser();
-//		UserModel expectUserModel = UserFactory.createUser();
-//		expectUserModel.setId(currentUserModel.getId());
-//		expectUserModel.setName("New Name");
-//		expectUserModel.setEmail("new@email.com");
-//		expectUserModel.setPhoneNumber("(11) 95051-5050");
-//		when(userRepository.getReferenceById(userId)).thenReturn(currentUserModel);
-//		when(userRepository.save(expectUserModel)).thenReturn(expectUserModel);
-//		UserModel receivedUserModel = userService.updateUser(userId, expectUserModel);
-//		assertEquals(expectUserModel.getName(), receivedUserModel.getName());
-//		assertEquals(expectUserModel.getEmail(), receivedUserModel.getEmail());
-//		assertEquals(expectUserModel.getPassword(), receivedUserModel.getPassword());
-//		assertEquals(expectUserModel.getId(), receivedUserModel.getId());
-//	}
-//
+	@Test @DisplayName("Test if is possible to update a user")
+	void testCanUpdateAnUser() {
+		UserModel currentUserModel = UserFactory.createUser();
+		UserModel expectUserModel = UserFactory.createUser();
+		expectUserModel.setId(currentUserModel.getId());
+		expectUserModel.setName("New Name");
+		expectUserModel.setEmail("new@email.com");
+		expectUserModel.setPhoneNumber("(11) 95051-5050");
+		expectUserModel.setPassword(currentUserModel.getPassword());
+		when(userRepository.getReferenceById(currentUserModel.getId())).thenReturn(currentUserModel);
+		when(userRepository.save(expectUserModel)).thenReturn(expectUserModel);
+		UserModel receivedUserModel = userService.updateUser(currentUserModel.getId(), expectUserModel);
+		assertEquals(expectUserModel.getName(), receivedUserModel.getName());
+		assertEquals(expectUserModel.getEmail(), receivedUserModel.getEmail());
+		assertEquals(expectUserModel.getPassword(), receivedUserModel.getPassword());
+		assertEquals(expectUserModel.getId(), receivedUserModel.getId());
+	}
+
+	@Test @DisplayName("Test if is possible to update a password.")
+	void testCanUpdateThePassword() {
+		UserModel currentUser = UserFactory.createUser();
+		UserModel expectUser = UserFactory.createUserClone(currentUser);
+		String encryptedPassword = "new_encrypted_pass";
+		expectUser.setPassword(encryptedPassword);
+		String newPassword = "new_common_pass";
+		when(passwordEncoder.encode(newPassword)).thenReturn(encryptedPassword);
+		when(userRepository.getReferenceById(currentUser.getId())).thenReturn(currentUser);
+		when(userRepository.save(expectUser)).thenReturn(expectUser);
+		userService.updatePassword(currentUser.getId(), newPassword);
+		verify(userRepository, times(1)).save(expectUser);
+		verify(passwordEncoder, times(1)).encode(newPassword);
+	}
+
 //	// ======================================== Error cases ======================================== //
 //
 //	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
