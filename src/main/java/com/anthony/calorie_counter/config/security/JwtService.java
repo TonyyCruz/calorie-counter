@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.config.security;
 
+import com.anthony.calorie_counter.entity.UserModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,14 +22,18 @@ public class JwtService {
 
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
-        String scopes = authentication.getAuthorities().stream()
+        UserModel userModel = (UserModel) authentication.getPrincipal();
+        String userId = userModel.getId().toString();
+        String scopes = authentication
+                .getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
         var claims = JwtClaimsSet.builder()
                 .issuer("spring-security-jwt")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expirationTime))
-                .subject(authentication.getName())
+                .subject(userId)
                 .claim("scope", scopes)
                 .build();
         return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

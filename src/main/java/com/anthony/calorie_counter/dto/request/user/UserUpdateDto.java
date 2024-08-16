@@ -11,7 +11,7 @@ import lombok.Setter;
 public class UserUpdateDto extends AbstractUserDto {
     public UserModel toEntity() {
         UserModel userModel = new UserModel();
-        userModel.setFullName(fullName);
+        userModel.setName(name);
         userModel.setEmail(email);
         userModel.setPhoneNumber(phoneNumber);
         return userModel;

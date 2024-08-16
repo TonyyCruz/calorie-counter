@@ -5,16 +5,15 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public enum UserRole {
-    ROLE_USER(1),
-    ROLE_ADMIN(2);
+    ROLE_USER(1L),
+    ROLE_ADMIN(2L);
 
-    private final int role;
+    private final Long role;
 
-    UserRole(int role) { this.role = role; }
+    UserRole(Long role) { this.role = role; }
 
     public static UserRole getRoleFrom(String roleString) {
         try {

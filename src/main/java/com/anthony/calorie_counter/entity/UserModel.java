@@ -6,7 +6,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.*;
 
 
@@ -17,12 +16,12 @@ import java.util.*;
 @ToString
 @Entity
 @Table(name = "tb_users")
-public class UserModel implements UserDetails, Serializable {
+public class UserModel implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(nullable = false)
-    private String fullName;
+    private String name;
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
@@ -37,6 +36,10 @@ public class UserModel implements UserDetails, Serializable {
 
     public void addRole(RoleModel roleModel) {
         roles.add(roleModel);
+    }
+
+    public void removeRoleById(Long roleId) {
+        roles.removeIf(r -> Objects.equals(r.getId(), roleId));
     }
 
     @Override

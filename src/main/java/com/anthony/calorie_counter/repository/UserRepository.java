@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
 
     Optional<UserModel> findByEmail(String email);
 
-    @Modifying
-    @Query("UPDATE UserModel u SET u.password=?2 where u.id = ?1")
-    void updatePasswordByUserId(UUID id, String password);
+//    @Modifying
+//    @Query("UPDATE UserModel u SET u.password=?2 where u.id = ?1")
+//    void updatePasswordByUserId(UUID id, String password);
 }

@@ -57,7 +57,7 @@ public class SimpleFake {
         return randomString() + "@email.com";
     }
 
-    public static String randomSymbol() {
+    private static String randomSymbol() {
         String[] symbols = new String[] {"!", "@", "#", "$", "%", "", "&", "*", "(", ")", "_", "=", "+", ".", "?", ">", "<"};
         int position = randomInteger(0, symbols.length - 1);
         return symbols[position];
