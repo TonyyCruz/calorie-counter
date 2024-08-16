@@ -64,7 +64,7 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    @Override
+    @Override @Transactional
     public void deleteById(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new EntityDataNotFoundException("User not found with id: " + id);
@@ -85,16 +85,24 @@ public class UserService implements IUserService, UserDetailsService {
 
     @Override @Transactional
     public UserModel promoteToAdmin(UUID id) {
-        UserModel userModel = findById(id);
-        userModel.addRole(new RoleModel(UserRole.ROLE_ADMIN));
-        return userRepository.save(userModel);
+        try {
+            UserModel userModel = userRepository.getReferenceById(id);
+            userModel.addRole(new RoleModel(UserRole.ROLE_ADMIN));
+            return userRepository.save(userModel);
+        } catch (EntityNotFoundException e) {
+            throw new EntityDataNotFoundException("User not found with id: " + id);
+        }
     }
 
     @Override @Transactional
     public UserModel demoteFromAdmin(UUID id) {
-        UserModel userModel = findById(id);
-        userModel.removeRoleById(UserRole.ROLE_ADMIN.getRole());
-        return userRepository.save(userModel);
+        try {
+            UserModel userModel = userRepository.getReferenceById(id);
+            userModel.removeRoleById(UserRole.ROLE_ADMIN.getRole());
+            return userRepository.save(userModel);
+        } catch (EntityNotFoundException e) {
+            throw new EntityDataNotFoundException("User not found with id: " + id);
+        }
     }
 
     @Override

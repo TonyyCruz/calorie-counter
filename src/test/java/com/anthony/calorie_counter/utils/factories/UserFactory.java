@@ -47,6 +47,7 @@ public class UserFactory {
         newUserModel.setEmail(userModel.getEmail());
         newUserModel.setPhoneNumber(userModel.getPhoneNumber());
         newUserModel.setPassword(userModel.getPassword());
+        userModel.getRoles().forEach(newUserModel::addRole);
         return newUserModel;
     }
 }
