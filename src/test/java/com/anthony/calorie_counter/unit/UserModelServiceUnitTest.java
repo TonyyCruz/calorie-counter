@@ -3,10 +3,13 @@ package com.anthony.calorie_counter.unit;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
+import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -105,22 +109,22 @@ public class UserModelServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible delete a user.")
 	void testCanDeleteUserById() {
-		UserModel user = UserFactory.createUser();
-		when(userRepository.existsById(user.getId())).thenReturn(true);
-		doNothing().when(userRepository).deleteById(user.getId());
-		userService.deleteById(user.getId());
-		verify(userRepository, times(1)).existsById(user.getId());
-		verify(userRepository, times(1)).deleteById(user.getId());
+		UUID id = UUID.randomUUID();
+		when(userRepository.existsById(id)).thenReturn(true);
+		doNothing().when(userRepository).deleteById(id);
+		userService.deleteById(id);
+		verify(userRepository, times(1)).existsById(id);
+		verify(userRepository, times(1)).deleteById(id);
 	}
 
 	@Test @DisplayName("Test if is possible find all users.")
 	void testCanFindAllUsers() {
 		Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "id");
-		Page<UserModel> page = new PageImpl<UserModel>(List.of(UserFactory.createUser()));
+		Page<UserModel> page = new PageImpl<UserModel>(List.of(UserFactory.createUser(), UserFactory.createUser()));
 		when(userRepository.findAll(pageable)).thenReturn(page);
 		Page<UserModel> received = userService.findAll(pageable);
 		verify(userRepository, times(1)).findAll(pageable);
-		assertEquals(1, received.getSize());
+		assertEquals(2, received.getSize());
 	}
 
 	@Test @DisplayName("Test if is possible promote a user to admin.")
@@ -164,30 +168,102 @@ public class UserModelServiceUnitTest {
 	}
 
 //	// ======================================== Error cases ======================================== //
-//
-//	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
-//	void testCannotFindUserByInvalidIdAndThrowsAnException() {
-//		Long invalidId = 99L;
-//		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
-//		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
-//		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
-//	}
-//
-//	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
-//	void testCannotUpdateUserUserByInvalidIdAndThrowsAnException() {
-//		Long invalidId = 99L;
-//		UserModel expectUserModel = UserFactory.createUser();
-//		when(userRepository.getReferenceById(invalidId)).thenThrow(new EntityNotFoundException());
-//		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.updateUser(invalidId, expectUserModel));
-//		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
-//	}
-//
-//	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
-//	void testCannotDeleteByEmailUserByInvalidIdAndThrowsAnException() {
-//		Long invalidId = 99L;
-////		doThrow(new EmptyResultDataAccessException(0)).when(userRepository).deleteById(invalidId);
-//		when(userRepository.existsById(invalidId)).thenReturn(false);
-//		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.deleteByEmail(invalidId));
-//		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
-//	}
+
+	@Test @DisplayName("Test if service method 'findById' throws an exception with invalid id.")
+	void testTryFindUserByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
+		verify(userRepository, times(1)).findById(invalidId);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
+	void testTryUpdateUserByInvalidIdThrowsAnException() {
+		UserModel invalidUpdate = UserFactory.createUser();
+		UserModel reference = new UserModel();
+		reference.setId(invalidUpdate.getId());
+		when(userRepository.getReferenceById(invalidUpdate.getId())).thenReturn(reference);
+		when(userRepository.save(invalidUpdate)).thenThrow(new EntityNotFoundException());
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.updateUser(invalidUpdate.getId(), invalidUpdate)
+		);
+		verify(userRepository, times(1)).getReferenceById(invalidUpdate.getId());
+		verify(userRepository, times(1)).save(invalidUpdate);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidUpdate.getId());
+	}
+
+	@Test @DisplayName("Test if service method 'updatePassword' thrown an exception with invalid id.")
+	void testTryUpdatePasswordByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		String password = "Password123!";
+		UserModel reference = new UserModel();
+		reference.setId(invalidId);
+		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
+		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.updatePassword(invalidId, password)
+		);
+		verify(userRepository, times(1)).getReferenceById(invalidId);
+		verify(userRepository, times(1)).save(reference);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
+	void testTryDeleteByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		when(userRepository.existsById(invalidId)).thenReturn(false);
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.deleteById(invalidId)
+		);
+		verify(userRepository, times(1)).existsById(invalidId);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'promoteToAdmin' thrown an exception with invalid id.")
+	void testTryPromoteToAdminByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		UserModel reference = new UserModel();
+		reference.setId(invalidId);
+		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
+		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.promoteToAdmin(invalidId)
+		);
+		verify(userRepository, times(1)).getReferenceById(invalidId);
+		verify(userRepository, times(1)).save(reference);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'demoteToAdmin' thrown an exception with invalid id.")
+	void testTryDemoteToAdminByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		UserModel reference = new UserModel();
+		reference.setId(invalidId);
+		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
+		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.demoteFromAdmin(invalidId)
+		);
+		verify(userRepository, times(1)).getReferenceById(invalidId);
+		verify(userRepository, times(1)).save(reference);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'loadUserByUsername' throws an exception with invalid username.")
+	void testTryFindUserByInvalidUsernameThrowsAnException() {
+		String invalidUsername = "Username@email.com";
+		when(userRepository.findByEmail(invalidUsername)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(
+				UsernameNotFoundException.class ,
+				() -> userService.loadUserByUsername(invalidUsername)
+		);
+		verify(userRepository, times(1)).findByEmail(invalidUsername);
+		assertEquals(error.getMessage(), "User not found with username: " +  invalidUsername);
+	}
 }
