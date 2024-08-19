@@ -3,10 +3,13 @@ package com.anthony.calorie_counter.unit;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
+import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -164,24 +167,29 @@ public class UserModelServiceUnitTest {
 	}
 
 //	// ======================================== Error cases ======================================== //
-//
-//	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
-//	void testCannotFindUserByInvalidIdAndThrowsAnException() {
-//		Long invalidId = 99L;
-//		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
-//		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
-//		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
-//	}
-//
-//	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
-//	void testCannotUpdateUserUserByInvalidIdAndThrowsAnException() {
-//		Long invalidId = 99L;
-//		UserModel expectUserModel = UserFactory.createUser();
-//		when(userRepository.getReferenceById(invalidId)).thenThrow(new EntityNotFoundException());
-//		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.updateUser(invalidId, expectUserModel));
-//		assertEquals(error.getMessage(), "User " +  invalidId + " was not found.");
-//	}
-//
+
+	@Test @DisplayName("Test if service method 'find user by id' throws an exception with invalid id.")
+	void testTryFindUserByInvalidIdThrowsAnException() {
+		UUID invalidId = UUID.randomUUID();
+		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+	}
+
+	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
+	void testTryUpdateUserByInvalidIdThrowsAnException() {
+		UserModel invalidUpdate = UserFactory.createUser();
+		UserModel reference = new UserModel();
+		reference.setId(invalidUpdate.getId());
+		when(userRepository.getReferenceById(invalidUpdate.getId())).thenReturn(reference);
+		when(userRepository.save(invalidUpdate)).thenThrow(new EntityNotFoundException());
+		Throwable error = assertThrowsExactly(
+				EntityDataNotFoundException.class,
+				() -> userService.updateUser(invalidUpdate.getId(), invalidUpdate)
+		);
+		assertEquals(error.getMessage(), "User not found with id: " +  invalidUpdate.getId());
+	}
+
 //	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
 //	void testCannotDeleteByEmailUserByInvalidIdAndThrowsAnException() {
 //		Long invalidId = 99L;
