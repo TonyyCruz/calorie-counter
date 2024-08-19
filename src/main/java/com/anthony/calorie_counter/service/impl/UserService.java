@@ -108,6 +108,6 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found with: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }
