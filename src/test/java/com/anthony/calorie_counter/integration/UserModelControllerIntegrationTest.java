@@ -1,9 +1,12 @@
 package com.anthony.calorie_counter.integration;
 
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
+import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.repository.UserRepository;
+import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+import java.util.Set;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 public class UserModelControllerIntegrationTest extends TestBase {
     @Autowired
@@ -24,18 +30,22 @@ public class UserModelControllerIntegrationTest extends TestBase {
         userRepository.deleteAll();
     }
 
-//    @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
-//    void canCreateAnNewUser() throws Exception {
-//        UserCreateDto newUser = UserFactory.createUserDto();
-//        String valueAsString = objectMapper.writeValueAsString(newUser);
-//        mockMvc.perform(post(USER_URL).contentType(MediaType.APPLICATION_JSON).content(valueAsString))
-//            .andExpect(status().isCreated())
-//            .andExpect(jsonPath("$.name").value(newUser.fullName()))
-//            .andExpect(jsonPath("$.email").value(newUser.email()))
-//            .andExpect(jsonPath("$.phoneNumber").value(newUser.phoneNumber()))
-//            .andExpect(jsonPath("$.password").doesNotExist());
-//    }
-//
+    @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
+    void canCreateAnNewUser() throws Exception {
+        UserCreateDto newUser = UserFactory.createUserDto();
+        String valueAsString = objectMapper.writeValueAsString(newUser);
+        mockMvc.perform(post(USER_URL + "/register").contentType(MediaType.APPLICATION_JSON).content(valueAsString))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").isNotEmpty())
+            .andExpect(jsonPath("$.name").value(newUser.getName()))
+            .andExpect(jsonPath("$.email").value(newUser.getEmail()))
+            .andExpect(jsonPath("$.phoneNumber").value(newUser.getPhoneNumber()))
+            .andExpect(jsonPath("$.roles.length()").value(1))
+            .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
+            .andExpect(jsonPath("$.password").doesNotExist())
+            .andDo(print());
+    }
+
 //    @Test @DisplayName("Test if is possible find a user by received id and receive status code 200.")
 //    void canFindAnUserById() throws Exception {
 //        UserCreateDto userCreateDto = UserFactory.createUserDto();

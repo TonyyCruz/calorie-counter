@@ -3,7 +3,8 @@ package com.anthony.calorie_counter.service.impl;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,7 +31,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Override @Transactional(readOnly = true)
     public UserModel findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
+            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
@@ -60,14 +61,14 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
+            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
     @Override @Transactional
     public void deleteById(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
+            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
         userRepository.deleteById(id);
     }
@@ -77,12 +78,6 @@ public class UserService implements IUserService, UserDetailsService {
         return userRepository.findAll(pageable);
     }
 
-//    @Transactional(readOnly = true)
-//    public RoleModel findRoleById(Long id) {
-//        return roleRepository.findById(id)
-//                .orElseThrow(() -> new EntityDataNotFoundException("Role not found with id: " + id));
-//    }
-
     @Override @Transactional
     public UserModel promoteToAdmin(UUID id) {
         try {
@@ -90,7 +85,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.addRole(new RoleModel(UserRole.ROLE_ADMIN));
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
+            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
@@ -101,13 +96,13 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.removeRoleById(UserRole.ROLE_ADMIN.getRole());
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException("User not found with id: " + id);
+            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
     @Override
     public UserModel loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_USERNAME + username));
     }
 }

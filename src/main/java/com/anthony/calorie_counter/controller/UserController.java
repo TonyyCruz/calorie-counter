@@ -4,10 +4,11 @@ import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
+import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
-import com.anthony.calorie_counter.exceptions.UnauthorizedRequestException;
+import com.anthony.calorie_counter.exceptions.UnauthorizedRequest;
 import com.anthony.calorie_counter.service.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
@@ -40,6 +41,8 @@ public class UserController {
     public ResponseEntity<UserViewDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
         UserModel userModel = userCreateDto.toEntity();
         UserModel registeredUserModel = userService.create(userModel);
+        UserViewDto view = new UserViewDto(userModel);
+        boolean t = view.roles().contains(new RoleModel(UserRole.ROLE_USER));
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 
@@ -71,7 +74,7 @@ public class UserController {
         if(isPrincipalAdmin() || getPrincipalId().equals(UUID.fromString(id))) {
             userService.deleteById(UUID.fromString(id));
         } else {
-            throw new UnauthorizedRequestException("You have no authorization to delete another user.");
+            throw new UnauthorizedRequest("You have no authorization to delete another user.");
         }
         return ResponseEntity.noContent().build();
     }

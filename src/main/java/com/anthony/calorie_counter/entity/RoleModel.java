@@ -36,6 +36,11 @@ public class RoleModel implements GrantedAuthority {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(id, authority);
+    }
+
+    @Override
     public String getAuthority() {
         return authority.name();
     }
