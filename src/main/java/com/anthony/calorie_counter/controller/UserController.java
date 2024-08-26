@@ -9,6 +9,7 @@ import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.UnauthorizedRequest;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.service.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
@@ -39,16 +40,17 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserViewDto> create(@RequestBody @Valid UserCreateDto userCreateDto) {
-        UserModel userModel = userCreateDto.toEntity();
-        UserModel registeredUserModel = userService.create(userModel);
-        UserViewDto view = new UserViewDto(userModel);
-        boolean t = view.roles().contains(new RoleModel(UserRole.ROLE_USER));
+        UserModel registeredUserModel = userService.create(userCreateDto.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(registeredUserModel));
     }
 
-    @GetMapping
-    public ResponseEntity<UserViewDto> findSelfData() {
-        UserModel userModel = userService.findById(getPrincipalId());
+    @GetMapping("/{id}")
+    public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
+        var a =SecurityContextHolder.getContext();
+        if(!getPrincipalId().equals(UUID.fromString(id)) && !isPrincipalAdmin()) {
+            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_ACCESS_DATA);
+        }
+        UserModel userModel = userService.findById(UUID.fromString(id));
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
@@ -74,16 +76,9 @@ public class UserController {
         if(isPrincipalAdmin() || getPrincipalId().equals(UUID.fromString(id))) {
             userService.deleteById(UUID.fromString(id));
         } else {
-            throw new UnauthorizedRequest("You have no authorization to delete another user.");
+            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_MODIFY_DATA);
         }
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
-        UserModel userModel = userService.findById(UUID.fromString(id));
-        return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     @PostMapping("/promote/{id}")
@@ -100,7 +95,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(updatedUser));
     }
 
-    @GetMapping("/all")
+    @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<Page<UserViewDto>> listAll(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
