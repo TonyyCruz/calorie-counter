@@ -46,7 +46,6 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
-        var a =SecurityContextHolder.getContext();
         if(!getPrincipalId().equals(UUID.fromString(id)) && !isPrincipalAdmin()) {
             throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_ACCESS_DATA);
         }

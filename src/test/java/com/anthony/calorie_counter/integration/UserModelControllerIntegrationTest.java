@@ -9,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,15 +47,11 @@ public class UserModelControllerIntegrationTest extends TestBase {
     }
 
     @Test @DisplayName("Test if is possible find a user by received id and receive status code 200.")
+//    @WithMockUser
+
     void canFindAnUserById() throws Exception {
-//        UserCreateDto userCreateDto = UserFactory.createUserDto();
-//        UserModel savedUserModel = this.userRepository.save(userCreateDto.toEntity());
         String path = USER_URL + "/" + userModelTest().getId();
-
-        mockMvc.perform(get(path)
-                        .header("Authorization", this.userToken)
-
-                )
+        mockMvc.perform(get(path).header("Authorization", this.userToken))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value(userModelTest().getName()))
             .andExpect(jsonPath("$.email").value(userModelTest().getEmail()))

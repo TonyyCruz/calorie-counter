@@ -35,6 +35,8 @@ public class TestBase {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    private UUID userId;
+    private UUID adminId;
     protected final String USER_URL = "/api/v1/users";
     protected final String AUTH_URL = "/api/v1/auth/login";
     protected String userToken;
@@ -59,13 +61,15 @@ public class TestBase {
 
     public void performSaveUser(UserModel user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        user = userRepository.save(user);
+        if (user.getName().equals(userModelTest().getName())) { userId = user.getId(); }
+        else { adminId = user.getId(); }
     }
 
 
     public UserModel userModelTest() {
         UserModel user = new UserModel();
-        user.setId(UUID.fromString("d89401d3-64ac-40c7-8198-b35cdaa4935b"));
+        user.setId(userId);
         user.setName("user");
         user.setEmail("testUser@email.com");
         user.setPhoneNumber("(11) 95797-9692");
@@ -75,7 +79,7 @@ public class TestBase {
 
     public UserModel adminModelTest() {
         UserModel user = new UserModel();
-        user.setId(UUID.fromString("47f4b4f7-40a4-4bc5-aa09-d7828fc911f2"));
+        user.setId(adminId);
         user.setName("admin");
         user.setEmail("testAdmin@email.com");
         user.setPhoneNumber("(11) 95797-9692");
