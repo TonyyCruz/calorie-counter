@@ -1,5 +1,6 @@
 package com.anthony.calorie_counter.controller;
 
+import com.anthony.calorie_counter.dto.request.user.PasswordAuthenticateDto;
 import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
@@ -46,37 +47,44 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
-        if(!getPrincipalId().equals(UUID.fromString(id)) && !isPrincipalAdmin()) {
-            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_ACCESS_DATA);
-        }
+        checkAuthorization(id);
         UserModel userModel = userService.findById(UUID.fromString(id));
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
-    @PutMapping("/update/user")
-    public ResponseEntity<UserViewDto> updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto) {
-        UserModel userModel = userService.updateUser(getPrincipalId(), userUpdateDto.toEntity());
+    @PutMapping("/update/user/{id}")
+    public ResponseEntity<UserViewDto> updateUser(
+            @PathVariable String id,
+            @RequestBody @Valid UserUpdateDto userUpdateDto
+    ) {
+        checkAuthorization(id);
+        UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
-    @PutMapping("/update/password")
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid PasswordUpdateDto passwordDto) {
-        UserModel user = userService.findById(getPrincipalId());
-        if (!passwordEncoder.matches(passwordDto.getOldPassword(), user.getPassword())) {
-            throw new AuthenticationDataException("Old password is incorrect.");
+    @PutMapping("/update/password/{id}")
+    public ResponseEntity<String> updatePassword(
+            @PathVariable String id,
+            @RequestBody @Valid PasswordUpdateDto passwordUpdateDto
+    ) {
+        UserModel user = userService.findById(UUID.fromString(id));
+        if (!passwordEncoder.matches(passwordUpdateDto.getOldPassword(), user.getPassword()) && principalIsNotAdmin()) {
+            throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
         }
-        userService.updatePassword(user.getId(), passwordDto.getNewPassword());
+        checkAuthorization(id);
+        userService.updatePassword(UUID.fromString(id), passwordUpdateDto.getNewPassword());
         return ResponseEntity.ok("Password updated successfully.");
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        if(isPrincipalAdmin() || getPrincipalId().equals(UUID.fromString(id))) {
-            userService.deleteById(UUID.fromString(id));
-        } else {
-            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_MODIFY_DATA);
+    public ResponseEntity<?> delete(@PathVariable String id, PasswordAuthenticateDto passwordAuthenticate) {
+        UserModel user = userService.findById(UUID.fromString(id));
+        if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword()) && principalIsNotAdmin()) {
+            throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
         }
+        checkAuthorization(id);
+        userService.deleteById(UUID.fromString(id));
         return ResponseEntity.noContent().build();
     }
 
@@ -105,7 +113,10 @@ public class UserController {
 
     @PutMapping("/update/user/{id}")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<UserViewDto> updateUserById(@RequestBody @Valid UserUpdateDto userUpdateDto, @PathVariable String id) {
+    public ResponseEntity<UserViewDto> updateUserById(
+            @RequestBody @Valid UserUpdateDto userUpdateDto,
+            @PathVariable String id
+    ) {
         UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
@@ -118,8 +129,14 @@ public class UserController {
         return UUID.fromString(getJwtUser().getSubject());
     }
 
-    private boolean isPrincipalAdmin() {
+    private boolean principalIsNotAdmin() {
         String[] roles = getJwtUser().getClaims().get("scope").toString().split(" ");
         return Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
+    }
+
+    private void checkAuthorization(String id) {
+        if (principalIsNotAdmin() || !getPrincipalId().equals(UUID.fromString(id))) {
+            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_MODIFY_DATA);
+        }
     }
 }
