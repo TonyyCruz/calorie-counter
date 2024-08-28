@@ -93,7 +93,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<UserViewDto> promoteToAdmin(@PathVariable(name = "id") String id) {
         UserModel user = userService.promoteToAdmin(UUID.fromString(id));
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(user));
+        return ResponseEntity.ok(new UserViewDto(user));
     }
 
     @PostMapping("/demote/{id}")
@@ -122,11 +122,11 @@ public class UserController {
 
     private boolean principalIsNotAdmin() {
         String[] roles = getJwtUser().getClaims().get("scope").toString().split(" ");
-        return Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
+        return !Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
     }
 
     private void checkAuthorization(String id) {
-        if (principalIsNotAdmin() || !getPrincipalId().equals(UUID.fromString(id))) {
+        if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
             throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_MODIFY_DATA);
         }
     }
