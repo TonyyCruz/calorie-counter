@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/update/user/{id}")
-    public ResponseEntity<UserViewDto> updateUser(
+    public ResponseEntity<UserViewDto> updateUserById(
             @PathVariable String id,
             @RequestBody @Valid UserUpdateDto userUpdateDto
     ) {
@@ -78,8 +78,9 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable String id, PasswordAuthenticateDto passwordAuthenticate) {
+    public ResponseEntity<?> delete(@PathVariable String id, @RequestBody PasswordAuthenticateDto passwordAuthenticate) {
         UserModel user = userService.findById(UUID.fromString(id));
+        var a = passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword());
         if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword()) && principalIsNotAdmin()) {
             throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
         }
@@ -109,16 +110,6 @@ public class UserController {
     ) {
         Page<UserViewDto> users = userService.findAll(pageable).map(UserViewDto::new);
         return ResponseEntity.ok(users);
-    }
-
-    @PutMapping("/update/user/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<UserViewDto> updateUserById(
-            @RequestBody @Valid UserUpdateDto userUpdateDto,
-            @PathVariable String id
-    ) {
-        UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
-        return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     private Jwt getJwtUser() {
