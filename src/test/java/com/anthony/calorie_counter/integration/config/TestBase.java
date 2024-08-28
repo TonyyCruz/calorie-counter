@@ -2,6 +2,7 @@ package com.anthony.calorie_counter.integration.config;
 
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.repository.UserRepository;
+import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,14 +45,14 @@ public class TestBase {
 
     @BeforeEach
     protected void setUp() throws Exception {
-        performSaveUser(userModelTest());
-        performSaveUser(adminModelTest());
-        userToken = performLogin(userModelTest());
-        adminToken = performLogin(adminModelTest());
+        userId = performSaveUser(savedUser()).getId();
+        adminId = performSaveUser(savedAdmin()).getId();
+        userToken = performLogin(savedUser().getEmail(), savedUser().getPassword());
+        adminToken = performLogin(savedAdmin().getEmail(), savedAdmin().getPassword());
     }
 
-    public String performLogin(UserModel user) throws Exception {
-        ResultActions resultActions = mockMvc.perform(post(AUTH_URL).with(httpBasic(user.getEmail(), user.getPassword())));
+    public String performLogin(String username, String password) throws Exception {
+        ResultActions resultActions = mockMvc.perform(post(AUTH_URL).with(httpBasic(username, password)));
         MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         JSONObject json = new JSONObject(contentAsString);
@@ -59,31 +60,32 @@ public class TestBase {
 //        return "Bearer " + json.getJSONObject("data").getString("token");
     }
 
-    public void performSaveUser(UserModel user) {
+    public UserModel performSaveUser(UserModel user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user = userRepository.save(user);
-        if (user.getName().equals(userModelTest().getName())) { userId = user.getId(); }
-        else { adminId = user.getId(); }
+        return userRepository.save(user);
     }
 
 
-    public UserModel userModelTest() {
+    public UserModel savedUser() {
         UserModel user = new UserModel();
         user.setId(userId);
         user.setName("user");
         user.setEmail("testUser@email.com");
         user.setPhoneNumber("(11) 95797-9692");
         user.setPassword("123456");
+        user.addRole(RoleFactory.createUserRole());
         return user;
     }
 
-    public UserModel adminModelTest() {
+    public UserModel savedAdmin() {
         UserModel user = new UserModel();
         user.setId(adminId);
         user.setName("admin");
         user.setEmail("testAdmin@email.com");
         user.setPhoneNumber("(11) 95797-9692");
         user.setPassword("123456");
+        user.addRole(RoleFactory.createUserRole());
+        user.addRole(RoleFactory.createAdminRole());
         return user;
     }
 }
