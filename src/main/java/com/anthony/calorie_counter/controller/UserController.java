@@ -100,7 +100,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<UserViewDto> demoteFromAdmin(@PathVariable(name = "id") String id) {
         UserModel updatedUser = userService.demoteFromAdmin(UUID.fromString(id));
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserViewDto(updatedUser));
+        return ResponseEntity.ok(new UserViewDto(updatedUser));
     }
 
     @GetMapping

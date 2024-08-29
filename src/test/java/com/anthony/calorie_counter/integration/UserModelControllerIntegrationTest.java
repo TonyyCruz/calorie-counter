@@ -4,6 +4,7 @@ import com.anthony.calorie_counter.dto.request.user.PasswordAuthenticateDto;
 import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
+import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.utils.SimpleFake;
@@ -18,6 +19,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+
+import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -130,14 +134,6 @@ public class UserModelControllerIntegrationTest extends TestBase {
     @Test @DisplayName("Test if an admin can promote an user to admin by id and receive status code 200.")
     void canAdminPromoteAnUserToAdminById() throws Exception {
         String path = USER_URL + "/promote/" + savedUser().getId();
-        mockMvc.perform(get(USER_URL + "/" + savedUser().getId()).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
-                .andExpect(jsonPath(
-                        "$.roles[*].authority", Matchers.containsInAnyOrder(
-                                RoleFactory.createUserRole().getAuthority()
-                        ))
-                );
         mockMvc.perform(post(path)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", adminToken)
@@ -155,6 +151,51 @@ public class UserModelControllerIntegrationTest extends TestBase {
                         ))
                 )
                 .andExpect(jsonPath("$.password").doesNotExist())
+                .andDo(print());
+    }
+
+    @Test @DisplayName("Test if an admin can demote an admin to user by id and receive status code 200.")
+    void canAdminDemoteAnAdminToUserById() throws Exception {
+        userRepository.findById(savedUser().getId())
+                .ifPresent(userModel -> {
+                    userModel.addRole(RoleFactory.createAdminRole());
+                    userRepository.save(userModel);
+        });
+        String getUserPath = USER_URL + "/" + savedUser().getId();
+        mockMvc.perform((get(getUserPath)).header("Authorization", userToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roles", Matchers.hasSize(2)))
+                .andExpect(jsonPath(
+                        "$.roles[*].authority", Matchers.containsInAnyOrder(
+                                RoleFactory.createAdminRole().getAuthority(),
+                                RoleFactory.createUserRole().getAuthority()
+                        ))
+                );
+        String demotePath = USER_URL + "/demote/" + savedUser().getId();
+        mockMvc.perform(post(demotePath)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", adminToken)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
+                .andExpect(jsonPath("$.name").value(savedUser().getName()))
+                .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
+                .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
+                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.roles[0]").value( RoleFactory.createUserRole()))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andDo(print());
+    }
+
+    @Test @DisplayName("Test if an admin can get all users and receive status code 200.")
+    void canAdminGetAllUsers() throws Exception {
+        mockMvc.perform(get(USER_URL).header("Authorization", adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", Matchers.hasSize(2)))
+                .andExpect(jsonPath(
+                        "$.content[*].email",
+                        Matchers.containsInAnyOrder(savedUser().getEmail(), savedAdmin().getEmail()))
+                )
                 .andDo(print());
     }
 
