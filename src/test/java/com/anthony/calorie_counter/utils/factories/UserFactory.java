@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.utils.factories;
 
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.utils.SimpleFake;
 
@@ -49,5 +50,13 @@ public class UserFactory {
         newUserModel.setPassword(userModel.getPassword());
         userModel.getRoles().forEach(newUserModel::addRole);
         return newUserModel;
+    }
+
+    public static UserUpdateDto updateUserDto() {
+        UserUpdateDto updateDto = new UserUpdateDto();
+        updateDto.setName(SimpleFake.fullName());
+        updateDto.setEmail(SimpleFake.email());
+        updateDto.setPhoneNumber(SimpleFake.phoneNumber());
+        return updateDto;
     }
 }

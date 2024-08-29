@@ -34,6 +34,8 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	// Oauth2
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	// https://mvnrepository.com/artifact/com.nimbusds/oauth2-oidc-sdk
+	//runtimeOnly group: 'com.nimbusds', name: 'oauth2-oidc-sdk', version: '11.18' // For test token
 	// Documentation
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'

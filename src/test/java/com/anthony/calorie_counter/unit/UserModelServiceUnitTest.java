@@ -3,14 +3,15 @@ package com.anthony.calorie_counter.unit;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
-import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +28,9 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
+@DisplayName("Unit test for UserModel service")
 public class UserModelServiceUnitTest {
 	@InjectMocks
 	private UserService userService;
@@ -173,9 +176,9 @@ public class UserModelServiceUnitTest {
 	void testTryFindUserByInvalidIdThrowsAnException() {
 		UUID invalidId = UUID.randomUUID();
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
-		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
+		Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> userService.findById(invalidId));
 		verify(userRepository, times(1)).findById(invalidId);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
 	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
@@ -186,12 +189,12 @@ public class UserModelServiceUnitTest {
 		when(userRepository.getReferenceById(invalidUpdate.getId())).thenReturn(reference);
 		when(userRepository.save(invalidUpdate)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFoundException.class,
+				EntityDataNotFound.class,
 				() -> userService.updateUser(invalidUpdate.getId(), invalidUpdate)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidUpdate.getId());
 		verify(userRepository, times(1)).save(invalidUpdate);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidUpdate.getId());
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidUpdate.getId());
 	}
 
 	@Test @DisplayName("Test if service method 'updatePassword' thrown an exception with invalid id.")
@@ -203,12 +206,12 @@ public class UserModelServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFoundException.class,
+				EntityDataNotFound.class,
 				() -> userService.updatePassword(invalidId, password)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);
 		verify(userRepository, times(1)).save(reference);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
 	@Test @DisplayName("Test if service method 'delete' thrown an exception with invalid id.")
@@ -216,11 +219,11 @@ public class UserModelServiceUnitTest {
 		UUID invalidId = UUID.randomUUID();
 		when(userRepository.existsById(invalidId)).thenReturn(false);
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFoundException.class,
+				EntityDataNotFound.class,
 				() -> userService.deleteById(invalidId)
 		);
 		verify(userRepository, times(1)).existsById(invalidId);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
 	@Test @DisplayName("Test if service method 'promoteToAdmin' thrown an exception with invalid id.")
@@ -231,12 +234,12 @@ public class UserModelServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFoundException.class,
+				EntityDataNotFound.class,
 				() -> userService.promoteToAdmin(invalidId)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);
 		verify(userRepository, times(1)).save(reference);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
 	@Test @DisplayName("Test if service method 'demoteToAdmin' thrown an exception with invalid id.")
@@ -247,12 +250,12 @@ public class UserModelServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFoundException.class,
+				EntityDataNotFound.class,
 				() -> userService.demoteFromAdmin(invalidId)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);
 		verify(userRepository, times(1)).save(reference);
-		assertEquals(error.getMessage(), "User not found with id: " +  invalidId);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
 	@Test @DisplayName("Test if service method 'loadUserByUsername' throws an exception with invalid username.")
@@ -264,6 +267,6 @@ public class UserModelServiceUnitTest {
 				() -> userService.loadUserByUsername(invalidUsername)
 		);
 		verify(userRepository, times(1)).findByEmail(invalidUsername);
-		assertEquals(error.getMessage(), "User not found with username: " +  invalidUsername);
+		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_USERNAME +  invalidUsername);
 	}
 }

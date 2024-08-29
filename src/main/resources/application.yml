@@ -16,10 +16,10 @@ spring:
       hibernate:
         format_sql: true
 
-  spring:
-    sql:
-      init:
-        mode: always # To hibernate runs before data SQL
+
+  sql:
+    init:
+      mode: always # To hibernate runs before data SQL
 
   h2:
     console:

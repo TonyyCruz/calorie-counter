@@ -1,8 +1,8 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
-import com.anthony.calorie_counter.exceptions.abstractError.BadRequest;
-import com.anthony.calorie_counter.exceptions.abstractError.NotFoundException;
-import com.anthony.calorie_counter.exceptions.abstractError.UnauthorizedException;
+import com.anthony.calorie_counter.exceptions.abstractExeptions.BadRequest;
+import com.anthony.calorie_counter.exceptions.abstractExeptions.NotFound;
+import com.anthony.calorie_counter.exceptions.abstractExeptions.Unauthorized;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -16,8 +16,8 @@ import java.time.Instant;
 @RestControllerAdvice
 public class RestExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    ResponseEntity<ExceptionDetails> notFound(NotFoundException e, HttpServletRequest request) {
+    @ExceptionHandler(NotFound.class)
+    ResponseEntity<ExceptionDetails> notFound(NotFound e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Not found.");
         exceptionDetails.setTimestamp(Instant.now());
@@ -67,8 +67,8 @@ public class RestExceptionHandler {
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    ResponseEntity<ExceptionDetails> unauthorizedException(UnauthorizedException e, HttpServletRequest request) {
+    @ExceptionHandler(Unauthorized.class)
+    ResponseEntity<ExceptionDetails> unauthorizedException(Unauthorized e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Unauthorized.");
         exceptionDetails.setTimestamp(Instant.now());
