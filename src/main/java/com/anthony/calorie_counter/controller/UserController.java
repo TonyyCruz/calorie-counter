@@ -5,11 +5,10 @@ import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
-import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
-import com.anthony.calorie_counter.exceptions.UnauthorizedRequest;
+import com.anthony.calorie_counter.exceptions.ForbiddenRequest;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.service.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -80,7 +79,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable String id, @RequestBody PasswordAuthenticateDto passwordAuthenticate) {
         UserModel user = userService.findById(UUID.fromString(id));
-        var a = passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword());
         if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword()) && principalIsNotAdmin()) {
             throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
         }
@@ -127,7 +125,7 @@ public class UserController {
 
     private void checkAuthorization(String id) {
         if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
-            throw new UnauthorizedRequest(ExceptionMessages.UNAUTHORIZED_TO_MODIFY_DATA);
+            throw new ForbiddenRequest(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION);
         }
     }
 }

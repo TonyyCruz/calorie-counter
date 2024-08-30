@@ -2,7 +2,7 @@ package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.abstractExeptions.BadRequest;
 import com.anthony.calorie_counter.exceptions.abstractExeptions.NotFound;
-import com.anthony.calorie_counter.exceptions.abstractExeptions.Unauthorized;
+import com.anthony.calorie_counter.exceptions.abstractExeptions.Forbidden;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -67,12 +67,12 @@ public class RestExceptionHandler {
         return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
     }
 
-    @ExceptionHandler(Unauthorized.class)
-    ResponseEntity<ExceptionDetails> unauthorizedException(Unauthorized e, HttpServletRequest request) {
+    @ExceptionHandler(Forbidden.class)
+    ResponseEntity<ExceptionDetails> unauthorizedException(Forbidden e, HttpServletRequest request) {
         ExceptionDetails exceptionDetails = new ExceptionDetails();
         exceptionDetails.setTitle("Unauthorized.");
         exceptionDetails.setTimestamp(Instant.now());
-        exceptionDetails.setStatus(HttpStatus.UNAUTHORIZED.value());
+        exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.addError("error", e.getMessage());

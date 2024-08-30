@@ -52,13 +52,13 @@ public class UserModelServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible save a new user.")
 	void testCanSaveAnNewUser() {
-		UserCreateDto userCreateDto = UserFactory.createUserDto();
+		UserCreateDto userCreateDto = UserFactory.userCreateDto();
 		String encryptedPassword = "new_encrypted_pass";
-		UserModel expectProcess = UserFactory.createUserDtoClone(userCreateDto).toEntity();
+		UserModel expectProcess = UserFactory.cloneUserCreateDto(userCreateDto).toEntity();
 		expectProcess.setPassword(encryptedPassword);
 		RoleModel role = RoleFactory.createUserRole();
 		expectProcess.addRole(role);
-		UserModel expectedWithId = UserFactory.createUserClone(expectProcess);
+		UserModel expectedWithId = UserFactory.cloneUser(expectProcess);
 		expectedWithId.setId(UUID.randomUUID());
 		when(passwordEncoder.encode(userCreateDto.getPassword())).thenReturn(encryptedPassword);
 		when(userRepository.save(expectProcess)).thenReturn(expectedWithId);
@@ -78,7 +78,7 @@ public class UserModelServiceUnitTest {
 		UserModel currentUserData = UserFactory.createUser();
 		UserModel updateData = UserFactory.createUser();
 		updateData.setId(currentUserData.getId());
-		UserModel expected = UserFactory.createUserClone(currentUserData);
+		UserModel expected = UserFactory.cloneUser(currentUserData);
 		expected.setName(updateData.getName());
 		expected.setEmail(updateData.getEmail());
 		expected.setPhoneNumber(updateData.getPhoneNumber());
@@ -97,7 +97,7 @@ public class UserModelServiceUnitTest {
 	@Test @DisplayName("Test if is possible to update a password.")
 	void testCanUpdateThePassword() {
 		UserModel userData = UserFactory.createUser();
-		UserModel expect = UserFactory.createUserClone(userData);
+		UserModel expect = UserFactory.cloneUser(userData);
 		String newPassword = "new_common_pass";
 		String encryptedPassword = "new_encrypted_pass";
 		expect.setPassword(encryptedPassword);
@@ -134,7 +134,7 @@ public class UserModelServiceUnitTest {
 	void testCanPromoteUserToAdmin() {
 		UserModel commonUser = UserFactory.createUser();
 		commonUser.addRole(RoleFactory.createUserRole());
-		UserModel expect = UserFactory.createUserClone(commonUser);
+		UserModel expect = UserFactory.cloneUser(commonUser);
 		RoleModel roleAdmin = RoleFactory.createAdminRole();
 		expect.addRole(roleAdmin);
 		when(userRepository.getReferenceById(commonUser.getId())).thenReturn(commonUser);
@@ -151,7 +151,7 @@ public class UserModelServiceUnitTest {
 		adminUser.addRole(RoleFactory.createUserRole());
 		RoleModel roleAdmin = RoleFactory.createAdminRole();
 		adminUser.addRole(roleAdmin);
-		UserModel expect = UserFactory.createUserClone(adminUser);
+		UserModel expect = UserFactory.cloneUser(adminUser);
 		expect.removeRoleById(roleAdmin.getId());
 		when(userRepository.getReferenceById(adminUser.getId())).thenReturn(adminUser);
 		when(userRepository.save(expect)).thenReturn(expect);
