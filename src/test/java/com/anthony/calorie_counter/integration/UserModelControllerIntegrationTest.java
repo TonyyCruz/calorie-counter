@@ -4,24 +4,13 @@ import com.anthony.calorie_counter.dto.request.user.PasswordAuthenticateDto;
 import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
-import com.anthony.calorie_counter.entity.UserModel;
-import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.utils.SimpleFake;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
-import com.nimbusds.jose.shaded.gson.Gson;
-import com.nimbusds.jose.shaded.gson.JsonArray;
 import org.hamcrest.Matchers;
-import org.json.JSONArray;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
-
-import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,198 +29,183 @@ public class UserModelControllerIntegrationTest extends TestBase {
         super.setUp();
     }
 
-    @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
-    void canCreateANewUser() throws Exception {
-        UserCreateDto newUser = UserFactory.createUserDto();
-        String valueAsString = objectMapper.writeValueAsString(newUser);
-        mockMvc.perform(post(USER_URL + "/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(valueAsString)
-                )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.name").value(newUser.getName()))
-                .andExpect(jsonPath("$.email").value(newUser.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(newUser.getPhoneNumber()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
-                .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
-                .andDo(print());
+    @Nested
+    @DisplayName("User test cases.")
+    class UserSuccessTestCases {
+
+        @Test
+        @DisplayName("Test if is possible create a new user and receive status code 201.")
+        void canCreateANewUser() throws Exception {
+            UserCreateDto newUser = UserFactory.createUserDto();
+            String valueAsString = objectMapper.writeValueAsString(newUser);
+            mockMvc.perform(post(USER_URL + "/register")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                    )
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").isNotEmpty())
+                    .andExpect(jsonPath("$.name").value(newUser.getName()))
+                    .andExpect(jsonPath("$.email").value(newUser.getEmail()))
+                    .andExpect(jsonPath("$.phoneNumber").value(newUser.getPhoneNumber()))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if is possible find self user data by id and receive status code 200.")
+        void canUserFindSelfDataById() throws Exception {
+            String path = USER_URL + "/" + savedUser().getId();
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
+                    .andExpect(jsonPath("$.name").value(savedUser().getName()))
+                    .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
+                    .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if an user can update his data by id and receive status code 200.")
+        void canUserUpdateHisDataById() throws Exception {
+            UserUpdateDto updateUser = UserFactory.updateUserDto();
+            String valueAsString = objectMapper.writeValueAsString(updateUser);
+            String path = USER_URL + "/update/user/" + savedUser().getId();
+            mockMvc.perform(put(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                            .header("Authorization", userToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
+                    .andExpect(jsonPath("$.name").value(updateUser.getName()))
+                    .andExpect(jsonPath("$.email").value(updateUser.getEmail()))
+                    .andExpect(jsonPath("$.phoneNumber").value(updateUser.getPhoneNumber()))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
+                    .andDo(print());
+            mockMvc.perform(post(AUTH_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
+                    .andExpect(status().isOk()).andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if an user can update his password by id and receive status code 200.")
+        void canUserUpdateHisPasswordById() throws Exception {
+            PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto();
+            passwordUpdateDto.setOldPassword(savedUser().getPassword());
+            passwordUpdateDto.setNewPassword(SimpleFake.password(8));
+            String valueAsString = objectMapper.writeValueAsString(passwordUpdateDto);
+            String path = USER_URL + "/update/password/" + savedUser().getId();
+            mockMvc.perform(put(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                            .header("Authorization", userToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andDo(print());
+            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
+                    .andExpect(status().isOk()).andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if an user can delete his account by id and receive status code 200.")
+        void canUserDeleteHisAccountById() throws Exception {
+            PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto(savedUser().getPassword());
+            String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);
+            String path = USER_URL + "/" + savedUser().getId();
+            mockMvc.perform(delete(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                            .header("Authorization", userToken)
+                    )
+                    .andExpect(status().isNoContent())
+                    .andDo(print());
+            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
+                    .andExpect(status().is(401)).andDo(print());
+        }
     }
 
-    @Test @DisplayName("Test if is possible find self user data by id and receive status code 200.")
-    void canUserFindSelfDataById() throws Exception {
-        String path = USER_URL + "/" + savedUser().getId();
-        mockMvc.perform(get(path).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
-                .andExpect(jsonPath("$.name").value(savedUser().getName()))
-                .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
-                .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
-                .andDo(print());
-    }
+    @Nested
+    @DisplayName("Admin test cases.")
+    class AdminSuccessTestCases {
+        @Test @DisplayName("Test if an admin can promote an user to admin by id and receive status code 200.")
+        void canAdminPromoteAnUserToAdminById() throws Exception {
+            String path = USER_URL + "/promote/" + savedUser().getId();
+            mockMvc.perform(post(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", adminToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
+                    .andExpect(jsonPath("$.name").value(savedUser().getName()))
+                    .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
+                    .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(2)))
+                    .andExpect(jsonPath(
+                            "$.roles[*].authority", Matchers.containsInAnyOrder(
+                                    RoleFactory.createAdminRole().getAuthority(),
+                                    RoleFactory.createUserRole().getAuthority()
+                            ))
+                    )
+                    .andExpect(jsonPath("$.password").doesNotExist())
+                    .andDo(print());
+        }
 
-    @Test @DisplayName("Test if an user can update his data by id and receive status code 200.")
-    void canUserUpdateHisDataById() throws Exception {
-        UserUpdateDto updateUser = UserFactory.updateUserDto();
-        String valueAsString = objectMapper.writeValueAsString(updateUser);
-        String path = USER_URL + "/update/user/" + savedUser().getId();
-        mockMvc.perform(put(path)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(valueAsString)
-                        .header("Authorization", userToken)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
-                .andExpect(jsonPath("$.name").value(updateUser.getName()))
-                .andExpect(jsonPath("$.email").value(updateUser.getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(updateUser.getPhoneNumber()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
-                .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
-                .andDo(print());
-        mockMvc.perform(post(AUTH_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
-                .andExpect(status().isOk()).andDo(print());
-    }
+        @Test @DisplayName("Test if an admin can demote an admin to user by id and receive status code 200.")
+        void canAdminDemoteAnAdminToUserById() throws Exception {
+            userRepository.findById(savedUser().getId())
+                    .ifPresent(userModel -> {
+                        userModel.addRole(RoleFactory.createAdminRole());
+                        userRepository.save(userModel);
+                    });
+            String getUserPath = USER_URL + "/" + savedUser().getId();
+            mockMvc.perform((get(getUserPath)).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(2)))
+                    .andExpect(jsonPath(
+                            "$.roles[*].authority", Matchers.containsInAnyOrder(
+                                    RoleFactory.createAdminRole().getAuthority(),
+                                    RoleFactory.createUserRole().getAuthority()
+                            ))
+                    );
+            String demotePath = USER_URL + "/demote/" + savedUser().getId();
+            mockMvc.perform(post(demotePath)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", adminToken)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
+                    .andExpect(jsonPath("$.name").value(savedUser().getName()))
+                    .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
+                    .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
+                    .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.roles[0]").value( RoleFactory.createUserRole()))
+                    .andExpect(jsonPath("$.password").doesNotExist())
+                    .andDo(print());
+        }
 
-    @Test @DisplayName("Test if an user can update his password by id and receive status code 200.")
-    void canUserUpdateHisPasswordById() throws Exception {
-        PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto();
-        passwordUpdateDto.setOldPassword(savedUser().getPassword());
-        passwordUpdateDto.setNewPassword(SimpleFake.password(8));
-        String valueAsString = objectMapper.writeValueAsString(passwordUpdateDto);
-        String path = USER_URL + "/update/password/" + savedUser().getId();
-        mockMvc.perform(put(path)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(valueAsString)
-                        .header("Authorization", userToken)
-                )
-                .andExpect(status().isOk())
-                .andDo(print());
-        mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
-                .andExpect(status().isOk()).andDo(print());
-    }
-
-    @Test @DisplayName("Test if an user can delete his account by id and receive status code 200.")
-    void canUserDeleteHisAccountById() throws Exception {
-        PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto(savedUser().getPassword());
-        String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);
-        String path = USER_URL + "/" + savedUser().getId();
-        mockMvc.perform(delete(path)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(valueAsString)
-                        .header("Authorization", userToken)
-                )
-                .andExpect(status().isNoContent())
-                .andDo(print());
-        mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
-                .andExpect(status().is(401)).andDo(print());
-    }
-
-    @Test @DisplayName("Test if an admin can promote an user to admin by id and receive status code 200.")
-    void canAdminPromoteAnUserToAdminById() throws Exception {
-        String path = USER_URL + "/promote/" + savedUser().getId();
-        mockMvc.perform(post(path)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", adminToken)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
-                .andExpect(jsonPath("$.name").value(savedUser().getName()))
-                .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(2)))
-                .andExpect(jsonPath(
-                        "$.roles[*].authority", Matchers.containsInAnyOrder(
-                        RoleFactory.createAdminRole().getAuthority(),
-                        RoleFactory.createUserRole().getAuthority()
-                        ))
-                )
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andDo(print());
-    }
-
-    @Test @DisplayName("Test if an admin can demote an admin to user by id and receive status code 200.")
-    void canAdminDemoteAnAdminToUserById() throws Exception {
-        userRepository.findById(savedUser().getId())
-                .ifPresent(userModel -> {
-                    userModel.addRole(RoleFactory.createAdminRole());
-                    userRepository.save(userModel);
-        });
-        String getUserPath = USER_URL + "/" + savedUser().getId();
-        mockMvc.perform((get(getUserPath)).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(2)))
-                .andExpect(jsonPath(
-                        "$.roles[*].authority", Matchers.containsInAnyOrder(
-                                RoleFactory.createAdminRole().getAuthority(),
-                                RoleFactory.createUserRole().getAuthority()
-                        ))
-                );
-        String demotePath = USER_URL + "/demote/" + savedUser().getId();
-        mockMvc.perform(post(demotePath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", adminToken)
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(savedUser().getId().toString()))
-                .andExpect(jsonPath("$.name").value(savedUser().getName()))
-                .andExpect(jsonPath("$.email").value(savedUser().getEmail()))
-                .andExpect(jsonPath("$.phoneNumber").value(savedUser().getPhoneNumber()))
-                .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
-                .andExpect(jsonPath("$.roles[0]").value( RoleFactory.createUserRole()))
-                .andExpect(jsonPath("$.password").doesNotExist())
-                .andDo(print());
-    }
-
-    @Test @DisplayName("Test if an admin can get all users and receive status code 200.")
-    void canAdminGetAllUsers() throws Exception {
-        mockMvc.perform(get(USER_URL).header("Authorization", adminToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", Matchers.hasSize(2)))
-                .andExpect(jsonPath(
-                        "$.content[*].email",
-                        Matchers.containsInAnyOrder(savedUser().getEmail(), savedAdmin().getEmail()))
-                )
-                .andDo(print());
+        @Test @DisplayName("Test if an admin can get all users and receive status code 200.")
+        void canAdminGetAllUsers() throws Exception {
+            mockMvc.perform(get(USER_URL).header("Authorization", adminToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content", Matchers.hasSize(2)))
+                    .andExpect(jsonPath(
+                            "$.content[*].email",
+                            Matchers.containsInAnyOrder(savedUser().getEmail(), savedAdmin().getEmail()))
+                    )
+                    .andDo(print());
+        }
     }
 
 
 
-//    @Test @DisplayName("Test if is possible find all users and receive status code 200.")
-//    void canFindAllUsers() throws Exception {
-//        UserCreateDto userCreateDto = UserFactory.createUserDto();
-//        UserModel savedUserModel = this.userRepository.save(userCreateDto.toEntity());
-
-//        UserCreateDto userCreateDto = UserFactory.createUserDto();
-//        UserModel savedUserModel = this.userRepository.save(userCreateDto.toEntity());
-
-//        mockMvc.perform(get(USER_URL))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.name").value(userCreateDto.getName()))
-//                .andExpect(jsonPath("$.email").value(userCreateDto.getEmail()))
-//                .andExpect(jsonPath("$.phoneNumber").value(userCreateDto.getPhoneNumber()))
-//                .andExpect(jsonPath("$.password").doesNotExist())
-//                .andDo(print());
-//    }
-
-//    @Test @DisplayName("Test if is possible delete a user by received id and receive status code 204.")
-//    void canDeleteAnUserById() throws Exception {
-//        UserModel userModel = UserFactory.createUser();
-//        UserModel savedUserModel = this.userRepository.save(userModel);
-//        String path = USER_URL + "/" + savedUserModel.getId();
-//        mockMvc.perform(delete(path))
-//            .andExpect(status().isNoContent())
-//            .andExpect(jsonPath("$.name").doesNotExist())
-//            .andExpect(jsonPath("$.email").doesNotExist())
-//            .andExpect(jsonPath("$.phoneNumber").doesNotExist())
-//            .andExpect(jsonPath("$.password").doesNotExist());
-//    }
-//
-//    // ======================================== Error cases ======================================== //
+    
+//     ======================================== Error cases ======================================== //
 //
 //    @Test @DisplayName("Test if throws an exception when try create a user with empty full name and receive status code 400.")
 //    void cannotCreateAnNewUserWithEmptyFullName() throws Exception {
