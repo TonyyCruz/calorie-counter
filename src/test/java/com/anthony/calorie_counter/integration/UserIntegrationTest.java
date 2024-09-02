@@ -10,7 +10,10 @@ import com.anthony.calorie_counter.utils.SimpleFake;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -24,14 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("Integration test for User API endpoints")
-public class UserModelControllerIntegrationTest extends TestBase {
-
-    @Override
-    @BeforeEach
-    protected void setUp() throws Exception {
-        userRepository.deleteAll();
-        super.setUp();
-    }
+public class UserIntegrationTest extends TestBase {
 
     @Nested
     @DisplayName("User test cases")
@@ -131,7 +127,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(status().isNoContent())
                     .andDo(print());
             mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
-                    .andExpect(status().is(401)).andDo(print());
+                    .andExpect(status().is(HttpStatus.UNAUTHORIZED.value())).andDo(print());
         }
 
         @Test
@@ -146,7 +142,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -168,7 +164,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -190,7 +186,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -212,7 +208,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -223,7 +219,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if throws an exception when trying to create a user with empty phone number and receive status code 400.")
+        @DisplayName("Test if throws an exception when trying to create a user with empty phone number and 400.")
         void cannotCreateAUserWithEmptyPhoneNumber() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setPhoneNumber("");
@@ -234,7 +230,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -245,7 +241,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if throws an exception when trying to create a user with invalid phone number and receive status code 400.")
+        @DisplayName("Test if throws an exception when trying to create a user with invalid phone number and 400.")
         void cannotCreateAUserWithInvalidPhoneNumber() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             String path = USER_URL + "/register";
@@ -258,7 +254,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                                 .content(valueAsString)
                         )
                         .andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.status").value(400))
+                        .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                         .andExpect(jsonPath("$.path").value(path))
                         .andExpect(jsonPath("$.exception")
                                 .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -270,7 +266,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if throws an exception when trying to create a user with empty password and receive status code 400.")
+        @DisplayName("Test if throws an exception when trying to create a user with empty password and 400.")
         void cannotCreateAUserWithEmptyPassword() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setPassword("");
@@ -281,7 +277,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                             .content(valueAsString)
                     )
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value(400))
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception")
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -294,7 +290,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if throws an exception when trying to create a user with invalid password and receive status code 400.")
+        @DisplayName("Test if throws an exception when trying to create a user with invalid password and 400.")
         void cannotCreateAUserWithInvalidPassword() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             String path = USER_URL + "/register";
@@ -307,7 +303,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                                 .content(valueAsString)
                         )
                         .andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.status").value(400))
+                        .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                         .andExpect(jsonPath("$.path").value(path))
                         .andExpect(jsonPath("$.exception")
                                 .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -320,7 +316,8 @@ public class UserModelControllerIntegrationTest extends TestBase {
             }
         }
 
-        @Test @DisplayName("Test if throws an exception when trying to find another user by id and receive status code 403.")
+        @Test
+        @DisplayName("Test if throws an exception when trying to find another user by id and receive status code 403.")
         void cannotFindAnotherUserById() throws Exception {
             UUID invalidId = UUID.randomUUID();
             String path = USER_URL + "/" + invalidId;
@@ -359,7 +356,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if throws an exception when trying to update a user with invalid password and receive status code 400.")
+        @DisplayName("Test if throws an exception when trying to update a user with invalid password and 400.")
         void cannotUpdateAUserWithInvalidPassword() throws Exception {
             PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto(savedUser().getPassword(), "");
             String path = USER_URL + "/update/password/" + savedUser().getId();
@@ -373,7 +370,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                                 .header("Authorization", userToken)
                         )
                         .andExpect(status().isBadRequest())
-                        .andExpect(jsonPath("$.status").value(400))
+                        .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
                         .andExpect(jsonPath("$.path").value(path))
                         .andExpect(jsonPath("$.exception")
                                 .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
@@ -384,6 +381,54 @@ public class UserModelControllerIntegrationTest extends TestBase {
                         ))
                         .andDo(print());
             }
+        }
+
+        @Test
+        @DisplayName("Test if throws an exception when trying to update password with invalid  old password and 400.")
+        void cannotUpdateAnPasswordWithInvalidOldPassword() throws Exception {
+            String wrongOldPassword = SimpleFake.password(8);
+            String newPassword = SimpleFake.password(8);
+            PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto(wrongOldPassword, newPassword);
+            String path = USER_URL + "/update/password/" + savedUser().getId();
+            String valueAsString = objectMapper.writeValueAsString(passwordUpdateDto);
+            mockMvc.perform(put(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                            .header("Authorization", userToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+                    .andExpect(jsonPath("$.path").value(path))
+                    .andExpect(
+                            jsonPath("$.exception")
+                            .value("class com.anthony.calorie_counter.exceptions.InvalidCredentialsException")
+                    )
+                    .andExpect(jsonPath("$.errors[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.INCORRECT_USER_DATA))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if throws an exception when trying to delete a user with invalid authenticate password and receive status code 403.")
+        void cannotDeleteAUserWithInvalidAuthenticatePassword() throws Exception {
+            String wrongPassword = SimpleFake.password(8);
+            PasswordAuthenticateDto passwordAuthenticateDto = new PasswordAuthenticateDto(wrongPassword);
+            String valueAsString = objectMapper.writeValueAsString(passwordAuthenticateDto);
+            String path = USER_URL + "/" + savedUser().getId();
+            mockMvc.perform(delete(path)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(valueAsString)
+                            .header("Authorization", userToken)
+                    )
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+                    .andExpect(jsonPath("$.path").value(path))
+                    .andExpect(jsonPath("$.exception")
+                            .value("class com.anthony.calorie_counter.exceptions.InvalidCredentialsException")
+                    )
+                    .andExpect(jsonPath("$.errors[*]").isNotEmpty())
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.INCORRECT_USER_DATA))
+                    .andDo(print());
         }
 
         @Test
@@ -588,7 +633,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(status().isNoContent())
                     .andDo(print());
             mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
-                    .andExpect(status().is(401)).andDo(print());
+                    .andExpect(status().is(HttpStatus.UNAUTHORIZED.value())).andDo(print());
         }
 
         @Test @DisplayName("Test if throws an exception when trying to find a user with invalid id and receive status code 404.")

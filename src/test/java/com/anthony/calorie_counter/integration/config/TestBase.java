@@ -46,6 +46,7 @@ public class TestBase {
 
     @BeforeEach
     protected void setUp() throws Exception {
+        userRepository.deleteAll();
         userId = performSaveUser(savedUser()).getId();
         adminId = performSaveUser(savedAdmin()).getId();
         userToken = performLogin(savedUser().getEmail(), savedUser().getPassword());

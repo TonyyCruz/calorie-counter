@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Tag("integration")
 @DisplayName("Integration test for Authentication API endpoint")
-public class AuthenticationControllerIntegrationTest  extends TestBase {
+public class AuthenticationIntegrationTest extends TestBase {
 
     @Test
     @DisplayName("Test if is possible authenticate a user and receive status code 200.")
@@ -32,5 +32,17 @@ public class AuthenticationControllerIntegrationTest  extends TestBase {
         String path = USER_URL + "/" + savedUser().getId();
         mockMvc.perform(get(path).header("Authorization", token))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Test if throws an error if try to login with invalid credentials and receive status code 401.")
+    void cannotAuthenticateWithInvalidUserData() throws Exception {
+        String invalidPassword = "SomePass000!!!";
+        MvcResult response = mockMvc.perform(post(AUTH_LOGIN_URL)
+                        .with(httpBasic(savedUser().getEmail(), invalidPassword))
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.token").doesNotExist())
+                .andReturn();
     }
 }

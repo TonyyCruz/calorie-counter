@@ -50,10 +50,6 @@ public class UserModel implements UserDetails {
         return Objects.equals(id, userModel.id);
     }
 
-    public boolean isAdmin() {
-        return getAuthorities().stream().anyMatch(role -> role.getAuthority().contains(UserRole.ROLE_ADMIN.name()));
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(id);

@@ -7,8 +7,8 @@ import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
-import com.anthony.calorie_counter.exceptions.AuthenticationDataException;
 import com.anthony.calorie_counter.exceptions.ForbiddenRequest;
+import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.service.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -68,7 +68,7 @@ public class UserController {
     ) {
         UserModel user = userService.findById(UUID.fromString(id));
         if (!passwordEncoder.matches(passwordUpdateDto.getOldPassword(), user.getPassword()) && principalIsNotAdmin()) {
-            throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
+            throw new InvalidCredentialsException(ExceptionMessages.INCORRECT_USER_DATA);
         }
         checkAuthorization(id);
         userService.updatePassword(UUID.fromString(id), passwordUpdateDto.getNewPassword());
@@ -80,7 +80,7 @@ public class UserController {
     public ResponseEntity<?> delete(@PathVariable String id, @RequestBody PasswordAuthenticateDto passwordAuthenticate) {
         UserModel user = userService.findById(UUID.fromString(id));
         if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword()) && principalIsNotAdmin()) {
-            throw new AuthenticationDataException(ExceptionMessages.INCORRECT_USER_DATA);
+            throw new InvalidCredentialsException(ExceptionMessages.INCORRECT_USER_DATA);
         }
         checkAuthorization(id);
         userService.deleteById(UUID.fromString(id));

@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Unit test for UserModel service")
-public class UserModelServiceUnitTest {
+public class UserServiceUnitTest {
 	@InjectMocks
 	private UserService userService;
 
