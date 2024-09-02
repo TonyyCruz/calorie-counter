@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class UserFactory {
 
-    public static UserCreateDto createUserDto() {
+    public static UserCreateDto userCreateDto() {
         UserCreateDto createDto = new UserCreateDto();
         createDto.setName(SimpleFake.fullName());
         createDto.setEmail(SimpleFake.email());
@@ -18,7 +18,7 @@ public class UserFactory {
         return createDto;
     }
 
-    public static UserCreateDto createUserDtoClone(UserCreateDto createDto) {
+    public static UserCreateDto cloneUserCreateDto(UserCreateDto createDto) {
         UserCreateDto newCreateDto = new UserCreateDto();
         newCreateDto.setName(createDto.getName());
         newCreateDto.setEmail(createDto.getEmail());
@@ -38,10 +38,10 @@ public class UserFactory {
     }
 
     public static UserModel createUser() {
-        return createUserFromDto(createUserDto());
+        return createUserFromDto(userCreateDto());
     }
 
-    public static UserModel createUserClone(UserModel userModel) {
+    public static UserModel cloneUser(UserModel userModel) {
         UserModel newUserModel = new UserModel();
         newUserModel.setId(userModel.getId());
         newUserModel.setName(userModel.getName());
@@ -52,7 +52,7 @@ public class UserFactory {
         return newUserModel;
     }
 
-    public static UserUpdateDto updateUserDto() {
+    public static UserUpdateDto userUpdateDto() {
         UserUpdateDto updateDto = new UserUpdateDto();
         updateDto.setName(SimpleFake.fullName());
         updateDto.setEmail(SimpleFake.email());
