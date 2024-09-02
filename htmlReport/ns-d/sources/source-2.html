@@ -1,0 +1,151 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PasswordValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.anthony.calorie_counter.service.validation</a>
+</div>
+
+<h1>Coverage Summary for Class: PasswordValidator (com.anthony.calorie_counter.service.validation)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PasswordValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.anthony.calorie_counter.service.validation;
+&nbsp;
+&nbsp;import com.anthony.calorie_counter.exceptions.handler.FieldErrorMessage;
+&nbsp;import jakarta.validation.ConstraintValidator;
+&nbsp;import jakarta.validation.ConstraintValidatorContext;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+<b class="fc">&nbsp;public class PasswordValidator implements ConstraintValidator&lt;PasswordValid, String&gt; {</b>
+<b class="fc">&nbsp;    private final Pattern REGEX = Pattern.compile(&quot;^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$&quot;);</b>
+&nbsp;
+&nbsp;    @Override
+<b class="fc">&nbsp;    public void initialize(PasswordValid ann){}</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean isValid(String password, ConstraintValidatorContext context) {
+<b class="fc">&nbsp;        List&lt;FieldErrorMessage&gt; list = new ArrayList&lt;&gt;();</b>
+&nbsp;        // Testes de validaçãoa baixo. Insere os erros da validação de email a lista com minha classe &quot;FieldErrorMessage&quot;.
+<b class="fc">&nbsp;        if (!REGEX.matcher(password).matches()) {</b>
+<b class="fc">&nbsp;            list.add(</b>
+&nbsp;                    new FieldErrorMessage(
+&nbsp;                    &quot;password&quot;,
+&nbsp;                    &quot;The password must have at least 8 characters including at least one uppercase, one lowercase and a number.&quot;
+&nbsp;            ));
+&nbsp;        }
+<b class="fc">&nbsp;        for(FieldErrorMessage e : list) {</b>
+<b class="fc">&nbsp;            context.disableDefaultConstraintViolation();</b>
+<b class="fc">&nbsp;            context.buildConstraintViolationWithTemplate(e.getErrorMessage())</b>
+<b class="fc">&nbsp;                    .addConstraintViolation();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return list.isEmpty();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-30 17:42</div>
+</div>
+</body>
+</html>

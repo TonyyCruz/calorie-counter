@@ -94,7 +94,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
                     .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
                     .andExpect(status().isOk()).andDo(print());
         }
 
@@ -113,7 +113,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     )
                     .andExpect(status().isOk())
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
                     .andExpect(status().isOk()).andDo(print());
         }
 
@@ -130,7 +130,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     )
                     .andExpect(status().isNoContent())
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
                     .andExpect(status().is(401)).andDo(print());
         }
 
@@ -551,7 +551,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.roles", Matchers.hasSize(1)))
                     .andExpect(jsonPath("$.roles[0]").value(RoleFactory.createUserRole()))
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(updateUser.getEmail(), savedUser().getPassword())))
                     .andExpect(status().isOk()).andDo(print());
         }
 
@@ -570,7 +570,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     )
                     .andExpect(status().isOk())
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), passwordUpdateDto.getNewPassword())))
                     .andExpect(status().isOk()).andDo(print());
         }
 
@@ -587,7 +587,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     )
                     .andExpect(status().isNoContent())
                     .andDo(print());
-            mockMvc.perform(post(AUTH_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
+            mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(savedUser().getEmail(), savedUser().getPassword())))
                     .andExpect(status().is(401)).andDo(print());
         }
 
@@ -602,7 +602,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
 
@@ -623,7 +623,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
 
@@ -644,7 +644,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
 
@@ -665,7 +665,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
 
@@ -680,7 +680,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
 
@@ -695,7 +695,7 @@ public class UserModelControllerIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.EntityDataNotFound"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value("User not found with id: " + invalidId))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.USER_NOT_FOUND_WITH_ID + invalidId))
                     .andDo(print());
         }
     }

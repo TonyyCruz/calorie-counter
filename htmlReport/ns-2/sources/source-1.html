@@ -1,0 +1,145 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > JwtService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.anthony.calorie_counter.config.security</a>
+</div>
+
+<h1>Coverage Summary for Class: JwtService (com.anthony.calorie_counter.config.security)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JwtService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.anthony.calorie_counter.config.security;
+&nbsp;
+&nbsp;import com.anthony.calorie_counter.entity.UserModel;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.GrantedAuthority;
+&nbsp;import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+&nbsp;import org.springframework.security.oauth2.jwt.JwtEncoder;
+&nbsp;import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.time.Instant;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class JwtService {
+&nbsp;    private final JwtEncoder encoder;
+&nbsp;    @Value(&quot;${jwt.expiration_time}&quot;)
+&nbsp;    private Long expirationTime;
+&nbsp;
+<b class="fc">&nbsp;    public JwtService(JwtEncoder encoder) { this.encoder = encoder; }</b>
+&nbsp;
+&nbsp;    public String generateToken(Authentication authentication) {
+<b class="fc">&nbsp;        Instant now = Instant.now();</b>
+<b class="fc">&nbsp;        UserModel userModel = (UserModel) authentication.getPrincipal();</b>
+<b class="fc">&nbsp;        String userId = userModel.getId().toString();</b>
+<b class="fc">&nbsp;        String scopes = authentication</b>
+<b class="fc">&nbsp;                .getAuthorities()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(GrantedAuthority::getAuthority)</b>
+<b class="fc">&nbsp;                .collect(Collectors.joining(&quot; &quot;));</b>
+<b class="fc">&nbsp;        var claims = JwtClaimsSet.builder()</b>
+<b class="fc">&nbsp;                .issuer(&quot;spring-security-jwt&quot;)</b>
+<b class="fc">&nbsp;                .issuedAt(now)</b>
+<b class="fc">&nbsp;                .expiresAt(now.plusSeconds(expirationTime))</b>
+<b class="fc">&nbsp;                .subject(userId)</b>
+<b class="fc">&nbsp;                .claim(&quot;scope&quot;, scopes)</b>
+<b class="fc">&nbsp;                .build();</b>
+<b class="fc">&nbsp;        return encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-30 17:42</div>
+</div>
+</body>
+</html>

@@ -36,10 +36,11 @@ public class TestBase {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    protected String API_VERSION = "/api/v1";
+    protected final String AUTH_LOGIN_URL = API_VERSION + "/auth/login";
+    protected final String USER_URL = API_VERSION + "/users";
     private UUID userId;
     private UUID adminId;
-    protected final String USER_URL = "/api/v1/users";
-    protected final String AUTH_URL = "/api/v1/auth/login";
     protected String userToken;
     protected String adminToken;
 
@@ -52,7 +53,7 @@ public class TestBase {
     }
 
     public String performLogin(String username, String password) throws Exception {
-        ResultActions resultActions = mockMvc.perform(post(AUTH_URL).with(httpBasic(username, password)));
+        ResultActions resultActions = mockMvc.perform(post(AUTH_LOGIN_URL).with(httpBasic(username, password)));
         MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         JSONObject json = new JSONObject(contentAsString);
