@@ -26,6 +26,7 @@ public class UserModel implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.EAGER)

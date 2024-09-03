@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.controller;
 
 import com.anthony.calorie_counter.dto.response.user.LoginResponseTokenDto;
-import com.anthony.calorie_counter.service.IAuthenticationService;
+import com.anthony.calorie_counter.service.interfaces.IAuthenticationService;
 import com.anthony.calorie_counter.service.impl.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

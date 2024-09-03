@@ -20,17 +20,17 @@ VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 1),
        ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 2),
        ('7b87f809-d142-4dfa-8802-87644d774dd5', 1);
 
-CREATE TABLE `tb_foods` (
-  `id` INT PRIMARY KEY,
-  `name` CHAR(255),
-  `portion` CHAR(10),
-  `calories` SMALLINT,
-  `total_fat` CHAR(10),
-  `protein` CHAR(10),
-  `carbohydrate` CHAR(10),
-  `fiber` CHAR(10),
-  `sugars` CHAR(10)
-);
+--CREATE TABLE `tb_foods` (
+--  `id` INT PRIMARY KEY,
+--  `name` CHAR(255),
+--  `portion` CHAR(10),
+--  `calories` SMALLINT,
+--  `total_fat` CHAR(10),
+--  `protein` CHAR(10),
+--  `carbohydrate` CHAR(10),
+--  `fiber` CHAR(10),
+--  `sugars` CHAR(10)
+--);
 
 INSERT INTO `tb_foods` (`id`,`name`,`portion`,`calories`,`total_fat`,`protein`,`carbohydrate`,`fiber`,`sugars`)
 VALUES

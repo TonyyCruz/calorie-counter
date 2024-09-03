@@ -19,7 +19,7 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberVali
         List<FieldErrorMessage> list = new ArrayList<>();
         // Testes de validaçãoa baixo. Insere os erros da validação de email a lista com minha classe "FieldErrorMessage".
         if (!REGEX.matcher(phoneNumber).matches()) {
-            list.add(new FieldErrorMessage("phoneNumber", "Invalid phone number."));
+            list.add(new FieldErrorMessage("phoneNumber", "Invalid phone number, please enter valid data in the format: '(11) 99999-9999'."));
         }
         for(FieldErrorMessage e : list) {
             context.disableDefaultConstraintViolation();

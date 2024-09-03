@@ -6,7 +6,7 @@ import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
-import com.anthony.calorie_counter.service.IUserService;
+import com.anthony.calorie_counter.service.interfaces.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
