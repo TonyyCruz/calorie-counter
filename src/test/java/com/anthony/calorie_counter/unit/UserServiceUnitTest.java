@@ -43,7 +43,7 @@ public class UserServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible find a user by id.")
 	void testCanFindUserById() {
-		UserModel expect = UserFactory.createUser();
+		UserModel expect = UserFactory.createUserEntity();
 		when(userRepository.findById(expect.getId())).thenReturn(Optional.of(expect));
 		UserModel received = userService.findById(expect.getId());
 		verify(userRepository, times(1)).findById(expect.getId());
@@ -51,7 +51,7 @@ public class UserServiceUnitTest {
 	}
 
 	@Test @DisplayName("Test if is possible save a new user.")
-	void testCanSaveAnNewUser() {
+	void testCanSaveANewUser() {
 		UserCreateDto userCreateDto = UserFactory.userCreateDto();
 		String encryptedPassword = "new_encrypted_pass";
 		UserModel expectProcess = UserFactory.cloneUserCreateDto(userCreateDto).toEntity();
@@ -74,9 +74,9 @@ public class UserServiceUnitTest {
 	}
 
 	@Test @DisplayName("Test if is possible to update a user")
-	void testCanUpdateAnUser() {
-		UserModel currentUserData = UserFactory.createUser();
-		UserModel updateData = UserFactory.createUser();
+	void testCanUpdateAUser() {
+		UserModel currentUserData = UserFactory.createUserEntity();
+		UserModel updateData = UserFactory.createUserEntity();
 		updateData.setId(currentUserData.getId());
 		UserModel expected = UserFactory.cloneUser(currentUserData);
 		expected.setName(updateData.getName());
@@ -96,7 +96,7 @@ public class UserServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible to update a password.")
 	void testCanUpdateThePassword() {
-		UserModel userData = UserFactory.createUser();
+		UserModel userData = UserFactory.createUserEntity();
 		UserModel expect = UserFactory.cloneUser(userData);
 		String newPassword = "new_common_pass";
 		String encryptedPassword = "new_encrypted_pass";
@@ -111,7 +111,7 @@ public class UserServiceUnitTest {
 	}
 
 	@Test @DisplayName("Test if is possible delete a user.")
-	void testCanDeleteUserById() {
+	void testCanDeleteAUserById() {
 		UUID id = UUID.randomUUID();
 		when(userRepository.existsById(id)).thenReturn(true);
 		doNothing().when(userRepository).deleteById(id);
@@ -123,7 +123,7 @@ public class UserServiceUnitTest {
 	@Test @DisplayName("Test if is possible find all users.")
 	void testCanFindAllUsers() {
 		Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "id");
-		Page<UserModel> page = new PageImpl<UserModel>(List.of(UserFactory.createUser(), UserFactory.createUser()));
+		Page<UserModel> page = new PageImpl<UserModel>(List.of(UserFactory.createUserEntity(), UserFactory.createUserEntity()));
 		when(userRepository.findAll(pageable)).thenReturn(page);
 		Page<UserModel> received = userService.findAll(pageable);
 		verify(userRepository, times(1)).findAll(pageable);
@@ -131,8 +131,8 @@ public class UserServiceUnitTest {
 	}
 
 	@Test @DisplayName("Test if is possible promote a user to admin.")
-	void testCanPromoteUserToAdmin() {
-		UserModel commonUser = UserFactory.createUser();
+	void testCanPromoteAUserToAdmin() {
+		UserModel commonUser = UserFactory.createUserEntity();
 		commonUser.addRole(RoleFactory.createUserRole());
 		UserModel expect = UserFactory.cloneUser(commonUser);
 		RoleModel roleAdmin = RoleFactory.createAdminRole();
@@ -146,8 +146,8 @@ public class UserServiceUnitTest {
 	}
 
 	@Test @DisplayName("Test if is possible demote an admin to user.")
-	void testCanDemoteAdminToUser() {
-		UserModel adminUser = UserFactory.createUser();
+	void testCanDemoteAnAdminToUser() {
+		UserModel adminUser = UserFactory.createUserEntity();
 		adminUser.addRole(RoleFactory.createUserRole());
 		RoleModel roleAdmin = RoleFactory.createAdminRole();
 		adminUser.addRole(roleAdmin);
@@ -163,7 +163,7 @@ public class UserServiceUnitTest {
 
 	@Test @DisplayName("Test if is possible load by username.")
 	void testCanLoadByUsername() {
-		UserModel current = UserFactory.createUser();
+		UserModel current = UserFactory.createUserEntity();
 		when(userRepository.findByEmail(current.getEmail())).thenReturn(Optional.of(current));
 		UserModel received = userService.loadUserByUsername(current.getEmail());
 		verify(userRepository, times(1)).findByEmail(current.getEmail());
@@ -183,7 +183,7 @@ public class UserServiceUnitTest {
 
 	@Test @DisplayName("Test if service method 'update' thrown an exception with invalid id.")
 	void testTryUpdateUserByInvalidIdThrowsAnException() {
-		UserModel invalidUpdate = UserFactory.createUser();
+		UserModel invalidUpdate = UserFactory.createUserEntity();
 		UserModel reference = new UserModel();
 		reference.setId(invalidUpdate.getId());
 		when(userRepository.getReferenceById(invalidUpdate.getId())).thenReturn(reference);

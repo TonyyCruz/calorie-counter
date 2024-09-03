@@ -236,7 +236,9 @@ public class UserIntegrationTest extends TestBase {
                             .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
                     .andExpect(jsonPath("$.fieldError[*]").isNotEmpty())
                     .andExpect(jsonPath("$.fieldError[0].fieldName").value("phoneNumber"))
-                    .andExpect(jsonPath("$.fieldError[0].errorMessage").value("Invalid phone number."))
+                    .andExpect(jsonPath("$.fieldError[0].errorMessage").value(
+                            "Invalid phone number, please enter valid data in the format: '(11) 99999-9999'."
+                    ))
                     .andDo(print());
         }
 
@@ -260,7 +262,9 @@ public class UserIntegrationTest extends TestBase {
                                 .value("class org.springframework.web.bind.MethodArgumentNotValidException"))
                         .andExpect(jsonPath("$.fieldError[*]").isNotEmpty())
                         .andExpect(jsonPath("$.fieldError[0].fieldName").value("phoneNumber"))
-                        .andExpect(jsonPath("$.fieldError[0].errorMessage").value("Invalid phone number."))
+                        .andExpect(jsonPath("$.fieldError[0].errorMessage").value(
+                                "Invalid phone number, please enter valid data in the format: '(11) 99999-9999'."
+                        ))
                         .andDo(print());
             }
         }

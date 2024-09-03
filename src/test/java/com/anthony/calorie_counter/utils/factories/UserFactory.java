@@ -27,7 +27,7 @@ public class UserFactory {
         return newCreateDto;
     }
 
-    public static UserModel createUserFromDto(UserCreateDto createDto) {
+    public static UserModel createUserEntityFromDto(UserCreateDto createDto) {
         UserModel userModel = new UserModel();
         userModel.setId(UUID.randomUUID());
         userModel.setName(createDto.getName());
@@ -37,8 +37,8 @@ public class UserFactory {
         return userModel;
     }
 
-    public static UserModel createUser() {
-        return createUserFromDto(userCreateDto());
+    public static UserModel createUserEntity() {
+        return createUserEntityFromDto(userCreateDto());
     }
 
     public static UserModel cloneUser(UserModel userModel) {
