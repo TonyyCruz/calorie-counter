@@ -3,7 +3,9 @@ package com.anthony.calorie_counter.service.impl;
 import com.anthony.calorie_counter.entity.FoodModel;
 import com.anthony.calorie_counter.repository.FoodRepository;
 import com.anthony.calorie_counter.service.interfaces.IFoodService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FoodService implements IFoodService {
     private final FoodRepository foodRepository;
 
