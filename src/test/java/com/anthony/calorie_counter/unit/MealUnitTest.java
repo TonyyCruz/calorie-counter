@@ -1,9 +1,9 @@
 package com.anthony.calorie_counter.unit;
 
-import com.anthony.calorie_counter.controller.FoodController;
-import com.anthony.calorie_counter.dto.request.food.FoodCreateDto;
-import com.anthony.calorie_counter.dto.response.food.FoodViewDto;
-import com.anthony.calorie_counter.entity.FoodModel;
+import com.anthony.calorie_counter.controller.MealController;
+import com.anthony.calorie_counter.dto.request.meal.MealCreateDto;
+import com.anthony.calorie_counter.dto.response.meal.MealViewDto;
+import com.anthony.calorie_counter.entity.MealModel;
 import com.anthony.calorie_counter.repository.FoodRepository;
 import com.anthony.calorie_counter.service.impl.FoodService;
 import com.anthony.calorie_counter.utils.factories.FoodFactory;
@@ -25,18 +25,15 @@ import static org.mockito.Mockito.*;
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Unit test for Food")
-public class FoodUnitTest {
-//    @InjectMocks
-//    FoodService foodService;
-
+public class MealUnitTest {
     @Mock
     FoodRepository foodRepository;
 
     @Nested
-    @DisplayName("Food Controller unit tests")
-    class FoodControllerTest {
+    @DisplayName("Meal Controller unit tests")
+    class MealControllerTest {
         @InjectMocks
-        FoodController foodController;
+        MealController mealController;
 
         @Mock
         FoodService foodService;
@@ -44,13 +41,13 @@ public class FoodUnitTest {
         @Test
         @DisplayName("Test if is possible create a new food.")
         void testCanCreateANewFood() {
-            FoodCreateDto foodCreateDto = FoodFactory.foodCreateDto();
-            FoodModel createdFood = FoodFactory.foodEntityFromDto(foodCreateDto);
-            FoodViewDto expect = new FoodViewDto(createdFood);
-            when(foodService.create(foodCreateDto.toEntity())).thenReturn(createdFood);
-            ResponseEntity<FoodViewDto> received = foodController.create(foodCreateDto);
-            FoodViewDto current = Objects.requireNonNull(received.getBody());
-            verify(foodService, times(1)).create(foodCreateDto.toEntity());
+            MealCreateDto mealCreateDto = FoodFactory.foodCreateDto();
+            MealModel createdFood = FoodFactory.foodEntityFromDto(mealCreateDto);
+            MealViewDto expect = new MealViewDto(createdFood);
+            when(foodService.create(mealCreateDto.toEntity())).thenReturn(createdFood);
+            ResponseEntity<MealViewDto> received = mealController.create(mealCreateDto);
+            MealViewDto current = Objects.requireNonNull(received.getBody());
+            verify(foodService, times(1)).create(mealCreateDto.toEntity());
             assertNotNull(current.id());
             assertEquals(expect.id(), current.id());
             assertEquals(expect.name(), current.name());

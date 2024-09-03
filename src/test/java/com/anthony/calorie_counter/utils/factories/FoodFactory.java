@@ -1,13 +1,13 @@
 package com.anthony.calorie_counter.utils.factories;
 
-import com.anthony.calorie_counter.dto.request.food.FoodCreateDto;
-import com.anthony.calorie_counter.entity.FoodModel;
+import com.anthony.calorie_counter.dto.request.meal.MealCreateDto;
+import com.anthony.calorie_counter.entity.MealModel;
 import com.anthony.calorie_counter.utils.SimpleFake;
 
 public class FoodFactory {
 
-    public static FoodCreateDto foodCreateDto() {
-        FoodCreateDto createDto = new FoodCreateDto();
+    public static MealCreateDto foodCreateDto() {
+        MealCreateDto createDto = new MealCreateDto();
         createDto.setName(SimpleFake.name());
         createDto.setPortion("100g");
         createDto.setCalories(SimpleFake.randomInteger());
@@ -19,18 +19,18 @@ public class FoodFactory {
         return createDto;
     }
 
-    public static FoodModel foodEntityFromDto(FoodCreateDto createDto) {
-        FoodModel foodModel = foodCreateDto().toEntity();
-        foodModel.setId(SimpleFake.randomLong());
-        return foodModel;
+    public static MealModel foodEntityFromDto(MealCreateDto createDto) {
+        MealModel mealModel = foodCreateDto().toEntity();
+        mealModel.setId(SimpleFake.randomLong());
+        return mealModel;
     }
 
-    public static FoodModel createFoodEntity() {
+    public static MealModel createFoodEntity() {
         return foodEntityFromDto(foodCreateDto());
     }
 
-    public static FoodCreateDto cloneFoodCreateDto(FoodCreateDto createDto) {
-        FoodCreateDto newCreateDto = new FoodCreateDto();
+    public static MealCreateDto cloneFoodCreateDto(MealCreateDto createDto) {
+        MealCreateDto newCreateDto = new MealCreateDto();
         newCreateDto.setName(createDto.getName());
         newCreateDto.setPortion(createDto.getPortion());
         newCreateDto.setCalories(createDto.getCalories());
@@ -42,17 +42,17 @@ public class FoodFactory {
         return newCreateDto;
     }
 
-    public static FoodModel cloneFoodModel(FoodModel foodModel) {
-        FoodModel newFoodModel = new FoodModel();
-        newFoodModel.setId(foodModel.getId());
-        newFoodModel.setName(foodModel.getName());
-        newFoodModel.setPortion(foodModel.getPortion());
-        newFoodModel.setCalories(foodModel.getCalories());
-        newFoodModel.setTotalFat(foodModel.getTotalFat());
-        newFoodModel.setProtein(foodModel.getProtein());
-        newFoodModel.setCarbohydrate(foodModel.getCarbohydrate());
-        newFoodModel.setFiber(foodModel.getFiber());
-        newFoodModel.setSugars(foodModel.getSugars());
-        return newFoodModel;
+    public static MealModel cloneFoodModel(MealModel mealModel) {
+        MealModel newMealModel = new MealModel();
+        newMealModel.setId(mealModel.getId());
+        newMealModel.setName(mealModel.getName());
+        newMealModel.setPortion(mealModel.getPortion());
+        newMealModel.setCalories(mealModel.getCalories());
+        newMealModel.setTotalFat(mealModel.getTotalFat());
+        newMealModel.setProtein(mealModel.getProtein());
+        newMealModel.setCarbohydrate(mealModel.getCarbohydrate());
+        newMealModel.setFiber(mealModel.getFiber());
+        newMealModel.setSugars(mealModel.getSugars());
+        return newMealModel;
     }
 }

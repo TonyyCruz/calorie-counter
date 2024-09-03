@@ -12,8 +12,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_foods")
-public class FoodModel implements Serializable {
+@Table(name = "tb_meals")
+public class MealModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -38,8 +38,8 @@ public class FoodModel implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FoodModel foodModel = (FoodModel) o;
-        return Objects.equals(id, foodModel.id);
+        MealModel mealModel = (MealModel) o;
+        return Objects.equals(id, mealModel.id);
     }
 
     @Override

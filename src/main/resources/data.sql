@@ -20,7 +20,7 @@ VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 1),
        ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 2),
        ('7b87f809-d142-4dfa-8802-87644d774dd5', 1);
 
---CREATE TABLE `tb_foods` (
+--CREATE TABLE `tb_meals` (
 --  `id` INT PRIMARY KEY,
 --  `name` CHAR(255),
 --  `portion` CHAR(10),
@@ -32,7 +32,7 @@ VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 1),
 --  `sugars` CHAR(10)
 --);
 
-INSERT INTO `tb_foods` (`id`,`name`,`portion`,`calories`,`total_fat`,`protein`,`carbohydrate`,`fiber`,`sugars`)
+INSERT INTO `tb_meals` (`id`,`name`,`portion`,`calories`,`total_fat`,`protein`,`carbohydrate`,`fiber`,`sugars`)
 VALUES
 (1,'Nuts, pecans','100g',691,'72g','9.17g','13.86g','9.6g','3.97g'),
 (2,'Eggplant, raw','100g',25,'0.2g','0.98g','5.88g','3.0g','3.53g'),

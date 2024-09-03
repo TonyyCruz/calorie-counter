@@ -48,9 +48,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/users/register").permitAll()
                         // ADMIN
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
-                        .requestMatchers(API_VERSION + "/admin/**").hasRole(ADMIN)
+                        .requestMatchers(API_VERSION + "/meals").hasRole(ADMIN)
+                        .requestMatchers(API_VERSION + "/meals/**").hasRole(ADMIN)
                         // USERS
                         .anyRequest().authenticated()
                 )

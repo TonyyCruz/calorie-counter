@@ -1,6 +1,6 @@
-package com.anthony.calorie_counter.dto.request.food;
+package com.anthony.calorie_counter.dto.request.meal;
 
-import com.anthony.calorie_counter.entity.FoodModel;
+import com.anthony.calorie_counter.entity.MealModel;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoodCreateDto implements Serializable {
+public class MealCreateDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
     private String name;
     @NotBlank(message = "The portion must not be empty.")
@@ -29,8 +29,8 @@ public class FoodCreateDto implements Serializable {
     @NotBlank(message = "The sugars must not be empty.")
     private String  sugars;
 
-    public FoodModel toEntity() {
-        FoodModel food = new FoodModel();
+    public MealModel toEntity() {
+        MealModel food = new MealModel();
         food.setName(name);
         food.setPortion(portion);
         food.setCalories(calories);
