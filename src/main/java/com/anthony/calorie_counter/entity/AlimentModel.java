@@ -8,14 +8,14 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name = "tb_meals")
-public class MealModel implements Serializable {
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "tb_aliments")
+public class AlimentModel implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String name;
@@ -38,8 +38,8 @@ public class MealModel implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MealModel mealModel = (MealModel) o;
-        return Objects.equals(id, mealModel.id);
+        AlimentModel alimentModel = (AlimentModel) o;
+        return Objects.equals(id, alimentModel.id);
     }
 
     @Override

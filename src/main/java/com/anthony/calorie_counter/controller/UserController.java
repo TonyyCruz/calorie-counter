@@ -28,7 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.UUID;
 
-@RestController @RequestMapping("/api/v1/users")
+@RestController
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
