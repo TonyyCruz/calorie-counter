@@ -16,10 +16,13 @@ public record UserViewDto(
         Set<RoleModel> roles
 ) implements Serializable {
 
-
     public UserViewDto(UserModel userModel) {
-        this(userModel.getId(), userModel.getName(), userModel.getEmail(), userModel.getPhoneNumber(), userModel.getRoles());
+        this(
+                userModel.getId(),
+                userModel.getName(),
+                userModel.getEmail(),
+                userModel.getPhoneNumber(),
+                userModel.getRoles()
+        );
     }
-
-
 }

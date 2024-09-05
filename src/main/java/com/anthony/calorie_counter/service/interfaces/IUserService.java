@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.service;
+package com.anthony.calorie_counter.service.interfaces;
 
 import com.anthony.calorie_counter.entity.UserModel;
 import org.springframework.data.domain.Page;

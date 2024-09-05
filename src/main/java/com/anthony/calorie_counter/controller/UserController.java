@@ -10,7 +10,7 @@ import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.ForbiddenRequest;
 import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
-import com.anthony.calorie_counter.service.IUserService;
+import com.anthony.calorie_counter.service.interfaces.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.UUID;
 
-@RestController @RequestMapping("/api/v1/users")
+@RestController
+@RequestMapping("/api/v1/users")
 public class UserController {
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;

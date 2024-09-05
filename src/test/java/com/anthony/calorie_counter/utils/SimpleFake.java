@@ -41,7 +41,7 @@ public class SimpleFake {
         return firstCharacter + word.substring(1);
     }
 
-    public static String firstName() {
+    public static String name() {
         return upperFirstLetterCase(randomString());
     }
 
@@ -50,7 +50,7 @@ public class SimpleFake {
     }
 
     public static String fullName() {
-        return firstName() + " " + lastName();
+        return name() + " " + lastName();
     }
 
     public static String email(){

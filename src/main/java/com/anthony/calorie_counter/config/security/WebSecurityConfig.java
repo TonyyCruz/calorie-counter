@@ -42,16 +42,10 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) //H2 database
                 .authorizeHttpRequests(authorize -> authorize
-                        // UNAUTHENTICATED
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, API_VERSION + "/users/register").permitAll()
-                        // ADMIN
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
-                        .requestMatchers(HttpMethod.POST, API_VERSION + "/meals").hasRole(ADMIN)
-                        .requestMatchers(API_VERSION + "/admin/**").hasRole(ADMIN)
-                        // USERS
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

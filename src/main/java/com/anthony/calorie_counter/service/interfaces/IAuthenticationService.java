@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.service;
+package com.anthony.calorie_counter.service.interfaces;
 
 import org.springframework.security.core.Authentication;
 
