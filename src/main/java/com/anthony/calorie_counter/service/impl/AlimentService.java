@@ -7,7 +7,6 @@ import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,7 +45,7 @@ public class AlimentService implements IAlimentService {
         current.setCarbohydrate(aliment.getCarbohydrate());
         current.setFiber(aliment.getFiber());
         current.setSugars(aliment.getSugars());
-        return alimentRepository.save(aliment);
+        return alimentRepository.save(current);
     }
 
     @Override

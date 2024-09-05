@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlimentCreateDto implements Serializable {
+public class AlimentDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
     private String name;
     @NotBlank(message = "The portion must not be empty.")
