@@ -7,6 +7,9 @@ import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class AlimentService implements IAlimentService {
     private final AlimentRepository alimentRepository;
@@ -25,6 +28,11 @@ public class AlimentService implements IAlimentService {
         return alimentRepository.findById(id).orElseThrow(
                 () -> new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id)
         );
+    }
+
+    @Override
+    public List<AlimentModel> findByName(String name) {
+        return alimentRepository.findByNameContainingIgnoreCase(name);
     }
 
     @Override
