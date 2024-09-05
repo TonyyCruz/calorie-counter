@@ -1,6 +1,8 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.AlimentModel;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,13 @@ public class AlimentService implements IAlimentService {
     @Override
     public AlimentModel create(AlimentModel aliment) {
         return alimentRepository.save(aliment);
+    }
+
+    @Override
+    public AlimentModel findById(Long id) {
+        return alimentRepository.findById(id).orElseThrow(
+                () -> new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id)
+        );
     }
 
     @Override

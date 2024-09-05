@@ -66,7 +66,7 @@ public class TestBase {
 
     private void preconfigureMeal() {
         alimentRepository.deleteAll();
-        mealId = alimentRepository.save(savedMeal()).getId();
+        mealId = alimentRepository.save(savedAliment()).getId();
     }
 
     public String performLogin(String username, String password) throws Exception {
@@ -106,7 +106,7 @@ public class TestBase {
         return user;
     }
 
-    public AlimentModel savedMeal() {
+    public AlimentModel savedAliment() {
         AlimentModel meal = new AlimentModel();
         meal.setId(mealId);
         meal.setName("Bread");

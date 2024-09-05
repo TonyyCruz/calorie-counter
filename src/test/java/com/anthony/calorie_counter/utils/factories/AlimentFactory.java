@@ -29,7 +29,7 @@ public class AlimentFactory {
         return alimentEntityFromDto(alimentCreateDto());
     }
 
-    public static AlimentCreateDto cloneMealCreateDto(AlimentCreateDto createDto) {
+    public static AlimentCreateDto cloneAlimentCreateDto(AlimentCreateDto createDto) {
         AlimentCreateDto newCreateDto = new AlimentCreateDto();
         newCreateDto.setName(createDto.getName());
         newCreateDto.setPortion(createDto.getPortion());
