@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class AlimentUnitTest {
         IAlimentService alimentService;
 
         @Test
-        @DisplayName("Test if is possible create a new aliment.")
+        @DisplayName("Test if is possible create a new aliment")
         void testCanCreateANewFood() {
             AlimentCreateDto alimentCreateDto = AlimentFactory.alimentCreateDto();
             AlimentModel createdFood = AlimentFactory.alimentEntityFromDto(alimentCreateDto);
@@ -61,7 +62,7 @@ public class AlimentUnitTest {
         }
 
         @Test
-        @DisplayName("Test if is possible find an aliment by id.")
+        @DisplayName("Test if is possible find an aliment by id")
         void testCanFindAnAlimentById() {
             Long id = 1L;
             AlimentModel aliment = AlimentFactory.createAlimentEntity();
@@ -81,6 +82,20 @@ public class AlimentUnitTest {
             assertEquals(expect.calories(), current.calories());
             assertEquals(expect.fiber(), current.fiber());
             assertEquals(expect.sugars(), current.sugars());
+        }
+
+        @Test
+        @DisplayName("Test if is possible find an aliment by name")
+        void testCanFindAnAlimentByName() {
+            String name = "Burger from Mexico";
+            AlimentModel aliment = AlimentFactory.createAlimentEntity();
+            aliment.setName(name);
+            List<AlimentViewDto> expect = List.of(new AlimentViewDto(aliment));
+            when(alimentService.findByName("mexico")).thenReturn(List.of(aliment));
+            ResponseEntity<List<AlimentViewDto>> received = alimentController.findByName("mexico");
+            List<AlimentViewDto> current = Objects.requireNonNull(received.getBody());
+            verify(alimentService, times(1)).findByName("mexico");
+            assertEquals(expect, current);
         }
     }
 
@@ -122,6 +137,28 @@ public class AlimentUnitTest {
             when(alimentRepository.findById(id)).thenReturn(Optional.of(expect));
             AlimentModel current = alimentService.findById(id);
             verify(alimentRepository, times(1)).findById(id);
+            assertNotNull(current.getId());
+            assertEquals(expect.getId(), current.getId());
+            assertEquals(expect.getName(), current.getName());
+            assertEquals(expect.getPortion(), current.getPortion());
+            assertEquals(expect.getCalories(), current.getCalories());
+            assertEquals(expect.getTotalFat(), current.getTotalFat());
+            assertEquals(expect.getProtein(), current.getProtein());
+            assertEquals(expect.getCalories(), current.getCalories());
+            assertEquals(expect.getFiber(), current.getFiber());
+            assertEquals(expect.getSugars(), current.getSugars());
+        }
+
+        @Test
+        @DisplayName("Test if can find an aliment by name")
+        void testCanFindAnAlimentByName() {
+            String name = "Burger from Mexico";
+            AlimentModel expect = AlimentFactory.createAlimentEntity();
+            expect.setName(name);
+            when(alimentRepository.findByNameContainingIgnoreCase("mexico")).thenReturn(List.of(expect));
+            Optional<AlimentModel> received = alimentService.findByName("mexico").stream().findFirst();
+            AlimentModel current = Objects.requireNonNull(received.orElse(null));
+            verify(alimentRepository, times(1)).findByNameContainingIgnoreCase("mexico");
             assertNotNull(current.getId());
             assertEquals(expect.getId(), current.getId());
             assertEquals(expect.getName(), current.getName());

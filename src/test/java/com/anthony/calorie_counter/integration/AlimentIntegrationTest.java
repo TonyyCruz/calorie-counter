@@ -25,7 +25,7 @@ public class AlimentIntegrationTest extends TestBase {
 
         @Test
         @DisplayName("Test if is possible create a new aliment and receive status code 201.")
-        void canCreateANewMeal() throws Exception {
+        void canCreateANewAliment() throws Exception {
             AlimentCreateDto meal = AlimentFactory.alimentCreateDto();
             String valueAsString = objectMapper.writeValueAsString(meal);
             String path = ALIMENT_URL + "/create";
@@ -54,7 +54,7 @@ public class AlimentIntegrationTest extends TestBase {
 
         @Test
         @DisplayName("Test if is possible find an aliment by id and receive status code 200.")
-        void canCreateANewMeal() throws Exception {
+        void canFindAnAlimentById() throws Exception {
             String path = ALIMENT_URL + "/" + savedAliment().getId();
             mockMvc.perform(get(path).header("Authorization", userToken))
                     .andExpect(status().isOk())
@@ -70,4 +70,26 @@ public class AlimentIntegrationTest extends TestBase {
                     .andDo(print());
         }
     }
+
+    @Test
+    @DisplayName("Test if is possible find an aliment by name and receive status code 200.")
+    void canFindAnAlimentByName() throws Exception {
+        String slicedName = savedAliment().getName().split(" ")[0];
+        String path = ALIMENT_URL + "?name=" + slicedName;
+        mockMvc.perform(get(path).header("Authorization", userToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(savedAliment()))
+                .andDo(print());
+        path = ALIMENT_URL + "?name=" + slicedName.toUpperCase();
+        mockMvc.perform(get(path).header("Authorization", userToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(savedAliment()))
+                .andDo(print());
+        path = ALIMENT_URL + "?name=" + slicedName.toLowerCase();
+        mockMvc.perform(get(path).header("Authorization", userToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(savedAliment()))
+                .andDo(print());
+    }
+
 }

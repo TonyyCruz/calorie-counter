@@ -109,7 +109,7 @@ public class TestBase {
     public AlimentModel savedAliment() {
         AlimentModel meal = new AlimentModel();
         meal.setId(mealId);
-        meal.setName("Bread");
+        meal.setName("Bread with cheese");
         meal.setPortion("100g");
         meal.setCalories(140);
         meal.setTotalFat("2g");
