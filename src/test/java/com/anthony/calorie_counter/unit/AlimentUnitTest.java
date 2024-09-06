@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -110,6 +111,16 @@ public class AlimentUnitTest {
             AlimentViewDto current = Objects.requireNonNull(received.getBody());
             verify(alimentService, times(1)).update(id, update.toEntity());
             assertEquals(new AlimentViewDto(expect), current);
+        }
+
+        @Test
+        @DisplayName("Test if is possible delete an aliment by id")
+        void testCanDeleteAnAlimentById() {
+            AlimentModel aliment = AlimentFactory.createAlimentEntity();
+            doNothing().when(alimentService).delete(aliment.getId());
+            ResponseEntity<?> received = alimentController.delete(aliment.getId());
+            verify(alimentService, times(1)).delete(aliment.getId());
+            assertEquals(HttpStatus.NO_CONTENT, received.getStatusCode());
         }
     }
 
@@ -207,6 +218,17 @@ public class AlimentUnitTest {
             assertEquals(expect.getCalories(), current.getCalories());
             assertEquals(expect.getFiber(), current.getFiber());
             assertEquals(expect.getSugars(), current.getSugars());
+        }
+
+        @Test
+        @DisplayName("Test if can delete an aliment by Id")
+        void testCanDeleteAnAlimentById() {
+            AlimentModel aliment = AlimentFactory.createAlimentEntity();
+            when(alimentRepository.existsById(aliment.getId())).thenReturn(true);
+            doNothing().when(alimentRepository).deleteById(aliment.getId());
+            alimentService.delete(aliment.getId());
+            verify(alimentRepository, times(1)).existsById(aliment.getId());
+            verify(alimentRepository, times(1)).deleteById(aliment.getId());
         }
     }
 }

@@ -114,7 +114,7 @@ public class UserIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if a user can delete his account by id and receive status code 200.")
+        @DisplayName("Test if a user can delete his account by id and receive status code 204.")
         void canUserDeleteHisAccountById() throws Exception {
             PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto(savedUser().getPassword());
             String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);
@@ -624,7 +624,7 @@ public class UserIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if an admin can delete a user account by id and receive status code 200.")
+        @DisplayName("Test if an admin can delete a user account by id and receive status code 204.")
         void canAdminDeleteAnUserAccountById() throws Exception {
             PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto("");
             String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);

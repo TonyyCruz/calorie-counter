@@ -47,8 +47,8 @@ public class AlimentIntegrationTest extends TestBase {
         }
 
         @Test
-        @DisplayName("Test if is possible update an aliment and receive status code 200.")
-        void canUpdateAnAliment() throws Exception {
+        @DisplayName("Test if is possible update an aliment by id and receive status code 200.")
+        void canUpdateAnAlimentById() throws Exception {
             AlimentDto update = AlimentFactory.alimentDto();
             String valueAsString = objectMapper.writeValueAsString(update);
             String path = ALIMENT_URL + "/" + savedAliment().getId();
@@ -67,6 +67,18 @@ public class AlimentIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.carbohydrate").value(update.getCarbohydrate()))
                     .andExpect(jsonPath("$.fiber").value(update.getFiber()))
                     .andExpect(jsonPath("$.sugars").value(update.getSugars()))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if is possible delete an aliment by id and receive status code 204.")
+        void canDeleteAnAlimentById() throws Exception {
+            String path = ALIMENT_URL + "/" + savedAliment().getId();
+            mockMvc.perform(delete(path).header("Authorization", adminToken))
+                    .andExpect(status().isNoContent())
+                    .andDo(print());
+            mockMvc.perform(get(path).header("Authorization", adminToken))
+                    .andExpect(status().isNotFound())
                     .andDo(print());
         }
     }
@@ -92,27 +104,26 @@ public class AlimentIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.sugars").value(savedAliment().getSugars()))
                     .andDo(print());
         }
-    }
 
-    @Test
-    @DisplayName("Test if is possible find an aliment by name and receive status code 200.")
-    void canFindAnAlimentByName() throws Exception {
-        String slicedName = savedAliment().getName().split(" ")[0];
-        String path = ALIMENT_URL + "?name=" + slicedName;
-        mockMvc.perform(get(path).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").value(savedAliment()))
-                .andDo(print());
-        path = ALIMENT_URL + "?name=" + slicedName.toUpperCase();
-        mockMvc.perform(get(path).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").value(savedAliment()))
-                .andDo(print());
-        path = ALIMENT_URL + "?name=" + slicedName.toLowerCase();
-        mockMvc.perform(get(path).header("Authorization", userToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0]").value(savedAliment()))
-                .andDo(print());
+        @Test
+        @DisplayName("Test if is possible find an aliment by name and receive status code 200.")
+        void canFindAnAlimentByName() throws Exception {
+            String slicedName = savedAliment().getName().split(" ")[0];
+            String path = ALIMENT_URL + "?name=" + slicedName;
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+            path = ALIMENT_URL + "?name=" + slicedName.toUpperCase();
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+            path = ALIMENT_URL + "?name=" + slicedName.toLowerCase();
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+        }
     }
-
 }

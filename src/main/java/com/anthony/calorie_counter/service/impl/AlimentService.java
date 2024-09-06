@@ -50,6 +50,9 @@ public class AlimentService implements IAlimentService {
 
     @Override
     public void delete(Long id) {
+        if (!alimentRepository.existsById(id)) {
+            throw new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
+        }
         alimentRepository.deleteById(id);
     }
 }

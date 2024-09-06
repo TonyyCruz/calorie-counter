@@ -47,4 +47,12 @@ public class AlimentController {
         AlimentModel aliment = alimentService.update(id, alimentDto.toEntity());
         return ResponseEntity.ok(new AlimentViewDto(aliment));
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        alimentService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
