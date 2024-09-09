@@ -4,10 +4,13 @@ import com.anthony.calorie_counter.controller.AlimentController;
 import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.dto.response.aliment.AlimentViewDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.impl.AlimentService;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import com.anthony.calorie_counter.utils.factories.AlimentFactory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -19,12 +22,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
@@ -197,6 +200,16 @@ public class AlimentUnitTest {
         }
 
         @Test
+        @DisplayName("Test if try to find an aliment by invalid name returns an empty list")
+        void testTryToFindAnAlimentByInvalidNameReturnsEmptyList() {
+            String name = "aaa";
+            when(alimentRepository.findByNameContainingIgnoreCase(name)).thenReturn(new ArrayList<>());
+            List<AlimentModel> current = alimentService.findByName(name);
+            verify(alimentRepository, times(1)).findByNameContainingIgnoreCase(name);
+            assertEquals(0, current.size());
+        }
+
+        @Test
         @DisplayName("Test if can update an aliment by Id")
         void testCanUpdateAnAlimentById() {
             AlimentModel alimentBeforeUpdate = AlimentFactory.createAlimentEntity();
@@ -229,6 +242,47 @@ public class AlimentUnitTest {
             alimentService.delete(aliment.getId());
             verify(alimentRepository, times(1)).existsById(aliment.getId());
             verify(alimentRepository, times(1)).deleteById(aliment.getId());
+        }
+
+        @Test
+        @DisplayName("Test if throws an exception when try to find an aliment by invalid id")
+        void testTryFindAnAlimentByInvalidIdThrowsAnException() {
+            Long id = 1L;
+            when(alimentRepository.findById(id)).thenReturn(Optional.empty());
+            Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> alimentService.findById(id));
+            verify(alimentRepository, times(1)).findById(id);
+            assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
+        }
+
+        @Test
+        @DisplayName("Test if throws an exception when try to update an aliment by invalid id")
+        void testTryUpdateAnAlimentByInvalidIdThrowsAnException() {
+            Long id = 1L;
+            AlimentDto alimentUpdate = AlimentFactory.alimentDto();
+            AlimentModel updatedModel = AlimentFactory.alimentEntityFromDto(alimentUpdate);
+            updatedModel.setId(id);
+            AlimentModel reference = new AlimentModel();
+            reference.setId(id);
+            when(alimentRepository.getReferenceById(id)).thenReturn(reference);
+            when(alimentRepository.save(updatedModel)).thenThrow(new EntityNotFoundException());
+            Throwable error = assertThrowsExactly(
+                    EntityDataNotFound.class ,
+                    () -> alimentService.update(id, alimentUpdate.toEntity())
+            );
+            verify(alimentRepository, times(1)).getReferenceById(id);
+            verify(alimentRepository, times(1)).save(updatedModel);
+            assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
+        }
+
+        @Test
+        @DisplayName("Test if throws an exception when try to delete an aliment by invalid id")
+        void testTryDeleteAnAlimentByInvalidIdThrowsAnException() {
+            Long id = 1L;
+            when(alimentRepository.existsById(id)).thenReturn(false);
+            Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> alimentService.delete(id));
+            verify(alimentRepository, times(1)).existsById(id);
+            verify(alimentRepository, times(0)).deleteById(id);
+            assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
         }
     }
 }

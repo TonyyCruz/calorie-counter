@@ -223,6 +223,7 @@ public class UserServiceUnitTest {
 				() -> userService.deleteById(invalidId)
 		);
 		verify(userRepository, times(1)).existsById(invalidId);
+		verify(userRepository, times(0)).deleteById(invalidId);
 		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
 
