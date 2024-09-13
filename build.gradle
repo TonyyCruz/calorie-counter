@@ -41,8 +41,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// JWT Authentication
 	implementation 'com.auth0:java-jwt:4.4.0'
+	// HIBERNATE SEARCH
 	// https://mvnrepository.com/artifact/org.hibernate.search/hibernate-search-mapper-orm
 	implementation group: 'org.hibernate.search', name: 'hibernate-search-mapper-orm', version: '7.2.1.Final'
+	// HIBERNATE ELASTICSEARCH
+	// https://mvnrepository.com/artifact/org.hibernate.search/hibernate-search-backend-elasticsearch
+	implementation group: 'org.hibernate.search', name: 'hibernate-search-backend-elasticsearch', version: '7.2.1.Final'
 }
 
 tasks.named('test') {
