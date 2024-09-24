@@ -4,7 +4,7 @@ import com.anthony.calorie_counter.controller.AlimentController;
 import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.dto.response.aliment.AlimentViewDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.impl.AlimentService;
@@ -249,7 +249,7 @@ public class AlimentUnitTest {
         void testTryFindAnAlimentByInvalidIdThrowsAnException() {
             Long id = 1L;
             when(alimentRepository.findById(id)).thenReturn(Optional.empty());
-            Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> alimentService.findById(id));
+            Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> alimentService.findById(id));
             verify(alimentRepository, times(1)).findById(id);
             assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
         }
@@ -266,7 +266,7 @@ public class AlimentUnitTest {
             when(alimentRepository.getReferenceById(id)).thenReturn(reference);
             when(alimentRepository.save(updatedModel)).thenThrow(new EntityNotFoundException());
             Throwable error = assertThrowsExactly(
-                    EntityDataNotFound.class ,
+                    EntityDataNotFoundException.class ,
                     () -> alimentService.update(id, alimentUpdate.toEntity())
             );
             verify(alimentRepository, times(1)).getReferenceById(id);
@@ -279,7 +279,7 @@ public class AlimentUnitTest {
         void testTryDeleteAnAlimentByInvalidIdThrowsAnException() {
             Long id = 1L;
             when(alimentRepository.existsById(id)).thenReturn(false);
-            Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> alimentService.delete(id));
+            Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> alimentService.delete(id));
             verify(alimentRepository, times(1)).existsById(id);
             verify(alimentRepository, times(0)).deleteById(id);
             assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);

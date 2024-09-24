@@ -17,7 +17,6 @@ public class PasswordValidator implements ConstraintValidator<PasswordValid, Str
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         List<FieldErrorMessage> list = new ArrayList<>();
-        // Testes de validaçãoa baixo. Insere os erros da validação de email a lista com minha classe "FieldErrorMessage".
         if (!REGEX.matcher(password).matches()) {
             list.add(
                     new FieldErrorMessage(

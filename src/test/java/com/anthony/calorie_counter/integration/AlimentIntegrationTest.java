@@ -108,21 +108,42 @@ public class AlimentIntegrationTest extends TestBase {
         @Test
         @DisplayName("Test if is possible find an aliment by name and receive status code 200.")
         void canFindAnAlimentByName() throws Exception {
-            String slicedName = savedAliment().getName().split(" ")[0];
-            String path = ALIMENT_URL + "?name=" + slicedName;
+            String[] slicedName = savedAliment().getName().split(" ");
+            String path = ALIMENT_URL + "?name=" + slicedName[0];
             mockMvc.perform(get(path).header("Authorization", userToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0]").value(savedAliment()))
                     .andDo(print());
-            path = ALIMENT_URL + "?name=" + slicedName.toUpperCase();
+            path = ALIMENT_URL + "?name=" + slicedName[1].toUpperCase();
             mockMvc.perform(get(path).header("Authorization", userToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0]").value(savedAliment()))
                     .andDo(print());
-            path = ALIMENT_URL + "?name=" + slicedName.toLowerCase();
+            path = ALIMENT_URL + "?name=" + slicedName[2].toLowerCase();
             mockMvc.perform(get(path).header("Authorization", userToken))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+            path = ALIMENT_URL + "?name=" + savedAliment().getName();
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+            path = ALIMENT_URL + "?name=" + slicedName[0] + " " + slicedName[2];
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[0]").value(savedAliment()))
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("Test if trying get an aliment with invalid name returns an empty list and receive status code 200.")
+        void receiveAnEmptyListIfAlimentNameSearchedWasNotFound() throws Exception {
+            String invalidName = "some invalid";
+            String path = ALIMENT_URL + "?name=" + invalidName;
+            mockMvc.perform(get(path).header("Authorization", userToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$[*]").isEmpty())
                     .andDo(print());
         }
     }

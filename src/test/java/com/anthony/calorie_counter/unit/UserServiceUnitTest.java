@@ -3,7 +3,7 @@ package com.anthony.calorie_counter.unit;
 import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
@@ -176,7 +176,7 @@ public class UserServiceUnitTest {
 	void testTryFindUserByInvalidIdThrowsAnException() {
 		UUID invalidId = UUID.randomUUID();
 		when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
-		Throwable error = assertThrowsExactly(EntityDataNotFound.class , () -> userService.findById(invalidId));
+		Throwable error = assertThrowsExactly(EntityDataNotFoundException.class , () -> userService.findById(invalidId));
 		verify(userRepository, times(1)).findById(invalidId);
 		assertEquals(error.getMessage(), ExceptionMessages.USER_NOT_FOUND_WITH_ID +  invalidId);
 	}
@@ -189,7 +189,7 @@ public class UserServiceUnitTest {
 		when(userRepository.getReferenceById(invalidUpdate.getId())).thenReturn(reference);
 		when(userRepository.save(invalidUpdate)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFound.class,
+				EntityDataNotFoundException.class,
 				() -> userService.updateUser(invalidUpdate.getId(), invalidUpdate)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidUpdate.getId());
@@ -206,7 +206,7 @@ public class UserServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFound.class,
+				EntityDataNotFoundException.class,
 				() -> userService.updatePassword(invalidId, password)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);
@@ -219,7 +219,7 @@ public class UserServiceUnitTest {
 		UUID invalidId = UUID.randomUUID();
 		when(userRepository.existsById(invalidId)).thenReturn(false);
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFound.class,
+				EntityDataNotFoundException.class,
 				() -> userService.deleteById(invalidId)
 		);
 		verify(userRepository, times(1)).existsById(invalidId);
@@ -235,7 +235,7 @@ public class UserServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFound.class,
+				EntityDataNotFoundException.class,
 				() -> userService.promoteToAdmin(invalidId)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);
@@ -251,7 +251,7 @@ public class UserServiceUnitTest {
 		when(userRepository.getReferenceById(invalidId)).thenReturn(reference);
 		when(userRepository.save(reference)).thenThrow(new EntityNotFoundException());
 		Throwable error = assertThrowsExactly(
-				EntityDataNotFound.class,
+				EntityDataNotFoundException.class,
 				() -> userService.demoteFromAdmin(invalidId)
 		);
 		verify(userRepository, times(1)).getReferenceById(invalidId);

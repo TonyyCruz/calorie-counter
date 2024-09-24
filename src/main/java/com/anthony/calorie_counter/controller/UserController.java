@@ -7,7 +7,7 @@ import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
-import com.anthony.calorie_counter.exceptions.ForbiddenRequest;
+import com.anthony.calorie_counter.exceptions.ForbiddenRequestException;
 import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.service.interfaces.IUserService;
@@ -126,7 +126,7 @@ public class UserController {
 
     private void checkAuthorization(String id) {
         if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
-            throw new ForbiddenRequest(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION);
+            throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION);
         }
     }
 }

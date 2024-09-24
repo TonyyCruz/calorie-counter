@@ -8,21 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PasswordValidator implements ConstraintValidator<PasswordValid, String> {
-    private final Pattern REGEX = Pattern.compile("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
+public class AlimentStringFieldValidator implements ConstraintValidator<AlimentStringFieldValid, String> {
+    private final Pattern REGEX = Pattern.compile("^[0-9]*\\.[0-9]{2}g$", Pattern.CASE_INSENSITIVE);
 
     @Override
-    public void initialize(PasswordValid ann){}
+    public void initialize(AlimentStringFieldValid ann){}
 
     @Override
-    public boolean isValid(String password, ConstraintValidatorContext context) {
+    public boolean isValid(String fieldValue, ConstraintValidatorContext context) {
         List<FieldErrorMessage> list = new ArrayList<>();
-        // Testes de validaçãoa baixo. Insere os erros da validação de email a lista com minha classe "FieldErrorMessage".
-        if (!REGEX.matcher(password).matches()) {
+        if (!REGEX.matcher(fieldValue).matches()) {
             list.add(
                     new FieldErrorMessage(
-                    "password",
-                    "The password must have at least 8 characters including at least one uppercase, one lowercase and a number."
+                    "alimentField",
+                    "The field must have a maximum of two decimal places, no blank spaces and ends with 'g'."
             ));
         }
         for(FieldErrorMessage e : list) {
