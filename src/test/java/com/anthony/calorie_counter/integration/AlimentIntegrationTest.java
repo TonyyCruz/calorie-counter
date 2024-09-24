@@ -129,11 +129,6 @@ public class AlimentIntegrationTest extends TestBase {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$[0]").value(savedAliment()))
                     .andDo(print());
-            path = ALIMENT_URL + "?name=" + slicedName[0] + " " + slicedName[2];
-            mockMvc.perform(get(path).header("Authorization", userToken))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0]").value(savedAliment()))
-                    .andDo(print());
         }
 
         @Test

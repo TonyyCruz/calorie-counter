@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class AlimentStringFieldValidator implements ConstraintValidator<AlimentStringFieldValid, String> {
-    private final Pattern REGEX = Pattern.compile("^[0-9]*\\.[0-9]{2}g$", Pattern.CASE_INSENSITIVE);
+    private final Pattern REGEX = Pattern.compile("^(?=.*\\d)\\d*(?:\\.\\d\\d)?g$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void initialize(AlimentStringFieldValid ann){}

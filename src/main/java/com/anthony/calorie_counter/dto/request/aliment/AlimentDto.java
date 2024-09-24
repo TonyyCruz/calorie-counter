@@ -8,6 +8,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 
@@ -16,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AlimentDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
-    @AlimentStringFieldValid(message = "Invalid aliment name.")
+    @Length(max = 100)
     private String name;
     @NotBlank(message = "The portion must not be empty.")
     @AlimentStringFieldValid(message = "Invalid aliment portion.")
