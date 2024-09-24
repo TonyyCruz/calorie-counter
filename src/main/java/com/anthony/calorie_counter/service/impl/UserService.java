@@ -28,13 +28,15 @@ public class UserService implements IUserService, UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override @Transactional(readOnly = true)
+    @Override
+    @Transactional(readOnly = true)
     public UserModel findById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
+    @Transactional
     public UserModel create(UserModel userModel) {
         userModel.addRole(new RoleModel(UserRole.ROLE_USER));
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
@@ -42,6 +44,7 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserModel updateUser(UUID id, UserModel newUserModelData) {
         try {
             UserModel userModel = userRepository.getReferenceById(id);
@@ -54,6 +57,7 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
+    @Override
     @Transactional
     public void updatePassword(UUID id, String newPassword) {
         try {
@@ -65,7 +69,8 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public void deleteById(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
@@ -74,11 +79,13 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<UserModel> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public UserModel promoteToAdmin(UUID id) {
         try {
             UserModel userModel = userRepository.getReferenceById(id);
@@ -89,7 +96,8 @@ public class UserService implements IUserService, UserDetailsService {
         }
     }
 
-    @Override @Transactional
+    @Override
+    @Transactional
     public UserModel demoteFromAdmin(UUID id) {
         try {
             UserModel userModel = userRepository.getReferenceById(id);

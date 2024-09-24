@@ -5,9 +5,9 @@ import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,11 +46,18 @@ public class AlimentService implements IAlimentService {
         current.setCarbohydrate(aliment.getCarbohydrate());
         current.setFiber(aliment.getFiber());
         current.setSugars(aliment.getSugars());
-        return alimentRepository.save(aliment);
+        try {
+            return alimentRepository.save(current);
+        } catch (EntityNotFoundException e) {
+            throw new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
+        }
     }
 
     @Override
     public void delete(Long id) {
+        if (!alimentRepository.existsById(id)) {
+            throw new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
+        }
         alimentRepository.deleteById(id);
     }
 }

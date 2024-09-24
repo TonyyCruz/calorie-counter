@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlimentCreateDto implements Serializable {
+public class AlimentDto implements Serializable {
     @NotBlank(message = "The name must not be empty.")
     private String name;
     @NotBlank(message = "The portion must not be empty.")
@@ -33,13 +33,13 @@ public class AlimentCreateDto implements Serializable {
     public AlimentModel toEntity() {
         AlimentModel food = new AlimentModel();
         food.setName(name);
-        food.setPortion(portion);
+        food.setPortion(portion.toLowerCase());
         food.setCalories(calories);
-        food.setTotalFat(totalFat);
-        food.setProtein(protein);
-        food.setCarbohydrate(carbohydrate);
-        food.setFiber(fiber);
-        food.setSugars(sugars);
+        food.setTotalFat(totalFat.toLowerCase());
+        food.setProtein(protein.toLowerCase());
+        food.setCarbohydrate(carbohydrate.toLowerCase());
+        food.setFiber(fiber.toLowerCase());
+        food.setSugars(sugars.toLowerCase());
         return food;
     }
 }

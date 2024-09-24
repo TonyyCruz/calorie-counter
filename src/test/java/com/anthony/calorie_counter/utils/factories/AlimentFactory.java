@@ -1,13 +1,13 @@
 package com.anthony.calorie_counter.utils.factories;
 
-import com.anthony.calorie_counter.dto.request.aliment.AlimentCreateDto;
+import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
 import com.anthony.calorie_counter.utils.SimpleFake;
 
 public class AlimentFactory {
 
-    public static AlimentCreateDto alimentCreateDto() {
-        AlimentCreateDto createDto = new AlimentCreateDto();
+    public static AlimentDto alimentDto() {
+        AlimentDto createDto = new AlimentDto();
         createDto.setName(SimpleFake.name());
         createDto.setPortion("100g");
         createDto.setCalories(SimpleFake.randomInteger());
@@ -19,26 +19,26 @@ public class AlimentFactory {
         return createDto;
     }
 
-    public static AlimentModel alimentEntityFromDto(AlimentCreateDto createDto) {
-        AlimentModel alimentModel = alimentCreateDto().toEntity();
+    public static AlimentModel alimentEntityFromDto(AlimentDto alimentDto) {
+        AlimentModel alimentModel = alimentDto().toEntity();
         alimentModel.setId(SimpleFake.randomLong());
         return alimentModel;
     }
 
     public static AlimentModel createAlimentEntity() {
-        return alimentEntityFromDto(alimentCreateDto());
+        return alimentEntityFromDto(alimentDto());
     }
 
-    public static AlimentCreateDto cloneAlimentCreateDto(AlimentCreateDto createDto) {
-        AlimentCreateDto newCreateDto = new AlimentCreateDto();
-        newCreateDto.setName(createDto.getName());
-        newCreateDto.setPortion(createDto.getPortion());
-        newCreateDto.setCalories(createDto.getCalories());
-        newCreateDto.setTotalFat(createDto.getTotalFat());
-        newCreateDto.setProtein(createDto.getProtein());
-        newCreateDto.setCarbohydrate(createDto.getCarbohydrate());
-        newCreateDto.setFiber(createDto.getFiber());
-        newCreateDto.setSugars(createDto.getSugars());
+    public static AlimentDto cloneAlimentDto(AlimentDto alimentDto) {
+        AlimentDto newCreateDto = new AlimentDto();
+        newCreateDto.setName(alimentDto.getName());
+        newCreateDto.setPortion(alimentDto.getPortion());
+        newCreateDto.setCalories(alimentDto.getCalories());
+        newCreateDto.setTotalFat(alimentDto.getTotalFat());
+        newCreateDto.setProtein(alimentDto.getProtein());
+        newCreateDto.setCarbohydrate(alimentDto.getCarbohydrate());
+        newCreateDto.setFiber(alimentDto.getFiber());
+        newCreateDto.setSugars(alimentDto.getSugars());
         return newCreateDto;
     }
 

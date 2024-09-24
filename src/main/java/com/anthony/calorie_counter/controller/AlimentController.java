@@ -1,9 +1,8 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.aliment.AlimentCreateDto;
+import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.dto.response.aliment.AlimentViewDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
-import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
@@ -25,7 +24,7 @@ public class AlimentController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
-    public ResponseEntity<AlimentViewDto> create(@Valid @RequestBody AlimentCreateDto createDto) {
+    public ResponseEntity<AlimentViewDto> create(@Valid @RequestBody AlimentDto createDto) {
         AlimentModel food = alimentService.create(createDto.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(new AlimentViewDto(food));
     }
@@ -40,5 +39,20 @@ public class AlimentController {
     public ResponseEntity<List<AlimentViewDto>> findByName(@PathParam("name") String name) {
         List<AlimentViewDto> aliments = alimentService.findByName(name).stream().map(AlimentViewDto::new).toList();
         return ResponseEntity.ok(aliments);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<AlimentViewDto> update(@PathVariable Long id, @Valid @RequestBody AlimentDto alimentDto) {
+        AlimentModel aliment = alimentService.update(id, alimentDto.toEntity());
+        return ResponseEntity.ok(new AlimentViewDto(aliment));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        alimentService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
