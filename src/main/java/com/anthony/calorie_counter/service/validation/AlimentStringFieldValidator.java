@@ -21,7 +21,7 @@ public class AlimentStringFieldValidator implements ConstraintValidator<AlimentS
             list.add(
                     new FieldErrorMessage(
                     "alimentField",
-                    "The field must have a maximum of two decimal places, no blank spaces and ends with 'g'."
+                    "The field must have zero or two decimal places, no blank spaces and ends with 'g'."
             ));
         }
         for(FieldErrorMessage e : list) {

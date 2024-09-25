@@ -37,16 +37,16 @@ public class AlimentService implements IAlimentService {
 
     @Override
     public AlimentModel update(Long id, AlimentModel aliment) {
-        AlimentModel current = alimentRepository.getReferenceById(id);
-        current.setName(aliment.getName());
-        current.setPortion(aliment.getPortion());
-        current.setCalories(aliment.getCalories());
-        current.setTotalFat(aliment.getTotalFat());
-        current.setProtein(aliment.getProtein());
-        current.setCarbohydrate(aliment.getCarbohydrate());
-        current.setFiber(aliment.getFiber());
-        current.setSugars(aliment.getSugars());
         try {
+            AlimentModel current = alimentRepository.getReferenceById(id);
+            current.setName(aliment.getName());
+            current.setPortion(aliment.getPortion());
+            current.setCalories(aliment.getCalories());
+            current.setTotalFat(aliment.getTotalFat());
+            current.setProtein(aliment.getProtein());
+            current.setCarbohydrate(aliment.getCarbohydrate());
+            current.setFiber(aliment.getFiber());
+            current.setSugars(aliment.getSugars());
             return alimentRepository.save(current);
         } catch (EntityNotFoundException e) {
             throw new EntityDataNotFoundException(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
