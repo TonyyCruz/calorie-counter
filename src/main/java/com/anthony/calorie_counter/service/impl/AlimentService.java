@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.AlimentModel;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
@@ -26,7 +26,7 @@ public class AlimentService implements IAlimentService {
     @Override
     public AlimentModel findById(Long id) {
         return alimentRepository.findById(id).orElseThrow(
-                () -> new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id)
+                () -> new EntityDataNotFoundException(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id)
         );
     }
 
@@ -37,26 +37,26 @@ public class AlimentService implements IAlimentService {
 
     @Override
     public AlimentModel update(Long id, AlimentModel aliment) {
-        AlimentModel current = alimentRepository.getReferenceById(id);
-        current.setName(aliment.getName());
-        current.setPortion(aliment.getPortion());
-        current.setCalories(aliment.getCalories());
-        current.setTotalFat(aliment.getTotalFat());
-        current.setProtein(aliment.getProtein());
-        current.setCarbohydrate(aliment.getCarbohydrate());
-        current.setFiber(aliment.getFiber());
-        current.setSugars(aliment.getSugars());
         try {
+            AlimentModel current = alimentRepository.getReferenceById(id);
+            current.setName(aliment.getName());
+            current.setPortion(aliment.getPortion());
+            current.setCalories(aliment.getCalories());
+            current.setTotalFat(aliment.getTotalFat());
+            current.setProtein(aliment.getProtein());
+            current.setCarbohydrate(aliment.getCarbohydrate());
+            current.setFiber(aliment.getFiber());
+            current.setSugars(aliment.getSugars());
             return alimentRepository.save(current);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
         }
     }
 
     @Override
     public void delete(Long id) {
         if (!alimentRepository.existsById(id)) {
-            throw new EntityDataNotFound(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID + id);
         }
         alimentRepository.deleteById(id);
     }

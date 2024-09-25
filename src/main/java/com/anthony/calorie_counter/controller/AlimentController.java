@@ -22,7 +22,7 @@ public class AlimentController {
         this.alimentService = alimentService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_ROLE_ADMIN')")
     public ResponseEntity<AlimentViewDto> create(@Valid @RequestBody AlimentDto createDto) {
         AlimentModel food = alimentService.create(createDto.toEntity());

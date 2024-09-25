@@ -8,11 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = PasswordValidator.class)
+@Constraint(validatedBy = AlimentStringFieldValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 
-public @interface PasswordValid {
+public @interface AlimentStringFieldValid {
     String message() default "Validation error.";
 
     Class<?>[] groups() default {};

@@ -1,26 +1,19 @@
 spring:
   application:
     name: calorie_counter
-
   datasource:
     url: jdbc:h2:mem:calories-counter_DB
     username: sa
     password:
-
   jpa:
-  #    hibernate:
-  #      ddl-auto: create-drop
     defer-datasource-initialization: true # To hibernate runs before data SQL
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-
-
   sql:
     init:
       mode: always # To hibernate runs before data SQL
-
   h2:
     console:
       enabled: true

@@ -3,7 +3,7 @@ package com.anthony.calorie_counter.service.impl;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
-import com.anthony.calorie_counter.exceptions.EntityDataNotFound;
+import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.interfaces.IUserService;
@@ -32,7 +32,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Transactional(readOnly = true)
     public UserModel findById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id));
+                .orElseThrow(() -> new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.setPhoneNumber(newUserModelData.getPhoneNumber());
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
@@ -65,7 +65,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
@@ -73,7 +73,7 @@ public class UserService implements IUserService, UserDetailsService {
     @Transactional
     public void deleteById(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
         userRepository.deleteById(id);
     }
@@ -92,7 +92,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.addRole(new RoleModel(UserRole.ROLE_ADMIN));
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
@@ -104,7 +104,7 @@ public class UserService implements IUserService, UserDetailsService {
             userModel.removeRoleById(UserRole.ROLE_ADMIN.getRole());
             return userRepository.save(userModel);
         } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFound(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
+            throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }
     }
 
