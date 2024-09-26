@@ -33,8 +33,7 @@ public class UserIntegrationTest extends TestBase {
     @DisplayName("User test cases")
     class UserTestCases {
 
-        @Test
-        @DisplayName("Test if is possible create a new user and receive status code 201.")
+        @Test @DisplayName("Test if is possible create a new user and receive status code 201.")
         void canCreateANewUser() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             String valueAsString = objectMapper.writeValueAsString(newUser);
@@ -54,8 +53,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if is possible find self user data by id and receive status code 200.")
+        @Test @DisplayName("Test if is possible find self user data by id and receive status code 200.")
         void canUserFindSelfDataById() throws Exception {
             String path = USER_URL + "/" + savedUser().getId();
             mockMvc.perform(get(path).header("Authorization", userToken))
@@ -70,8 +68,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if a user can update his data by id and receive status code 200.")
+        @Test @DisplayName("Test if a user can update his data by id and receive status code 200.")
         void canUserUpdateHisDataById() throws Exception {
             UserUpdateDto updateUser = UserFactory.userUpdateDto();
             String valueAsString = objectMapper.writeValueAsString(updateUser);
@@ -94,8 +91,7 @@ public class UserIntegrationTest extends TestBase {
                     .andExpect(status().isOk()).andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if a user can update his password by id and receive status code 200.")
+        @Test @DisplayName("Test if a user can update his password by id and receive status code 200.")
         void canUserUpdateHisPasswordById() throws Exception {
             PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto();
             passwordUpdateDto.setOldPassword(savedUser().getPassword());
@@ -113,8 +109,7 @@ public class UserIntegrationTest extends TestBase {
                     .andExpect(status().isOk()).andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if a user can delete his account by id and receive status code 204.")
+        @Test @DisplayName("Test if a user can delete his account by id and receive status code 204.")
         void canUserDeleteHisAccountById() throws Exception {
             PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto(savedUser().getPassword());
             String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);
@@ -152,8 +147,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with empty email and receive status code 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with empty email and receive status code 400.")
         void cannotCreateAnUserWithEmptyEmail() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setEmail("");
@@ -174,8 +168,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with invalid email and receive status code 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with invalid email and receive status code 400.")
         void cannotCreateAUserWithInvalidEmail() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setEmail("email.com");
@@ -196,8 +189,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with a registered email and receive status code 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with a registered email and receive status code 400.")
         void cannotCreateAUserWithRegisteredEmail() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setEmail(savedUser().getEmail());
@@ -218,8 +210,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with empty phone number and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with empty phone number and 400.")
         void cannotCreateAUserWithEmptyPhoneNumber() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setPhoneNumber("");
@@ -242,8 +233,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with invalid phone number and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with invalid phone number and 400.")
         void cannotCreateAUserWithInvalidPhoneNumber() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             String path = USER_URL + "/register";
@@ -269,8 +259,7 @@ public class UserIntegrationTest extends TestBase {
             }
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with empty password and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with empty password and 400.")
         void cannotCreateAUserWithEmptyPassword() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             newUser.setPassword("");
@@ -293,8 +282,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to create a user with invalid password and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to create a user with invalid password and 400.")
         void cannotCreateAUserWithInvalidPassword() throws Exception {
             UserCreateDto newUser = UserFactory.userCreateDto();
             String path = USER_URL + "/register";
@@ -320,8 +308,7 @@ public class UserIntegrationTest extends TestBase {
             }
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to find another user by id and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to find another user by id and receive status code 403.")
         void cannotFindAnotherUserById() throws Exception {
             UUID invalidId = UUID.randomUUID();
             String path = USER_URL + "/" + invalidId;
@@ -336,8 +323,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to update another user and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to update another user and receive status code 403.")
         void cannotUpdateAnotherUser() throws Exception {
             UUID invalidId = UUID.randomUUID();
             UserUpdateDto userUpdateDto = UserFactory.userUpdateDto();
@@ -359,8 +345,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to update a user with invalid password and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to update a user with invalid password and 400.")
         void cannotUpdateAUserWithInvalidPassword() throws Exception {
             PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto(savedUser().getPassword(), "");
             String path = USER_URL + "/update/password/" + savedUser().getId();
@@ -387,8 +372,7 @@ public class UserIntegrationTest extends TestBase {
             }
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to update password with invalid  old password and 400.")
+        @Test @DisplayName("Test if throws an exception when trying to update password with invalid  old password and 400.")
         void cannotUpdateAnPasswordWithInvalidOldPassword() throws Exception {
             String wrongOldPassword = SimpleFake.password(8);
             String newPassword = SimpleFake.password(8);
@@ -412,8 +396,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to delete a user with invalid authenticate password and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to delete a user with invalid authenticate password and receive status code 403.")
         void cannotDeleteAUserWithInvalidAuthenticatePassword() throws Exception {
             String wrongPassword = SimpleFake.password(8);
             PasswordAuthenticateDto passwordAuthenticateDto = new PasswordAuthenticateDto(wrongPassword);
@@ -435,8 +418,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to update another user password and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to update another user password and receive status code 403.")
         void cannotUpdateAnotherUserPassword() throws Exception {
             PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto(savedAdmin().getPassword(), "1234Aa.bbPo");
             String valueAsString = objectMapper.writeValueAsString(passwordUpdateDto);
@@ -457,8 +439,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to delete another user and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to delete another user and receive status code 403.")
         void cannotDeleteAnotherUser() throws Exception {
             PasswordAuthenticateDto passwordAuthenticateDto = new PasswordAuthenticateDto(savedAdmin().getPassword());
             String valueAsString = objectMapper.writeValueAsString(passwordAuthenticateDto);
@@ -479,8 +460,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when trying to access unauthorized routes and receive status code 403.")
+        @Test @DisplayName("Test if throws an exception when trying to access unauthorized routes and receive status code 403.")
         void cannotAccessUnauthorizedRoutes() throws Exception {
             String[] unauthorizedRoutes = new String[] {"/promote/", "/demote/"};
             for (String route : unauthorizedRoutes) {
@@ -564,8 +544,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if is possible an admin find a user by id and receive status code 200.")
+        @Test @DisplayName("Test if is possible an admin find a user by id and receive status code 200.")
         void canAdminFindUserById() throws Exception {
             String path = USER_URL + "/" + savedUser().getId();
             mockMvc.perform(get(path).header("Authorization", adminToken))
@@ -580,8 +559,7 @@ public class UserIntegrationTest extends TestBase {
                     .andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if an admin can update a user data by id and receive status code 200.")
+        @Test @DisplayName("Test if an admin can update a user data by id and receive status code 200.")
         void canAdminUpdateAnUserDataById() throws Exception {
             UserUpdateDto updateUser = UserFactory.userUpdateDto();
             String valueAsString = objectMapper.writeValueAsString(updateUser);
@@ -604,8 +582,7 @@ public class UserIntegrationTest extends TestBase {
                     .andExpect(status().isOk()).andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if an admin can update a user password by id and receive status code 200.")
+        @Test @DisplayName("Test if an admin can update a user password by id and receive status code 200.")
         void canAdminUpdateAnUserPasswordById() throws Exception {
             PasswordUpdateDto passwordUpdateDto = new PasswordUpdateDto();
             passwordUpdateDto.setOldPassword("");
@@ -623,8 +600,7 @@ public class UserIntegrationTest extends TestBase {
                     .andExpect(status().isOk()).andDo(print());
         }
 
-        @Test
-        @DisplayName("Test if an admin can delete a user account by id and receive status code 204.")
+        @Test @DisplayName("Test if an admin can delete a user account by id and receive status code 204.")
         void canAdminDeleteAnUserAccountById() throws Exception {
             PasswordAuthenticateDto passwordAuthenticate = new PasswordAuthenticateDto("");
             String valueAsString = objectMapper.writeValueAsString(passwordAuthenticate);
