@@ -43,13 +43,12 @@ public class AlimentUnitTest {
         @Mock
         IAlimentService alimentService;
 
-        @Test
-        @DisplayName("Test if is possible create a new aliment")
-        void testCanCreateANewFood() {
+        @Test @DisplayName("Test if is possible create a new aliment")
+        void testCanCreateANewAliment() {
             AlimentDto alimentDto = AlimentFactory.alimentDto();
-            AlimentModel createdFood = AlimentFactory.alimentEntityFromDto(alimentDto);
-            AlimentViewDto expect = new AlimentViewDto(createdFood);
-            when(alimentService.create(alimentDto.toEntity())).thenReturn(createdFood);
+            AlimentModel createdAliment = AlimentFactory.alimentEntityFromDto(alimentDto);
+            AlimentViewDto expect = new AlimentViewDto(createdAliment);
+            when(alimentService.create(alimentDto.toEntity())).thenReturn(createdAliment);
             ResponseEntity<AlimentViewDto> received = alimentController.create(alimentDto);
             AlimentViewDto current = Objects.requireNonNull(received.getBody());
             verify(alimentService, times(1)).create(alimentDto.toEntity());
@@ -65,8 +64,7 @@ public class AlimentUnitTest {
             assertEquals(expect.sugars(), current.sugars());
         }
 
-        @Test
-        @DisplayName("Test if is possible find an aliment by id")
+        @Test @DisplayName("Test if is possible find an aliment by id")
         void testCanFindAnAlimentById() {
             Long id = 1L;
             AlimentModel aliment = AlimentFactory.createAlimentEntity();
@@ -88,8 +86,7 @@ public class AlimentUnitTest {
             assertEquals(expect.sugars(), current.sugars());
         }
 
-        @Test
-        @DisplayName("Test if is possible find an aliment by name")
+        @Test @DisplayName("Test if is possible find an aliment by name")
         void testCanFindAnAlimentByName() {
             String name = "Burger from Mexico";
             AlimentModel aliment = AlimentFactory.createAlimentEntity();
@@ -102,8 +99,7 @@ public class AlimentUnitTest {
             assertEquals(expect, current);
         }
 
-        @Test
-        @DisplayName("Test if is possible update an aliment by id")
+        @Test @DisplayName("Test if is possible update an aliment by id")
         void testCanUpdateAnAlimentById() {
             Long id = 1L;
             AlimentDto update = AlimentFactory.alimentDto();
@@ -116,8 +112,7 @@ public class AlimentUnitTest {
             assertEquals(new AlimentViewDto(expect), current);
         }
 
-        @Test
-        @DisplayName("Test if is possible delete an aliment by id")
+        @Test @DisplayName("Test if is possible delete an aliment by id")
         void testCanDeleteAnAlimentById() {
             AlimentModel aliment = AlimentFactory.createAlimentEntity();
             doNothing().when(alimentService).delete(aliment.getId());
@@ -135,8 +130,7 @@ public class AlimentUnitTest {
         @InjectMocks
         AlimentService alimentService;
 
-        @Test
-        @DisplayName("Test if can save a new aliment")
+        @Test @DisplayName("Test if can save a new aliment")
         void testCanSaveANewAliment() {
             AlimentModel aliment = AlimentFactory.alimentDto().toEntity();
             AlimentModel expect = AlimentFactory.cloneAlimentModel(aliment);
@@ -156,8 +150,7 @@ public class AlimentUnitTest {
             assertEquals(expect.getSugars(), current.getSugars());
         }
 
-        @Test
-        @DisplayName("Test if can find an aliment by id")
+        @Test @DisplayName("Test if can find an aliment by id")
         void testCanFindAnAlimentById() {
             Long id = 1L;
             AlimentModel expect = AlimentFactory.createAlimentEntity();
@@ -177,8 +170,7 @@ public class AlimentUnitTest {
             assertEquals(expect.getSugars(), current.getSugars());
         }
 
-        @Test
-        @DisplayName("Test if can find an aliment by name")
+        @Test @DisplayName("Test if can find an aliment by name")
         void testCanFindAnAlimentByName() {
             String name = "Burger from Mexico";
             AlimentModel expect = AlimentFactory.createAlimentEntity();
@@ -199,8 +191,7 @@ public class AlimentUnitTest {
             assertEquals(expect.getSugars(), current.getSugars());
         }
 
-        @Test
-        @DisplayName("Test if try to find an aliment by invalid name returns an empty list")
+        @Test @DisplayName("Test if try to find an aliment by invalid name returns an empty list")
         void testTryToFindAnAlimentByInvalidNameReturnsEmptyList() {
             String name = "aaa";
             when(alimentRepository.findByNameContainingIgnoreCase(name)).thenReturn(new ArrayList<>());
@@ -209,8 +200,7 @@ public class AlimentUnitTest {
             assertEquals(0, current.size());
         }
 
-        @Test
-        @DisplayName("Test if can update an aliment by Id")
+        @Test @DisplayName("Test if can update an aliment by Id")
         void testCanUpdateAnAlimentById() {
             AlimentModel alimentBeforeUpdate = AlimentFactory.createAlimentEntity();
             AlimentModel update = AlimentFactory.alimentDto().toEntity();
@@ -233,8 +223,7 @@ public class AlimentUnitTest {
             assertEquals(expect.getSugars(), current.getSugars());
         }
 
-        @Test
-        @DisplayName("Test if can delete an aliment by Id")
+        @Test @DisplayName("Test if can delete an aliment by Id")
         void testCanDeleteAnAlimentById() {
             AlimentModel aliment = AlimentFactory.createAlimentEntity();
             when(alimentRepository.existsById(aliment.getId())).thenReturn(true);
@@ -244,8 +233,7 @@ public class AlimentUnitTest {
             verify(alimentRepository, times(1)).deleteById(aliment.getId());
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when try to find an aliment by invalid id")
+        @Test @DisplayName("Test if throws an exception when try to find an aliment by invalid id")
         void testTryFindAnAlimentByInvalidIdThrowsAnException() {
             Long id = 1L;
             when(alimentRepository.findById(id)).thenReturn(Optional.empty());
@@ -254,8 +242,7 @@ public class AlimentUnitTest {
             assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when try to update an aliment by invalid id")
+        @Test @DisplayName("Test if throws an exception when try to update an aliment by invalid id")
         void testTryUpdateAnAlimentByInvalidIdThrowsAnException() {
             Long id = 1L;
             AlimentDto alimentUpdate = AlimentFactory.alimentDto();
@@ -274,8 +261,7 @@ public class AlimentUnitTest {
             assertEquals(error.getMessage(), ExceptionMessages.ALIMENT_NOT_FOUND_WITH_ID +  id);
         }
 
-        @Test
-        @DisplayName("Test if throws an exception when try to delete an aliment by invalid id")
+        @Test @DisplayName("Test if throws an exception when try to delete an aliment by invalid id")
         void testTryDeleteAnAlimentByInvalidIdThrowsAnException() {
             Long id = 1L;
             when(alimentRepository.existsById(id)).thenReturn(false);
