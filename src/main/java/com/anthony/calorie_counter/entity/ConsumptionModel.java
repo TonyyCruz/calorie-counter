@@ -3,14 +3,17 @@ package com.anthony.calorie_counter.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tb_Consumption")
-public class ConsumptionModel {
+@Table(name = "tb_consumptions")
+public class ConsumptionModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
@@ -19,30 +22,43 @@ public class ConsumptionModel {
     private AlimentModel aliment;
 
     public Integer getCalories() {
-        return getQuantityDifference() * aliment.getCalories();
+        return differenceFromPortion() * aliment.getCalories();
     }
 
     public Integer getTotalFat() {
-        return getQuantityDifference() * aliment.getTotalFatAsNumber();
+        return differenceFromPortion() * aliment.getTotalFatAsNumber();
     }
 
     public Integer getProtein() {
-        return getQuantityDifference() * aliment.getProteinAsNumber();
+        return differenceFromPortion() * aliment.getProteinAsNumber();
     }
 
     public Integer getCarbohydrate() {
-        return getQuantityDifference() * aliment.getCarbohydrateAsNumber();
+        return differenceFromPortion() * aliment.getCarbohydrateAsNumber();
     }
 
     public Integer getFiber() {
-        return getQuantityDifference() * aliment.getFiberAsNumber();
+        return differenceFromPortion() * aliment.getFiberAsNumber();
     }
 
     public Integer getSugars() {
-        return getQuantityDifference() * aliment.getSugarsAsNumber();
+        return differenceFromPortion() * aliment.getSugarsAsNumber();
     }
 
-    private Integer getQuantityDifference() {
+    private Integer differenceFromPortion() {
         return grams / aliment.getPortionAsNumber();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConsumptionModel that = (ConsumptionModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(grams, that.grams) && Objects.equals(aliment, that.aliment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, grams, aliment);
     }
 }
