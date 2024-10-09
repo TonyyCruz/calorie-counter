@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.dto.request.user;
+package com.anthony.calorie_counter.entity.dto.request.user;
 
 import com.anthony.calorie_counter.service.validation.EmailUnique;
 import com.anthony.calorie_counter.service.validation.PhoneNumberValid;

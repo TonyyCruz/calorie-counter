@@ -1,15 +1,14 @@
 package com.anthony.calorie_counter.unit;
 
 import com.anthony.calorie_counter.controller.UserController;
-import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
-import com.anthony.calorie_counter.dto.response.user.UserViewDto;
+import com.anthony.calorie_counter.entity.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.entity.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.impl.UserService;
-import com.anthony.calorie_counter.service.interfaces.IUserService;
 import com.anthony.calorie_counter.utils.factories.RoleFactory;
 import com.anthony.calorie_counter.utils.factories.UserFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -51,6 +50,7 @@ public class UserUnitTest {
 		void testCanCreateANewUser() {
 			UserCreateDto userCreateDto = UserFactory.userCreateDto();
 			UserModel createdUser = UserFactory.createUserEntityFromDto(userCreateDto);
+			createdUser.addRole(RoleFactory.createUserRole());
 			UserViewDto expect = new UserViewDto(createdUser);
 			when(userService.create(userCreateDto.toEntity())).thenReturn(createdUser);
 			ResponseEntity<UserViewDto> received = userController.create(userCreateDto);

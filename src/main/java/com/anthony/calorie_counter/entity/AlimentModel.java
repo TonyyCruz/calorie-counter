@@ -34,6 +34,35 @@ public class AlimentModel implements Serializable {
     @Column(nullable = false)
     private String  sugars;
 
+    public Integer getPortionAsNumber() {
+        return getValueAsNumber(getPortion());
+    }
+
+    public Integer getTotalFatAsNumber() {
+        return getValueAsNumber(getTotalFat());
+    }
+
+    public Integer getProteinAsNumber() {
+        return getValueAsNumber(getProtein());
+    }
+
+    public Integer getCarbohydrateAsNumber() {
+        return getValueAsNumber(getCarbohydrate());
+    }
+
+    public Integer getFiberAsNumber() {
+        return getValueAsNumber(getFiber());
+    }
+
+    public Integer getSugarsAsNumber() {
+        return getValueAsNumber(getSugars());
+    }
+
+    private Integer getValueAsNumber(String value) {
+        value = value.replace("g", "");
+        return Integer.valueOf(value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.dto.request.aliment;
+package com.anthony.calorie_counter.entity.dto.request.aliment;
 
 import com.anthony.calorie_counter.entity.AlimentModel;
 import com.anthony.calorie_counter.service.validation.AlimentStringFieldValid;

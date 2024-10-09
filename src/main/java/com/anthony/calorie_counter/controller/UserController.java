@@ -1,10 +1,10 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.dto.request.user.PasswordAuthenticateDto;
-import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
-import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
-import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
-import com.anthony.calorie_counter.dto.response.user.UserViewDto;
+import com.anthony.calorie_counter.entity.dto.request.user.PasswordAuthenticateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.PasswordUpdateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.UserUpdateDto;
+import com.anthony.calorie_counter.entity.dto.response.user.UserViewDto;
 import com.anthony.calorie_counter.entity.UserModel;
 import com.anthony.calorie_counter.enums.UserRole;
 import com.anthony.calorie_counter.exceptions.ForbiddenRequestException;

@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.integration;
 
-import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
+import com.anthony.calorie_counter.entity.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.utils.factories.AlimentFactory;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
