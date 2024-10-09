@@ -15,7 +15,7 @@ public enum DescriptionName {
     AFTER_DINNER(9L),
     OTHER(10L);
 
-    private final Long mealId;
+    private final Long description;
 
-    DescriptionName(Long id) {this.mealId = id; }
+    DescriptionName(Long id) {this.description = id; }
 }

@@ -16,36 +16,40 @@ import java.util.Objects;
 public class ConsumptionModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "meal_id")
+    private MealModel meal;
     @Column(nullable = false)
     private Integer grams;
+    @JoinColumn(nullable = false, name = "aliment_id")
     @ManyToOne(fetch = FetchType.EAGER)
     private AlimentModel aliment;
 
     public Integer getCalories() {
-        return differenceFromPortion() * aliment.getCalories();
+        return differenceFromBasePortion() * aliment.getCalories();
     }
 
     public Integer getTotalFat() {
-        return differenceFromPortion() * aliment.getTotalFatAsNumber();
+        return differenceFromBasePortion() * aliment.getTotalFatAsNumber();
     }
 
     public Integer getProtein() {
-        return differenceFromPortion() * aliment.getProteinAsNumber();
+        return differenceFromBasePortion() * aliment.getProteinAsNumber();
     }
 
     public Integer getCarbohydrate() {
-        return differenceFromPortion() * aliment.getCarbohydrateAsNumber();
+        return differenceFromBasePortion() * aliment.getCarbohydrateAsNumber();
     }
 
     public Integer getFiber() {
-        return differenceFromPortion() * aliment.getFiberAsNumber();
+        return differenceFromBasePortion() * aliment.getFiberAsNumber();
     }
 
     public Integer getSugars() {
-        return differenceFromPortion() * aliment.getSugarsAsNumber();
+        return differenceFromBasePortion() * aliment.getSugarsAsNumber();
     }
 
-    private Integer differenceFromPortion() {
+    private Integer differenceFromBasePortion() {
         return grams / aliment.getPortionAsNumber();
     }
 

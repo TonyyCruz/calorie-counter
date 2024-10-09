@@ -14,8 +14,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tb_daily_meals")
-public class DailyMealsModel implements Serializable {
+@Table(name = "tb_daily_consume")
+public class DailyConsumeModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +36,7 @@ public class DailyMealsModel implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DailyMealsModel that = (DailyMealsModel) o;
+        DailyConsumeModel that = (DailyConsumeModel) o;
         return Objects.equals(id, that.id) && Objects.equals(user, that.user) && Objects.equals(date, that.date) && Objects.equals(meals, that.meals);
     }
 

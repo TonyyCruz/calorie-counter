@@ -1,14 +1,13 @@
 package com.anthony.calorie_counter.service.interfaces;
 
-import com.anthony.calorie_counter.entity.ConsumptionModel;
 
-public interface IConsumptionService {
+import com.anthony.calorie_counter.entity.DailyConsumeModel;
 
-    ConsumptionModel createConsumption(ConsumptionModel consumption);
+public interface IDailyMealsService {
 
-    ConsumptionModel updateConsumption(ConsumptionModel consumption);
+    DailyConsumeModel findDailyMealsById(Long id);
 
-    ConsumptionModel findConsumptionById(Long id);
+    DailyConsumeModel updateDailyMeals(Long id, DailyConsumeModel dailyMeals);
 
-    void deleteConsumptionById(Long id);
+    void deleteDailyMealsById(Long id);
 }

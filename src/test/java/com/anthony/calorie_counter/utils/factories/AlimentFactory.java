@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.utils.factories;
 
-import com.anthony.calorie_counter.dto.request.aliment.AlimentDto;
+import com.anthony.calorie_counter.entity.dto.request.aliment.AlimentDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
 import com.anthony.calorie_counter.utils.SimpleFake;
 

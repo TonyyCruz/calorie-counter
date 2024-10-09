@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.dto.response.user;
+package com.anthony.calorie_counter.entity.dto.response.user;
 
 import com.anthony.calorie_counter.entity.RoleModel;
 import com.anthony.calorie_counter.entity.UserModel;

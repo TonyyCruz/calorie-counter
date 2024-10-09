@@ -1,9 +1,9 @@
 package com.anthony.calorie_counter.integration;
 
-import com.anthony.calorie_counter.dto.request.user.PasswordAuthenticateDto;
-import com.anthony.calorie_counter.dto.request.user.PasswordUpdateDto;
-import com.anthony.calorie_counter.dto.request.user.UserCreateDto;
-import com.anthony.calorie_counter.dto.request.user.UserUpdateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.PasswordAuthenticateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.PasswordUpdateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.UserCreateDto;
+import com.anthony.calorie_counter.entity.dto.request.user.UserUpdateDto;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.utils.SimpleFake;

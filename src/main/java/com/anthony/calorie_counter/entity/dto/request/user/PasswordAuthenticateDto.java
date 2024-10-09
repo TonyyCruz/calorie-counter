@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.dto.request.user;
+package com.anthony.calorie_counter.entity.dto.request.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

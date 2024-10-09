@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.entity;
 
-import com.anthony.calorie_counter.enums.MealName;
+import com.anthony.calorie_counter.enums.DescriptionName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +20,10 @@ public class MealModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private MealName mealName;
+    @Column(nullable = false, name = "meal_name_id")
+    private DescriptionName descriptionName;
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "meal")
     private Set<ConsumptionModel> consumptions = new HashSet<>();
 
     public void addConsumption(ConsumptionModel consumptionModel) {
@@ -34,11 +35,11 @@ public class MealModel implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MealModel mealModel = (MealModel) o;
-        return Objects.equals(id, mealModel.id) && Objects.equals(mealName, mealModel.mealName) && Objects.equals(consumptions, mealModel.consumptions);
+        return Objects.equals(id, mealModel.id) && Objects.equals(descriptionName, mealModel.descriptionName) && Objects.equals(consumptions, mealModel.consumptions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mealName, consumptions);
+        return Objects.hash(id, descriptionName, consumptions);
     }
 }
