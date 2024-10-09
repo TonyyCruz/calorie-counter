@@ -18,7 +18,7 @@ public class DescriptionModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    @Column(name = "description_name", nullable = false, unique = true)
+    @Column(name = "description", nullable = false, unique = true)
     private DescriptionName descriptionName;
 
     public DescriptionModel(DescriptionName descriptionName) {

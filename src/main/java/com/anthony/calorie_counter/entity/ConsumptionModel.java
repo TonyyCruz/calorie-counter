@@ -16,13 +16,13 @@ import java.util.Objects;
 public class ConsumptionModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "meal_id")
     private MealModel meal;
     @Column(nullable = false)
     private Integer grams;
     @JoinColumn(nullable = false, name = "aliment_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private AlimentModel aliment;
 
     public Integer getCalories() {

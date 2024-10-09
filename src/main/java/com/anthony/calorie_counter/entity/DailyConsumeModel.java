@@ -19,13 +19,13 @@ public class DailyConsumeModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private UserModel user;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Instant date;
-    @Column(nullable = false)
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "dailyConsume")
     private Set<MealModel> meals;
 
     public void addMeal(MealModel meal) {

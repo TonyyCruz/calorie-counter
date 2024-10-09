@@ -1,6 +1,5 @@
 package com.anthony.calorie_counter.entity;
 
-import com.anthony.calorie_counter.enums.DescriptionName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,11 +18,14 @@ import java.util.Set;
 public class MealModel implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "meal_name_id")
-    private DescriptionName descriptionName;
+    @JoinColumn(name = "description_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.DETACH)
+    private DescriptionModel descriptionName;
+    @JoinColumn(name = "daily_consume_id", nullable = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private DailyConsumeModel dailyConsume;
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "meal")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "meal", cascade = CascadeType.ALL)
     private Set<ConsumptionModel> consumptions = new HashSet<>();
 
     public void addConsumption(ConsumptionModel consumptionModel) {
