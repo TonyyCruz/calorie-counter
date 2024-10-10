@@ -22,7 +22,7 @@ public class DailyConsumeModel implements Serializable {
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private UserModel user;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Instant date;
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "dailyConsume")
