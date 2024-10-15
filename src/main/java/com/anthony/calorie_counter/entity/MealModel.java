@@ -20,7 +20,7 @@ public class MealModel implements Serializable {
     private Long id;
     @JoinColumn(name = "description_id", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.DETACH)
-    private DescriptionModel descriptionName;
+    private DescriptionModel description;
     @JoinColumn(name = "daily_consume_id", nullable = false)
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private DailyConsumeModel dailyConsume;
@@ -37,11 +37,11 @@ public class MealModel implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MealModel mealModel = (MealModel) o;
-        return Objects.equals(id, mealModel.id) && Objects.equals(descriptionName, mealModel.descriptionName) && Objects.equals(consumptions, mealModel.consumptions);
+        return Objects.equals(id, mealModel.id) && Objects.equals(description, mealModel.description) && Objects.equals(consumptions, mealModel.consumptions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, descriptionName, consumptions);
+        return Objects.hash(id, description, consumptions);
     }
 }

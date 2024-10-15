@@ -39,7 +39,8 @@ public class ConsumptionService implements IConsumptionService {
     public ConsumptionModel update(Long id, ConsumptionModel consumption) {
         try {
             ConsumptionModel current = consumptionRepository.getReferenceById(id);
-            current.setMeal(mealRepository.getReferenceById(consumption.getMeal().getId()));
+//            current.setMeal(mealRepository.getReferenceById(consumption.getMeal().getId()));
+            current.setMeal(consumption.getMeal());
             current.setGrams(consumption.getGrams());
             current.setAliment(consumption.getAliment());
             return consumptionRepository.save(current);
