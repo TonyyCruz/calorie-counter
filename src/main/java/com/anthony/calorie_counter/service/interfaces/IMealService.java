@@ -1,15 +1,18 @@
 package com.anthony.calorie_counter.service.interfaces;
 
-import com.anthony.calorie_counter.entity.ConsumptionModel;
 import com.anthony.calorie_counter.entity.MealModel;
+
+import java.util.List;
 
 public interface IMealService {
 
-    MealModel findMealById(Long id);
+    MealModel create(MealModel meal);
 
-    void deleteMealById(Long id);
+    MealModel findById(Long id);
 
-    MealModel addConsumption(ConsumptionModel consumption);
+    List<MealModel> findAllByDailyConsumeId(Long dailyConsumeId);
 
-    MealModel deleteConsumption(ConsumptionModel consumption);
+    MealModel updateById(Long id, MealModel meal);
+
+    void deleteById(Long id);
 }

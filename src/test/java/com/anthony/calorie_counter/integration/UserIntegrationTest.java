@@ -319,7 +319,7 @@ public class UserIntegrationTest extends TestBase {
                     .andExpect(jsonPath("$.path").value(path))
                     .andExpect(jsonPath("$.exception").value("class com.anthony.calorie_counter.exceptions.ForbiddenRequestException"))
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION))
                     .andDo(print());
         }
 
@@ -341,7 +341,7 @@ public class UserIntegrationTest extends TestBase {
                             .value("class com.anthony.calorie_counter.exceptions.ForbiddenRequestException")
                     )
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION))
                     .andDo(print());
         }
 
@@ -435,7 +435,7 @@ public class UserIntegrationTest extends TestBase {
                             .value("class com.anthony.calorie_counter.exceptions.ForbiddenRequestException")
                     )
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION))
                     .andDo(print());
         }
 
@@ -456,7 +456,7 @@ public class UserIntegrationTest extends TestBase {
                             .value("class com.anthony.calorie_counter.exceptions.ForbiddenRequestException")
                     )
                     .andExpect(jsonPath("$.errors[*]").isNotEmpty())
-                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION))
+                    .andExpect(jsonPath("$.errors[*]").value(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION))
                     .andDo(print());
         }
 

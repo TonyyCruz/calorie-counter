@@ -1,12 +1,3 @@
---CREATE TABLE `users` (
---  `id` UUID PRIMARY KEY,
---  `full_name` CHAR(100),
---  `email` CHAR(100),
---  `password` CHAR(40),
---  `phone_number` CHAR(20),
---  `roles` INT
---);
-
 -- password: Passw0rd*
 INSERT INTO `tb_users` (`id`,`name`,`email`,`password`,`phone_number`)
 VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 'admin', 'admin@email.com', '$2a$10$2O9L0YxLhBWpjoyCkEOkDe5N4ahqyDFDlUot5AhNmKm5tghHS.dea', '(11) 95797-9692'),
@@ -20,17 +11,17 @@ VALUES ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 1),
        ('c0c4a69a-9dda-4b50-ab59-d896ce0a5c6e', 2),
        ('7b87f809-d142-4dfa-8802-87644d774dd5', 1);
 
---CREATE TABLE `tb_meals` (
---  `id` INT PRIMARY KEY,
---  `name` CHAR(255),
---  `portion` CHAR(10),
---  `calories` SMALLINT,
---  `total_fat` CHAR(10),
---  `protein` CHAR(10),
---  `carbohydrate` CHAR(10),
---  `fiber` CHAR(10),
---  `sugars` CHAR(10)
---);
+INSERT INTO `tb_descriptions` (`id`,`description`)
+VALUES (1, 'BREAKFAST'),
+       (2, 'SECOND_BREAKFAST'),
+       (3, 'BRUNCH'),
+       (4, 'ELEVENSES'),
+       (5, 'LUNCH'),
+       (6, 'AFTER_LUNCH'),
+       (7, 'SNACK'),
+       (8, 'DINNER'),
+       (9, 'AFTER_DINNER'),
+       (10, 'OTHER');
 
 INSERT INTO `tb_aliments` (`name`, `portion`, `calories`, `total_fat`, `protein`, `carbohydrate`, `fiber`, `sugars`)
 VALUES

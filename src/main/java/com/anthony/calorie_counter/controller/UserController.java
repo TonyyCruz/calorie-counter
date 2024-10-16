@@ -126,7 +126,7 @@ public class UserController {
 
     private void checkAuthorization(String id) {
         if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
-            throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERDFORM_ACTION);
+            throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION);
         }
     }
 }
