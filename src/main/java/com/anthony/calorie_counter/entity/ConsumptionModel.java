@@ -1,5 +1,7 @@
 package com.anthony.calorie_counter.entity;
 
+import com.anthony.calorie_counter.exceptions.InvalidArgumentException;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +10,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -26,31 +27,40 @@ public class ConsumptionModel implements Serializable {
     private AlimentModel aliment;
 
     public Integer getCalories() {
-        return differenceFromBasePortion() * aliment.getCalories();
+        return Math.round(differenceFromBasePortion() * aliment.getCalories());
     }
 
-    public Integer getTotalFat() {
-        return differenceFromBasePortion() * aliment.getTotalFatAsNumber();
+    public Float getTotalFat() {
+        return formatTwoDecimals(differenceFromBasePortion() * aliment.getTotalFatAsNumber());
     }
 
-    public Integer getProtein() {
-        return differenceFromBasePortion() * aliment.getProteinAsNumber();
+    public Float getProtein() {
+        return formatTwoDecimals(differenceFromBasePortion() * aliment.getProteinAsNumber());
     }
 
-    public Integer getCarbohydrate() {
-        return differenceFromBasePortion() * aliment.getCarbohydrateAsNumber();
+    public Float getCarbohydrate() {
+        return formatTwoDecimals(differenceFromBasePortion() * aliment.getCarbohydrateAsNumber());
     }
 
-    public Integer getFiber() {
-        return differenceFromBasePortion() * aliment.getFiberAsNumber();
+    public Float getFiber() {
+        return formatTwoDecimals(differenceFromBasePortion() * aliment.getFiberAsNumber());
     }
 
-    public Integer getSugars() {
-        return differenceFromBasePortion() * aliment.getSugarsAsNumber();
+    public Float getSugars() {
+        return formatTwoDecimals(differenceFromBasePortion() * aliment.getSugarsAsNumber());
     }
 
-    private Integer differenceFromBasePortion() {
-        return grams / aliment.getPortionAsNumber();
+    private Float differenceFromBasePortion() {
+        return formatTwoDecimals(grams / aliment.getPortionAsNumber());
+    }
+
+    private Float formatTwoDecimals(Float value) {
+        try {
+            String formatedValue = String.format("%.2f", value);
+            return Float.valueOf(formatedValue);
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException(ExceptionMessages.INVALID_ARGUMENTATION + value);
+        }
     }
 
     @Override
@@ -64,5 +74,15 @@ public class ConsumptionModel implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, grams, aliment);
+    }
+
+    @Override
+    public String toString() {
+        return "ConsumptionModel{" +
+                "id=" + id +
+                ", mealId=" + meal.getId() +
+                ", grams=" + grams +
+                ", aliment=" + aliment +
+                '}';
     }
 }
