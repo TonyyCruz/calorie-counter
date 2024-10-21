@@ -1,7 +1,7 @@
 package com.anthony.calorie_counter.controller;
 
-import com.anthony.calorie_counter.entity.dto.request.aliment.AlimentDto;
-import com.anthony.calorie_counter.entity.dto.response.aliment.AlimentViewDto;
+import com.anthony.calorie_counter.entity.dto.request.AlimentDto;
+import com.anthony.calorie_counter.entity.dto.response.AlimentViewDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
 import com.anthony.calorie_counter.service.interfaces.IAlimentService;
 import jakarta.validation.Valid;

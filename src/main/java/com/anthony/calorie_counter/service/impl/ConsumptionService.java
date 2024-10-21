@@ -1,8 +1,10 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.ConsumptionModel;
+import com.anthony.calorie_counter.entity.dto.request.ConsumptionDto;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
+import com.anthony.calorie_counter.repository.AlimentRepository;
 import com.anthony.calorie_counter.repository.ConsumptionRepository;
 import com.anthony.calorie_counter.repository.MealRepository;
 import com.anthony.calorie_counter.service.interfaces.IConsumptionService;
@@ -17,10 +19,19 @@ import java.util.List;
 public class ConsumptionService implements IConsumptionService {
     private final ConsumptionRepository consumptionRepository;
     private final MealRepository mealRepository;
+    private final AlimentRepository alimentRepository;
 
     @Override
-    public ConsumptionModel create(ConsumptionModel consumption) {
-        return consumptionRepository.save(consumption);
+    public ConsumptionModel create(ConsumptionDto consumptionDto) {
+        try {
+            ConsumptionModel consumption = new ConsumptionModel();
+            consumption.setMeal(mealRepository.getReferenceById(consumptionDto.getMealId()));
+            consumption.setAliment(alimentRepository.getReferenceById(consumptionDto.getAlimentId()));
+            consumption.setGrams(consumptionDto.getGrams());
+            return consumptionRepository.save(consumption);
+        } catch (Exception e) {
+            throw new EntityDataNotFoundException("----------------------MODIFICAR--------------------------------");
+        }
     }
 
     @Override

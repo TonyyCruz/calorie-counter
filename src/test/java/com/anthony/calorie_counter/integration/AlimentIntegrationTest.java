@@ -1,6 +1,6 @@
 package com.anthony.calorie_counter.integration;
 
-import com.anthony.calorie_counter.entity.dto.request.aliment.AlimentDto;
+import com.anthony.calorie_counter.entity.dto.request.AlimentDto;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.integration.config.TestBase;
 import com.anthony.calorie_counter.utils.factories.AlimentFactory;

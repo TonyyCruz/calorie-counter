@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationService implements IAuthenticationService {
     private final JwtService jwtService;
-    
+
     @Override
     public String authenticate(Authentication  authentication) {
         return jwtService.generateToken(authentication);

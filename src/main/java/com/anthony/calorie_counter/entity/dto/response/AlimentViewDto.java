@@ -1,4 +1,4 @@
-package com.anthony.calorie_counter.entity.dto.response.aliment;
+package com.anthony.calorie_counter.entity.dto.response;
 
 import com.anthony.calorie_counter.entity.AlimentModel;
 

@@ -1,5 +1,7 @@
 package com.anthony.calorie_counter.entity;
 
+import com.anthony.calorie_counter.exceptions.InvalidArgumentException;
+import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +11,6 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_aliments")
@@ -34,33 +35,37 @@ public class AlimentModel implements Serializable {
     @Column(nullable = false)
     private String  sugars;
 
-    public Integer getPortionAsNumber() {
+    public Float getPortionAsNumber() {
         return getValueAsNumber(getPortion());
     }
 
-    public Integer getTotalFatAsNumber() {
+    public Float getTotalFatAsNumber() {
         return getValueAsNumber(getTotalFat());
     }
 
-    public Integer getProteinAsNumber() {
+    public Float getProteinAsNumber() {
         return getValueAsNumber(getProtein());
     }
 
-    public Integer getCarbohydrateAsNumber() {
+    public Float getCarbohydrateAsNumber() {
         return getValueAsNumber(getCarbohydrate());
     }
 
-    public Integer getFiberAsNumber() {
+    public Float getFiberAsNumber() {
         return getValueAsNumber(getFiber());
     }
 
-    public Integer getSugarsAsNumber() {
+    public Float getSugarsAsNumber() {
         return getValueAsNumber(getSugars());
     }
 
-    private Integer getValueAsNumber(String value) {
-        value = value.replace("g", "");
-        return Integer.valueOf(value);
+    private Float getValueAsNumber(String value) {
+        try {
+            value = value.replace("g", "");
+            return Float.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException(ExceptionMessages.INVALID_ARGUMENTATION + value);
+        }
     }
 
     @Override
@@ -74,5 +79,20 @@ public class AlimentModel implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "AlimentModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", portion='" + portion + '\'' +
+                ", calories=" + calories +
+                ", totalFat='" + totalFat + '\'' +
+                ", protein='" + protein + '\'' +
+                ", carbohydrate='" + carbohydrate + '\'' +
+                ", fiber='" + fiber + '\'' +
+                ", sugars='" + sugars + '\'' +
+                '}';
     }
 }

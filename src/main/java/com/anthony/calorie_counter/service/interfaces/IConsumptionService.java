@@ -1,12 +1,13 @@
 package com.anthony.calorie_counter.service.interfaces;
 
 import com.anthony.calorie_counter.entity.ConsumptionModel;
+import com.anthony.calorie_counter.entity.dto.request.ConsumptionDto;
 
 import java.util.List;
 
 public interface IConsumptionService {
 
-    ConsumptionModel create(ConsumptionModel consumption);
+    ConsumptionModel create(ConsumptionDto consumption);
 
     ConsumptionModel findById(Long id);
 

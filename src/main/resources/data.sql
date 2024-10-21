@@ -23,6 +23,12 @@ VALUES (1, 'BREAKFAST'),
        (9, 'AFTER_DINNER'),
        (10, 'OTHER');
 
+INSERT INTO `tb_daily_consume` (`user_id`, `date`)
+VALUES ('7b87f809-d142-4dfa-8802-87644d774dd5', '2024-10-17T21:39:53.636413291Z');
+
+INSERT INTO `tb_meals` (`description_id`, `daily_consume_id`)
+VALUES (1, 1), (5, 1), (8, 1);
+
 INSERT INTO `tb_aliments` (`name`, `portion`, `calories`, `total_fat`, `protein`, `carbohydrate`, `fiber`, `sugars`)
 VALUES
     ('Cornstarch','100g',381,'0.10g','0.26g','91.27g','0.90g','0g'),

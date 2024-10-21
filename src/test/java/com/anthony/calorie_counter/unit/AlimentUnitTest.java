@@ -1,8 +1,8 @@
 package com.anthony.calorie_counter.unit;
 
 import com.anthony.calorie_counter.controller.AlimentController;
-import com.anthony.calorie_counter.entity.dto.request.aliment.AlimentDto;
-import com.anthony.calorie_counter.entity.dto.response.aliment.AlimentViewDto;
+import com.anthony.calorie_counter.entity.dto.request.AlimentDto;
+import com.anthony.calorie_counter.entity.dto.response.AlimentViewDto;
 import com.anthony.calorie_counter.entity.AlimentModel;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;

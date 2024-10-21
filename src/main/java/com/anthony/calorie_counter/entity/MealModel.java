@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
+//@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -43,5 +43,15 @@ public class MealModel implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, description, consumptions);
+    }
+
+    @Override
+    public String toString() {
+        return "MealModel{" +
+                "id=" + id +
+                ", description=" + description +
+                ", dailyConsumeId=" + dailyConsume.getId() +
+                ", consumptions=" + consumptions +
+                '}';
     }
 }

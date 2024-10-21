@@ -10,7 +10,6 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -43,5 +42,15 @@ public class DailyConsumeModel implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, user, date, meals);
+    }
+
+    @Override
+    public String toString() {
+        return "DailyConsumeModel{" +
+                "id=" + id +
+                ", userId=" + user.getId() +
+                ", date=" + date +
+                ", meals=" + meals +
+                '}';
     }
 }

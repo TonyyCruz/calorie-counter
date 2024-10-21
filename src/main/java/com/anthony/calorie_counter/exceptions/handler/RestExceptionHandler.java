@@ -1,6 +1,7 @@
 package com.anthony.calorie_counter.exceptions.handler;
 
 import com.anthony.calorie_counter.exceptions.abstractExeptions.BadRequest;
+import com.anthony.calorie_counter.exceptions.abstractExeptions.InvalidArgument;
 import com.anthony.calorie_counter.exceptions.abstractExeptions.NotFound;
 import com.anthony.calorie_counter.exceptions.abstractExeptions.Forbidden;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,6 +74,18 @@ public class RestExceptionHandler {
         exceptionDetails.setTitle("Unauthorized.");
         exceptionDetails.setTimestamp(Instant.now());
         exceptionDetails.setStatus(HttpStatus.FORBIDDEN.value());
+        exceptionDetails.setException(e.getClass().toString());
+        exceptionDetails.setPath(request.getRequestURI());
+        exceptionDetails.addError("error", e.getMessage());
+        return ResponseEntity.status(exceptionDetails.getStatus()).body(exceptionDetails);
+    }
+
+    @ExceptionHandler(InvalidArgument.class)
+    ResponseEntity<ExceptionDetails> invalidArgumentException(InvalidArgument e, HttpServletRequest request) {
+        ExceptionDetails exceptionDetails = new ExceptionDetails();
+        exceptionDetails.setTitle("Invalid argument.");
+        exceptionDetails.setTimestamp(Instant.now());
+        exceptionDetails.setStatus(HttpStatus.BAD_REQUEST.value());
         exceptionDetails.setException(e.getClass().toString());
         exceptionDetails.setPath(request.getRequestURI());
         exceptionDetails.addError("error", e.getMessage());
