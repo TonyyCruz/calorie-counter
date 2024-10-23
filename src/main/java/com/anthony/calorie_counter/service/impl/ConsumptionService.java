@@ -23,15 +23,11 @@ public class ConsumptionService implements IConsumptionService {
 
     @Override
     public ConsumptionModel create(ConsumptionDto consumptionDto) {
-        try {
-            ConsumptionModel consumption = new ConsumptionModel();
-            consumption.setMeal(mealRepository.getReferenceById(consumptionDto.getMealId()));
-            consumption.setAliment(alimentRepository.getReferenceById(consumptionDto.getAlimentId()));
-            consumption.setGrams(consumptionDto.getGrams());
-            return consumptionRepository.save(consumption);
-        } catch (Exception e) {
-            throw new EntityDataNotFoundException("----------------------MODIFICAR--------------------------------");
-        }
+        ConsumptionModel consumption = new ConsumptionModel();
+        consumption.setMeal(mealRepository.getReferenceById(consumptionDto.getMealId()));
+        consumption.setAliment(alimentRepository.getReferenceById(consumptionDto.getAlimentId()));
+        consumption.setGrams(consumptionDto.getGrams());
+        return consumptionRepository.save(consumption);
     }
 
     @Override

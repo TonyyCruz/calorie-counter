@@ -22,6 +22,7 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberVali
             list.add(new FieldErrorMessage("phoneNumber", "Invalid phone number, please enter valid data in the format: '(11) 99999-9999'."));
         }
         for(FieldErrorMessage e : list) {
+            var test = e.getErrorMessage();
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(e.getErrorMessage())
                     .addConstraintViolation();
