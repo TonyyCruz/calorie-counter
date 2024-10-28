@@ -38,4 +38,9 @@ public class ConsumptionController {
         return ResponseEntity.ok(consumptionList);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ConsumptionViewDto> update(@PathVariable Long id, @RequestBody @Valid ConsumptionDto consumptionDto) {
+        ConsumptionModel consumption = consumptionService.update(id, consumptionDto);
+        return ResponseEntity.ok(new ConsumptionViewDto(consumption));
+    }
 }

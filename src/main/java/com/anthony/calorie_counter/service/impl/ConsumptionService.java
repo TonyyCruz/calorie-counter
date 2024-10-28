@@ -24,10 +24,7 @@ public class ConsumptionService implements IConsumptionService {
     @Override
     public ConsumptionModel create(ConsumptionDto consumptionDto) {
         ConsumptionModel consumption = new ConsumptionModel();
-        consumption.setMeal(mealRepository.getReferenceById(consumptionDto.getMealId()));
-        consumption.setAliment(alimentRepository.getReferenceById(consumptionDto.getAlimentId()));
-        consumption.setGrams(consumptionDto.getGrams());
-        return consumptionRepository.save(consumption);
+        return consumptionRepository.save(entityFromDto(consumption, consumptionDto));
     }
 
     @Override
@@ -43,14 +40,10 @@ public class ConsumptionService implements IConsumptionService {
     }
 
     @Override
-    public ConsumptionModel update(Long id, ConsumptionModel consumption) {
+    public ConsumptionModel update(Long id, ConsumptionDto consumptionDto) {
         try {
             ConsumptionModel current = consumptionRepository.getReferenceById(id);
-//            current.setMeal(mealRepository.getReferenceById(consumption.getMeal().getId()));
-            current.setMeal(consumption.getMeal());
-            current.setGrams(consumption.getGrams());
-            current.setAliment(consumption.getAliment());
-            return consumptionRepository.save(current);
+            return consumptionRepository.save(entityFromDto(current, consumptionDto));
         } catch (EntityNotFoundException e) {
             throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
         }
@@ -62,5 +55,12 @@ public class ConsumptionService implements IConsumptionService {
             throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
         }
         consumptionRepository.deleteById(id);
+    }
+
+    private ConsumptionModel entityFromDto(ConsumptionModel consumption, ConsumptionDto dto) {
+        consumption.setMeal(mealRepository.getReferenceById(dto.getMealId()));
+        consumption.setGrams(dto.getGrams());
+        consumption.setAliment(alimentRepository.getReferenceById(dto.getAlimentId()));
+        return consumption;
     }
 }
