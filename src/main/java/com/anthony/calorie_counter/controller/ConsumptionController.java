@@ -15,7 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/consumption")
+@RequestMapping("/api/v1/consumptions")
 public class ConsumptionController {
     private final IConsumptionService consumptionService;
 
