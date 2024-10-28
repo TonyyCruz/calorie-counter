@@ -43,4 +43,11 @@ public class ConsumptionController {
         ConsumptionModel consumption = consumptionService.update(id, consumptionDto);
         return ResponseEntity.ok(new ConsumptionViewDto(consumption));
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        consumptionService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
