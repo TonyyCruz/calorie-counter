@@ -13,7 +13,7 @@ public interface IConsumptionService {
 
     List<ConsumptionModel> findAllByMealId(Long mealId);
 
-    ConsumptionModel update(Long id, ConsumptionModel consumption);
+    ConsumptionModel update(Long id, ConsumptionDto consumptionDto);
 
     void deleteById(Long id);
 }

@@ -31,7 +31,7 @@ public class ConsumptionValidator implements ConstraintValidator<ConsumptionVali
             list.add(new FieldErrorMessage("alimentId", "Aliment not found with id: " + consumptionDto.getAlimentId()));
         }
         if (!dailyConsumeRepository.existsById(consumptionDto.getDailyConsumeId())) {
-            list.add(new FieldErrorMessage("alimentId", "Daily consumption not found with id: " + consumptionDto.getDailyConsumeId()));
+            list.add(new FieldErrorMessage("dailyConsumeId", "Daily consume not found with id: " + consumptionDto.getDailyConsumeId()));
         }
         for (FieldErrorMessage e : list) {
             context.disableDefaultConstraintViolation();
