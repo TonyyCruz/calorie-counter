@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class AuthorizationManager {
+public class UserAuthorizationManager {
 
     protected Jwt getJwtUser() {
         return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
