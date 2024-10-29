@@ -84,7 +84,7 @@ public class UserController {
             throw new InvalidCredentialsException(ExceptionMessages.INCORRECT_USER_DATA);
         }
         checkAuthorization(id);
-        userService.deleteById(UUID.fromString(id));
+        userService.delete(UUID.fromString(id));
         return ResponseEntity.noContent().build();
     }
 
@@ -112,7 +112,7 @@ public class UserController {
     }
 
     private Jwt getJwtUser() {
-        return  (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     private UUID getPrincipalId() {
