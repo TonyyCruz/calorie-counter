@@ -63,7 +63,7 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void delete(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new EntityDataNotFoundException(ExceptionMessages.USER_NOT_FOUND_WITH_ID + id);
         }

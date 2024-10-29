@@ -1,9 +1,11 @@
 package com.anthony.calorie_counter.service.impl;
 
 import com.anthony.calorie_counter.entity.DailyConsumeModel;
+import com.anthony.calorie_counter.entity.dto.request.DailyConsumeDto;
 import com.anthony.calorie_counter.exceptions.EntityDataNotFoundException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.repository.DailyConsumeRepository;
+import com.anthony.calorie_counter.repository.UserRepository;
 import com.anthony.calorie_counter.service.interfaces.IDailyConsumeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DailyConsumeService implements IDailyConsumeService {
     private final DailyConsumeRepository dailyConsumeRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public DailyConsumeModel create(DailyConsumeModel dailyConsume) {
+    public DailyConsumeModel create(UUID userId, DailyConsumeDto dailyConsumeDto) {
+        DailyConsumeModel dailyConsume = new DailyConsumeModel();
+        dailyConsume.setDate(dailyConsumeDto.getDate());
+        dailyConsume.setUser(userRepository.getReferenceById(userId));
         return dailyConsumeRepository.save(dailyConsume);
     }
 
@@ -35,7 +41,7 @@ public class DailyConsumeService implements IDailyConsumeService {
     }
 
     @Override
-    public DailyConsumeModel updateById(Long id, DailyConsumeModel dailyConsume) {
+    public DailyConsumeModel update(Long id, DailyConsumeModel dailyConsume) {
         try {
             DailyConsumeModel current = dailyConsumeRepository.getReferenceById(id);
             current.setUser(dailyConsume.getUser());
@@ -47,7 +53,7 @@ public class DailyConsumeService implements IDailyConsumeService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         if (!dailyConsumeRepository.existsById(id)) {
             throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
         }
