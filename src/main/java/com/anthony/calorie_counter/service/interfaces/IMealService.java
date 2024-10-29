@@ -15,5 +15,5 @@ public interface IMealService {
 
     MealModel update(Long id, MealDto mealDto);
 
-    void deleteById(Long id);
+    void delete(Long id);
 }

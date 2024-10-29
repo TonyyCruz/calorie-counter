@@ -15,7 +15,7 @@ public interface IUserService {
 
     void updatePassword(UUID id, String newPassword);
 
-    void deleteById(UUID id);
+    void delete(UUID id);
 
     Page<UserModel> findAll(Pageable pageable);
 

@@ -15,5 +15,5 @@ public interface IConsumptionService {
 
     ConsumptionModel update(Long id, ConsumptionDto consumptionDto);
 
-    void deleteById(Long id);
+    void delete(Long id);
 }
