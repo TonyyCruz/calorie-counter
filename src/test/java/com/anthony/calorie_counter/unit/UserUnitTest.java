@@ -151,7 +151,7 @@ public class UserUnitTest {
 			UUID id = UUID.randomUUID();
 			when(userRepository.existsById(id)).thenReturn(true);
 			doNothing().when(userRepository).deleteById(id);
-			userService.deleteById(id);
+			userService.delete(id);
 			verify(userRepository, times(1)).existsById(id);
 			verify(userRepository, times(1)).deleteById(id);
 		}
@@ -254,7 +254,7 @@ public class UserUnitTest {
 			when(userRepository.existsById(invalidId)).thenReturn(false);
 			Throwable error = assertThrowsExactly(
 					EntityDataNotFoundException.class,
-					() -> userService.deleteById(invalidId)
+					() -> userService.delete(invalidId)
 			);
 			verify(userRepository, times(1)).existsById(invalidId);
 			verify(userRepository, times(0)).deleteById(invalidId);

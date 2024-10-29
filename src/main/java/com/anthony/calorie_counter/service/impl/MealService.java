@@ -50,7 +50,7 @@ public class MealService implements IMealService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         if (!mealRepository.existsById(id)) {
             throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID+ id);
         }

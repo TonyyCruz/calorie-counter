@@ -47,7 +47,7 @@ public class ConsumptionController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        consumptionService.deleteById(id);
+        consumptionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
