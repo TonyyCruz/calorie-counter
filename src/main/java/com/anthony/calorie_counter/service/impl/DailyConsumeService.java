@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,16 +42,24 @@ public class DailyConsumeService implements IDailyConsumeService {
     }
 
     @Override
-    public DailyConsumeModel update(Long id, DailyConsumeModel dailyConsume) {
-        try {
-            DailyConsumeModel current = dailyConsumeRepository.getReferenceById(id);
-            current.setUser(dailyConsume.getUser());
-            current.setDate(dailyConsume.getDate());
-            return dailyConsumeRepository.save(current);
-        } catch (EntityNotFoundException e) {
-            throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
-        }
+    public DailyConsumeModel findByUserIdAndDate(UUID userId, Instant date) {
+        return dailyConsumeRepository.findByUserIdAndDate(userId, date)
+                .orElseThrow(() -> new EntityDataNotFoundException(
+                        ExceptionMessages.DATA_NOT_FOUND_WITH_ID + userId + " and date: " + date)
+                );
     }
+
+//    @Override
+//    public DailyConsumeModel update(Long id, DailyConsumeModel dailyConsume) {
+//        try {
+//            DailyConsumeModel current = dailyConsumeRepository.getReferenceById(id);
+//            current.setUser(dailyConsume.getUser());
+//            current.setDate(dailyConsume.getDate());
+//            return dailyConsumeRepository.save(current);
+//        } catch (EntityNotFoundException e) {
+//            throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
+//        }
+//    }
 
     @Override
     public void delete(Long id) {
