@@ -20,5 +20,5 @@ public interface IDailyConsumeService {
 
 //    DailyConsumeModel update(Long id, DailyConsumeModel dailyConsume);
 
-    void delete(Long id);
+    void delete(Long id, UUID userId);
 }

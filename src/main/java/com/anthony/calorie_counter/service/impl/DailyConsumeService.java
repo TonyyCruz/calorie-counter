@@ -62,9 +62,11 @@ public class DailyConsumeService implements IDailyConsumeService {
 //    }
 
     @Override
-    public void delete(Long id) {
-        if (!dailyConsumeRepository.existsById(id)) {
-            throw new EntityDataNotFoundException(ExceptionMessages.DATA_NOT_FOUND_WITH_ID + id);
+    public void delete(Long id, UUID userId) {
+        if (!dailyConsumeRepository.existsByIdAndUserId(id, userId)) {
+            String errorMsg = dailyConsumeRepository.existsById(id) ? ExceptionMessages.UNAUTHORIZED_TO_DELETE_DATA
+                    : ExceptionMessages.DATA_NOT_FOUND_WITH_ID;
+            throw new EntityDataNotFoundException(errorMsg + id);
         }
         dailyConsumeRepository.deleteById(id);
     }

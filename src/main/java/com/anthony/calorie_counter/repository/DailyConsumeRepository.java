@@ -13,4 +13,6 @@ public interface DailyConsumeRepository extends JpaRepository<DailyConsumeModel,
     List<DailyConsumeModel> findAllByUserId(UUID userId);
 
     Optional<DailyConsumeModel> findByUserIdAndDate(UUID userId, Instant date);
+
+    boolean existsByIdAndUserId(Long id, UUID userId);
 }

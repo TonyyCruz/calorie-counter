@@ -51,8 +51,8 @@ public class DailyConsumeController extends UserAuthorizationManager {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable Long id ) {
-        dailyConsumeService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        dailyConsumeService.delete(id, getPrincipalId());
         return ResponseEntity.noContent().build();
     }
 }
