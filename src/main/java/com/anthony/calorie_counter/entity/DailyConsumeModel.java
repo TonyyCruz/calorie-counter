@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,13 +20,13 @@ public class DailyConsumeModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JoinColumn(name = "user_id", nullable = false)
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH)
     private UserModel user;
     @Column(nullable = false)
     private Instant date;
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "dailyConsume")
-    private Set<MealModel> meals;
+    private Set<MealModel> meals = new HashSet<>();
 
     public void addMeal(MealModel meal) {
         meals.add(meal);
