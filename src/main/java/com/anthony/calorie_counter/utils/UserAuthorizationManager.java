@@ -24,8 +24,8 @@ public class UserAuthorizationManager {
         return !Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
     }
 
-    protected void checkAuthorization(String id) {
-        if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
+    protected void checkAuthorization(UUID userId) {
+        if (principalIsNotAdmin() && !getPrincipalId().equals(userId)) {
             throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION);
         }
     }
