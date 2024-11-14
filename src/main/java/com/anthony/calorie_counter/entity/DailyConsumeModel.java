@@ -25,7 +25,7 @@ public class DailyConsumeModel implements Serializable {
     @Column(nullable = false)
     private Instant date;
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "dailyConsume")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "dailyConsume", cascade = CascadeType.ALL)
     private Set<MealModel> meals = new HashSet<>();
 
     public void addMeal(MealModel meal) {

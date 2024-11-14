@@ -18,12 +18,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/dailyconsume")
-public class DailyConsumeController extends UserAuthorizationManager {
+public class DailyConsumeController {
     private final IDailyConsumeService dailyConsumeService;
 
     @PostMapping
     public ResponseEntity<DailyConsumeViewDto> create(@RequestBody DailyConsumeDto dailyConsumeDto) {
-        DailyConsumeModel dailyConsume = dailyConsumeService.create(getPrincipalId(), dailyConsumeDto);
+        DailyConsumeModel dailyConsume = dailyConsumeService.create(UserAuthorizationManager.getPrincipalId(), dailyConsumeDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new DailyConsumeViewDto(dailyConsume));
     }
 
@@ -52,7 +52,7 @@ public class DailyConsumeController extends UserAuthorizationManager {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        dailyConsumeService.delete(id, getPrincipalId());
+        dailyConsumeService.delete(id, UserAuthorizationManager.getPrincipalId());
         return ResponseEntity.noContent().build();
     }
 }

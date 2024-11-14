@@ -9,22 +9,22 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class UserAuthorizationManager {
+public class UserAuthorizationManager extends SecurityContextHolder {
 
-    protected Jwt getJwtUser() {
-        return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    static public Jwt getJwtUser() {
+        return (Jwt) getContext().getAuthentication().getPrincipal();
     }
 
-    protected UUID getPrincipalId() {
+    static public UUID getPrincipalId() {
         return UUID.fromString(getJwtUser().getSubject());
     }
 
-    protected boolean principalIsNotAdmin() {
+    static public boolean principalIsNotAdmin() {
         String[] roles = getJwtUser().getClaims().get("scope").toString().split(" ");
         return !Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
     }
 
-    protected void checkAuthorization(UUID userId) {
+    static public void checkAuthorization(UUID userId) {
         if (principalIsNotAdmin() && !getPrincipalId().equals(userId)) {
             throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION);
         }
