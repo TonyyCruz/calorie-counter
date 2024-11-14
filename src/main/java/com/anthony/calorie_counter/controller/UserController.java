@@ -12,6 +12,7 @@ import com.anthony.calorie_counter.exceptions.InvalidCredentialsException;
 import com.anthony.calorie_counter.exceptions.messages.ExceptionMessages;
 import com.anthony.calorie_counter.service.interfaces.IUserService;
 import com.anthony.calorie_counter.service.impl.UserService;
+import com.anthony.calorie_counter.utils.UserAuthorizationManager;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,45 +47,48 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserViewDto> findUserById(@PathVariable String id) {
-        checkAuthorization(id);
-        UserModel userModel = userService.findById(UUID.fromString(id));
+    public ResponseEntity<UserViewDto> findUserById(@PathVariable UUID id) {
+        UserAuthorizationManager.checkAuthorization(id);
+        UserModel userModel = userService.findById(id);
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     @PutMapping("/update/user/{id}")
     public ResponseEntity<UserViewDto> updateUserById(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @RequestBody @Valid UserUpdateDto userUpdateDto
     ) {
-        checkAuthorization(id);
-        UserModel userModel = userService.updateUser(UUID.fromString(id), userUpdateDto.toEntity());
+        UserAuthorizationManager.checkAuthorization(id);
+        UserModel userModel = userService.updateUser(id, userUpdateDto.toEntity());
         return ResponseEntity.ok(new UserViewDto(userModel));
     }
 
     @PutMapping("/update/password/{id}")
     public ResponseEntity<String> updatePassword(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @RequestBody @Valid PasswordUpdateDto passwordUpdateDto
     ) {
-        UserModel user = userService.findById(UUID.fromString(id));
-        if (!passwordEncoder.matches(passwordUpdateDto.getOldPassword(), user.getPassword()) && principalIsNotAdmin()) {
+        UserModel user = userService.findById(id);
+        if (!passwordEncoder.matches(passwordUpdateDto.getOldPassword(), user.getPassword())
+                && UserAuthorizationManager.principalIsNotAdmin()
+        ) {
             throw new InvalidCredentialsException(ExceptionMessages.INCORRECT_USER_DATA);
         }
-        checkAuthorization(id);
-        userService.updatePassword(UUID.fromString(id), passwordUpdateDto.getNewPassword());
+        UserAuthorizationManager.checkAuthorization(id);
+        userService.updatePassword(id, passwordUpdateDto.getNewPassword());
         return ResponseEntity.ok("Password updated successfully.");
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<?> delete(@PathVariable String id, @RequestBody PasswordAuthenticateDto passwordAuthenticate) {
-        UserModel user = userService.findById(UUID.fromString(id));
-        if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword()) && principalIsNotAdmin()) {
+    public ResponseEntity<?> delete(@PathVariable UUID id, @RequestBody PasswordAuthenticateDto passwordAuthenticate) {
+        UserModel user = userService.findById(id);
+        if (!passwordEncoder.matches(passwordAuthenticate.getPassword(), user.getPassword())
+                && UserAuthorizationManager.principalIsNotAdmin()) {
             throw new InvalidCredentialsException(ExceptionMessages.INCORRECT_USER_DATA);
         }
-        checkAuthorization(id);
-        userService.delete(UUID.fromString(id));
+        UserAuthorizationManager.checkAuthorization(id);
+        userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -111,22 +115,22 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    private Jwt getJwtUser() {
-        return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
-    private UUID getPrincipalId() {
-        return UUID.fromString(getJwtUser().getSubject());
-    }
-
-    private boolean principalIsNotAdmin() {
-        String[] roles = getJwtUser().getClaims().get("scope").toString().split(" ");
-        return !Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
-    }
-
-    private void checkAuthorization(String id) {
-        if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
-            throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION);
-        }
-    }
+//    private Jwt getJwtUser() {
+//        return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//    }
+//
+//    private UUID getPrincipalId() {
+//        return UUID.fromString(getJwtUser().getSubject());
+//    }
+//
+//    private boolean principalIsNotAdmin() {
+//        String[] roles = getJwtUser().getClaims().get("scope").toString().split(" ");
+//        return !Arrays.asList(roles).contains(UserRole.ROLE_ADMIN.name());
+//    }
+//
+//    private void checkAuthorization(String id) {
+//        if (principalIsNotAdmin() && !getPrincipalId().equals(UUID.fromString(id))) {
+//            throw new ForbiddenRequestException(ExceptionMessages.UNAUTHORIZED_TO_PERFORM_ACTION);
+//        }
+//    }
 }

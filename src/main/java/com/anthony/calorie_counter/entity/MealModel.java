@@ -22,7 +22,7 @@ public class MealModel implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.DETACH)
     private DescriptionModel description;
     @JoinColumn(name = "daily_consume_id", nullable = false)
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.DETACH)
     private DailyConsumeModel dailyConsume;
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "meal", cascade = CascadeType.ALL)

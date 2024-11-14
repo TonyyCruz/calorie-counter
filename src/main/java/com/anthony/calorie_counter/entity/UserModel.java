@@ -1,6 +1,5 @@
 package com.anthony.calorie_counter.entity;
 
-import com.anthony.calorie_counter.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +12,6 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "tb_users")
 public class UserModel implements UserDetails {
@@ -30,10 +28,11 @@ public class UserModel implements UserDetails {
     private String phoneNumber;
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleModel> roles = new HashSet<>();
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<DailyConsumeModel> dailyConsume = new HashSet<>();
 
     public void addRole(RoleModel roleModel) {
         roles.add(roleModel);
@@ -84,5 +83,16 @@ public class UserModel implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                "roles=" + roles +
+                '}';
     }
 }

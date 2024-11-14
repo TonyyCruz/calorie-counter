@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -34,6 +36,9 @@ public class AlimentModel implements Serializable {
     private String  fiber;
     @Column(nullable = false)
     private String  sugars;
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "aliment", cascade = CascadeType.ALL)
+    private Set<ConsumptionModel> consumptions = new HashSet<>();
 
     public Float getPortionAsNumber() {
         return getValueAsNumber(getPortion());
