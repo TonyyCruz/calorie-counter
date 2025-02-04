@@ -5,3 +5,5 @@ Projeto pessoal de um contador de calorias
 [] Criar metodo para verificar autorizacao 
 
 [] Criar docker compose 
+
+[] adicionar front-end simples com Thymeleaf
