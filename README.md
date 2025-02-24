@@ -10,3 +10,4 @@ Tabela: https://app.diagrams.net/?src=about#G18qz6MEHwDqLJGmj3Vrm8KOLPPxX7-zC_#%
 [] Criar docker compose 
 
 [] adicionar front-end simples com Thymeleaf
+
